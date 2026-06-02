@@ -3,6 +3,7 @@ from src.infra.db.seed.seed_roles import get_all_roles
 from src.infra.db.seed.seed_permissions import seed_permissions
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.infra.db.session import SessionLocal
+from src.infra.db.seed.seed_role_permissions import seed_role_permissions
 
 
 async def run(session: AsyncSession):
@@ -12,6 +13,8 @@ async def run(session: AsyncSession):
     print("Permissions added")
     print("Seeding roles")
     await get_all_roles(session)
+    print("Seeding relationship")
+    await seed_role_permissions(session)
     print("finish ......")
 
 
