@@ -1,1 +1,3 @@
 from src.features.auth.models.user import User
+from src.features.auth.models.permission import Permission
+from src.features.auth.models.role import Role
