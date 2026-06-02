@@ -1,0 +1,11 @@
+from enum import StrEnum
+
+
+class Role(StrEnum):
+    SUPER_ADMIN = "SUPER_ADMIN"
+    ADMIN = "ADMIN"
+    MANAGER = "MANAGER"
+    REVIEWER = "REVIEWER"
+    OPERATOR = "OPERATOR"
+    QUALITY_CHAMPION = "QUALITY_CHAMPION"
+    VIEWER = "VIEWER"
