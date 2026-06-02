@@ -1,6 +1,11 @@
-def main():
-    print("Hello from backend!")
+from fastapi import FastAPI
 
 
-if __name__ == "__main__":
-    main()
+def create_app() -> FastAPI:
+
+    app = FastAPI(title="SOQM", version="v1")
+
+    return app
+
+
+create_app()
