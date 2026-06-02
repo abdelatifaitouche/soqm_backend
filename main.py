@@ -8,4 +8,9 @@ def create_app() -> FastAPI:
     return app
 
 
-create_app()
+app: FastAPI = create_app()
+
+
+@app.get("/health")
+def home():
+    return "soqm here"
