@@ -4,6 +4,7 @@ from src.infra.db.seed.seed_permissions import seed_permissions
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.infra.db.session import SessionLocal
 from src.infra.db.seed.seed_role_permissions import seed_role_permissions
+from src.infra.db.seed.seed_super_user import seed_super_user
 
 
 async def run(session: AsyncSession):
@@ -15,6 +16,11 @@ async def run(session: AsyncSession):
     await get_all_roles(session)
     print("Seeding relationship")
     await seed_role_permissions(session)
+
+    print("seeding super user")
+
+    await seed_super_user(session)
+
     print("finish ......")
 
 
