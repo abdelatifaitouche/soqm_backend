@@ -13,7 +13,11 @@ from src.core.exceptions import (
     TokenExpiredError,
     TokenInvalidError,
     RefreshTokenMissingError,
+    AccessDenied,
 )
+from src.features.auth.security.dependencies import require_permissions
+from src.features.auth.permissions.auth_permissions import AuthPermissions
+
 
 router = APIRouter(prefix="/auth")
 
@@ -76,7 +80,7 @@ async def get_refresh(
 
 @router.post("/register/")
 async def create_user(
-    creds=Depends(require_auth),
+    creds=Depends(require_permissions(AuthPermissions.CREATE)),
     service: AuthService = Depends(get_service),
 ):
     return creds

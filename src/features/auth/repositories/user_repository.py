@@ -63,3 +63,6 @@ class UserRepository:
             return None
 
         return self._to_domain(data)
+
+    async def get_role_permissions(self, role: str):
+        return

@@ -19,6 +19,10 @@ class TokenInvalidError(AppException):
     status_code: int = 401
 
 
+class AccessDenied(AppException):
+    status_code: int = 403
+
+
 class UserNotFoundError(AppException):
     status_code: int = 400
 
