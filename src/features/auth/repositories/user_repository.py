@@ -4,6 +4,7 @@ from sqlalchemy.orm import selectinload, contains_eager
 from src.features.auth.models.user import User as UserDB
 from src.features.auth.models.user_roles import UserRoles as UserRolesDB
 from src.features.auth.domain.user import User as UserEntity
+from uuid import UUID
 
 
 class UserRepository:
@@ -25,6 +26,24 @@ class UserRepository:
             is_active=orm.is_active,
             roles=roles,
         )
+
+    async def get_by_id(self, user_id: UUID) -> UserEntity | None:
+        stmt = (
+            select(self.model)
+            .where(self.model.id == user_id)
+            .join(UserDB.user_roles)
+            .join(UserRolesDB.role)
+            .options(contains_eager(UserDB.user_roles).contains_eager(UserRolesDB.role))
+        )
+
+        result = await self.db.execute(stmt)
+
+        data = result.unique().scalar_one_or_none()
+
+        if not data:
+            return None
+
+        return self._to_domain(data)
 
     async def get_by_email(self, email: str) -> UserEntity | None:
 

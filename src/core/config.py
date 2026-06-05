@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    DEBUG: bool
+
     DATABASE_URL: str
 
     SUPER_USER_NAME: str

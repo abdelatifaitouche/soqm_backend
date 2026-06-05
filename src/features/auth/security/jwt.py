@@ -7,12 +7,8 @@ from jwt.exceptions import (
     InvalidAlgorithmError,
     InvalidTokenError,
 )
-from enum import StrEnum
-
-
-class TokenType(StrEnum):
-    ACCESS_TOKEN = "ACCESS_TOKEN"
-    REFRESH_TOKEN = "REFRESH_TOKEN"
+from src.features.auth.enums.tokens import TokenType
+from src.core.exceptions import TokenExpiredError, TokenInvalidError
 
 
 def _now() -> datetime:
@@ -80,14 +76,13 @@ def _decode(token: str, token_type: TokenType):
                 settings.JWT_ALGO,
             ],
         )
-    except ExpiredSignatureError:
-        raise
-    except InvalidTokenError:
-        raise
+    except ExpiredSignatureError as exp:
+        raise TokenExpiredError(message="Token Expired")
+    except InvalidTokenError as inv:
+        raise TokenInvalidError(message="Invalid Token")
 
-    if decoded.get("type") != token_type:
-        raise
-
+    if decoded.get("type") != token_type.value:
+        raise TokenInvalidError(message="Invalid Token")
     return decoded
 
 
