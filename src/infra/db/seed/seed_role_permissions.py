@@ -6,6 +6,10 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from src.core.roles import Role
 from src.features.auth.permissions.auth_permissions import AuthPermissions
+from src.features.soqm_components.permissions.components_permissions import (
+    ComponentPermissions,
+)
+
 
 ROLES_PERMISSIONS = {
     Role.SUPER_ADMIN: [
@@ -16,6 +20,12 @@ ROLES_PERMISSIONS = {
         AuthPermissions.READ,
         AuthPermissions.READ_OWN,
         AuthPermissions.UPDATE,
+        ComponentPermissions.ACTIVATE,
+        ComponentPermissions.CREATE,
+        ComponentPermissions.DEACTIVATE,
+        ComponentPermissions.DELETE,
+        ComponentPermissions.READ,
+        ComponentPermissions.UPDATE,
     ],
     Role.ADMIN: [
         AuthPermissions.CREATE,
@@ -25,13 +35,21 @@ ROLES_PERMISSIONS = {
         AuthPermissions.READ,
         AuthPermissions.READ_OWN,
         AuthPermissions.UPDATE,
+        ComponentPermissions.ACTIVATE,
+        ComponentPermissions.CREATE,
+        ComponentPermissions.DEACTIVATE,
+        ComponentPermissions.DELETE,
+        ComponentPermissions.READ,
+        ComponentPermissions.UPDATE,
     ],
     Role.MANAGER: [
         AuthPermissions.READ,
         AuthPermissions.READ_OWN,
+        ComponentPermissions.READ,
     ],
     Role.OPERATOR: [
         AuthPermissions.READ_OWN,
+        ComponentPermissions.READ,
     ],
 }
 

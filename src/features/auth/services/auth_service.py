@@ -55,7 +55,7 @@ class AuthService:
         try:
             payload = decode_refresh_token(refresh_token)
         except TokenExpiredError:
-            raise TokenExpireError("Invalid Refresh Token")
+            raise TokenExpiredError("Invalid Refresh Token")
         except TokenInvalidError:
             raise TokenInvalidError("Invalid Refresh Token")
 

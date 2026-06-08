@@ -1,6 +1,3 @@
-from enum import StrEnum
-
-
 class AuthPermissions:
     CREATE = ("auth", "create")
     UPDATE = ("auth", "update")

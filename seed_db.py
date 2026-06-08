@@ -5,6 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.infra.db.session import SessionLocal
 from src.infra.db.seed.seed_role_permissions import seed_role_permissions
 from src.infra.db.seed.seed_super_user import seed_super_user
+from src.infra.db.seed.seed_soqm_components import seed_components
+from data.soqm_data import SOQM_COMPONENTS_SEED_DATA
 
 
 async def run(session: AsyncSession):
@@ -20,7 +22,8 @@ async def run(session: AsyncSession):
     print("seeding super user")
 
     await seed_super_user(session)
-
+    print("seeding soqm components")
+    await seed_components(SOQM_COMPONENTS_SEED_DATA, session, force=False)
     print("finish ......")
 
 
