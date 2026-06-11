@@ -7,7 +7,7 @@ from src.api.exceptions_handlers import register_exception_handlers
 
 def create_app() -> FastAPI:
     """
-    ENTRY FACTORY
+    ENTRY FACTORY,might change things later
     """
     origins = [
         "http://localhost:5173",
