@@ -35,7 +35,7 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd /opt/soqm
+            cd /opt/soqm_backend
 
             docker compose pull
             docker compose up -d
