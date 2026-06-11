@@ -10,7 +10,7 @@ from data.soqm_data import SOQM_COMPONENTS_SEED_DATA
 
 
 async def run(session: AsyncSession):
-    print("Starting the script")
+    print("Starting the script ......")
     print("Seeding permissions")
     await seed_permissions(session)
     print("Permissions added")
