@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, Response
+from src.core.pagination import Pagination
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.auth.schemas.user import UserLogin
+from src.features.auth.schemas.user import UserLogin, CreateUser, UserRead
+from src.features.auth.domain.user import User
 from src.infra.db.uow import get_db
 from src.features.auth.services.auth_service import AuthService
 from src.features.auth.repositories.user_repository import UserRepository
@@ -80,7 +82,31 @@ async def get_refresh(
 
 @router.post("/register/")
 async def create_user(
+    data: CreateUser,
     creds=Depends(require_permissions(AuthPermissions.CREATE)),
     service: AuthService = Depends(get_service),
 ):
-    return creds
+    user: User = await service.create_user(UserMapper.from_create(data))
+    return UserRead.model_validate(user)
+
+
+@router.get("/list")
+async def list_users(
+    pagination: Pagination = Depends(),
+    creds=Depends(require_permissions(AuthPermissions.READ)),
+    service: AuthService = Depends(get_service),
+):
+    users: list[User] = await service.list(pagination)
+    return [UserRead.model_validate(u) for u in users]
+
+
+@router.patch("/{user_id}/block/")
+async def deactivate_user(
+    user_id: str,
+    service: AuthService = Depends(get_service),
+    creds=Depends(
+        require_permissions(AuthPermissions.BLOCK),
+    ),
+):
+
+    return

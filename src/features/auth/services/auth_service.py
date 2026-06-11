@@ -1,5 +1,6 @@
-from src.features.auth.domain.user import UserLogin, User
-from src.features.auth.security.password import check_password
+from src.core.pagination import Pagination
+from src.features.auth.domain.user import UserLogin, User, UserCreate
+from src.features.auth.security.password import check_password, hash_password
 from src.features.auth.security.jwt import (
     generate_access_token,
     generate_refresh_token,
@@ -20,7 +21,22 @@ class AuthService:
     def __init__(self, repo: UserRepository):
         self.repo: UserRepository = repo
 
-    async def create_user(self):
+    async def list(self, pagination: Pagination):
+
+        return await self.repo.list(pagination)
+
+    async def create_user(self, user: UserCreate) -> User:
+        # check if email exists
+        if await self.repo.get_by_email(user.email):
+            raise Exception("Email already in use")
+        # hash_password,
+        hashed_password: str = hash_password(user.password)
+        # save the user
+        user.password = hashed_password
+        created: User = await self.repo.save(user)
+        return created
+
+    async def assign_role(self):
         return
 
     async def get_by_id(self, user_id: UUID):

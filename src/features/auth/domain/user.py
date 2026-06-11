@@ -9,11 +9,19 @@ class UserLogin:
 
 
 @dataclass
+class UserCreate:
+    first_name: str
+    last_name: str
+    password: str
+    email: str
+
+
+@dataclass
 class User:
     id: UUID
     email: str
-    password_hashed: str
     is_active: bool
     first_name: str
     last_name: str
-    roles: list[str]
+    roles: list[str] | None = None
+    password_hashed: str | None = None
