@@ -86,6 +86,15 @@ class AuthService:
 
         return access_token, new_refresh_token
 
+    async def assign_role(self, user_id: UUID, role_id: UUID):
+
+        user: User | None = await self.repo.get_by_id(user_id)
+
+        if not user:
+            raise UserNotFoundError("User Not Found")
+
+        await self.repo.add_user_role(user_id, role_id)
+
     async def update(self):
         return
 

@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.pagination import Pagination
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import selectinload, contains_eager
 from src.features.auth.models.user import User as UserDB
 from src.features.auth.models.user_roles import UserRoles as UserRolesDB
@@ -40,26 +41,23 @@ class UserRepository:
         return stmt.limit(pagination.limit).offset(pagination.offset)
 
     async def list(self, pagination: Pagination) -> list[UserEntity]:
-        stmt = select(self.model)
+        stmt = select(self.model).options(
+            selectinload(UserDB.user_roles).selectinload(UserRolesDB.role)
+        )
         stmt = self._apply_pagination(stmt, pagination)
         results = await self.db.execute(stmt)
 
         data = results.scalars().all()
-        return [
-            UserEntity(
-                id=u.id,
-                first_name=u.first_name,
-                last_name=u.last_name,
-                email=u.email,
-                is_active=u.is_active,
-            )
-            for u in data
-        ]
+
+        return [self._to_domain(u) for u in data]
 
     async def save(self, user: UserCreate) -> UserEntity:
         orm = self._to_orm(user)
         self.db.add(orm)
         await self.db.flush()
+
+        await self.add_user_role(orm.id, user.role_id)
+
         await self.db.refresh(orm)
         return UserEntity(
             id=orm.id,
@@ -100,11 +98,17 @@ class UserRepository:
         result = await self.db.execute(stmt)
 
         data = result.unique().scalar_one_or_none()
-
         if not data:
             return None
 
         return self._to_domain(data)
+
+    async def add_user_role(self, user_id: UUID, role_id: UUID):
+        await self.db.execute(
+            pg_insert(UserRolesDB)
+            .values({"user_id": user_id, "role_id": role_id})
+            .on_conflict_do_nothing()
+        )
 
     async def get_role_permissions(self, role: str):
         return

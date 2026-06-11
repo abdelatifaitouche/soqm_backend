@@ -1,7 +1,13 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, status
+from uuid import UUID
 from src.core.pagination import Pagination
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.auth.schemas.user import UserLogin, CreateUser, UserRead
+from src.features.auth.schemas.user import (
+    UserLogin,
+    CreateUser,
+    UserRead,
+    AssignRoleRequest,
+)
 from src.features.auth.domain.user import User
 from src.infra.db.uow import get_db
 from src.features.auth.services.auth_service import AuthService
@@ -110,3 +116,12 @@ async def deactivate_user(
 ):
 
     return
+
+
+@router.post("/{user_id}/roles/", status_code=status.HTTP_204_NO_CONTENT)
+async def assing_role(
+    user_id: str,
+    payload: AssignRoleRequest,
+    service: AuthService = Depends(get_service),
+):
+    return await service.assign_role(UUID(user_id), payload.role_id)

@@ -8,7 +8,7 @@ class UserRead(BaseModel):
     last_name: str
     email: str
     is_active: bool
-
+    roles: list[str] | None = None
     model_config = {"from_attributes": True}
 
 
@@ -22,3 +22,8 @@ class CreateUser(BaseModel):
     last_name: str
     email: str
     password: str
+    role_id: UUID
+
+
+class AssignRoleRequest(BaseModel):
+    role_id: UUID

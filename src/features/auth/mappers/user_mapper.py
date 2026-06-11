@@ -20,4 +20,5 @@ class UserMapper:
             last_name=data.last_name,
             password=data.password,
             email=data.email,
+            role_id=data.role_id,
         )

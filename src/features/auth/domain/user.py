@@ -14,6 +14,7 @@ class UserCreate:
     last_name: str
     password: str
     email: str
+    role_id: UUID
 
 
 @dataclass
