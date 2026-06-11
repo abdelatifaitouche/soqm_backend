@@ -22,8 +22,6 @@ async def run(session: AsyncSession):
     print("seeding super user")
 
     await seed_super_user(session)
-    print("seeding soqm components")
-    await seed_components(SOQM_COMPONENTS_SEED_DATA, session, force=False)
     print("finish ......")
 
 
