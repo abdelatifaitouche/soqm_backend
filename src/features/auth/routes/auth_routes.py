@@ -8,6 +8,7 @@ from src.features.auth.schemas.user import (
     UserRead,
     AssignRoleRequest,
 )
+from src.features.auth.schemas.role import Role as RoleRead
 from src.features.auth.domain.user import User
 from src.infra.db.uow import get_db
 from src.features.auth.services.auth_service import AuthService
@@ -116,6 +117,14 @@ async def deactivate_user(
 ):
 
     return
+
+
+@router.get("/roles")
+async def list_roles(
+    service: AuthService = Depends(get_service),
+):
+    roles = await service.list_roles()
+    return [RoleRead.model_validate(r) for r in roles]
 
 
 @router.post("/{user_id}/roles/", status_code=status.HTTP_204_NO_CONTENT)

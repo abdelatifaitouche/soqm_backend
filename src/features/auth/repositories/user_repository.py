@@ -110,5 +110,15 @@ class UserRepository:
             .on_conflict_do_nothing()
         )
 
+    async def list_roles(self):
+        from src.features.auth.models.role import Role as RoleDB
+
+        stmt = select(RoleDB)
+        results = await self.db.execute(stmt)
+
+        data = results.scalars().all()
+
+        return [{"id": r.id, "name": r.name} for r in data]
+
     async def get_role_permissions(self, role: str):
         return

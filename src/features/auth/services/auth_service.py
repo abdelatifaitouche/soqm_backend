@@ -36,6 +36,12 @@ class AuthService:
         created: User = await self.repo.save(user)
         return created
 
+    async def list_roles(self):
+        """
+        Its getting messy here
+        """
+        return await self.repo.list_roles()
+
     async def assign_role(self):
         return
 
