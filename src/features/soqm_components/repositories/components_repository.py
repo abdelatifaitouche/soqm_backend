@@ -1,4 +1,3 @@
-from src.core.repository import BaseRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from sqlalchemy import select, delete, update
@@ -7,13 +6,14 @@ from src.features.soqm_components.domain.component import (
     SOQMComponent as ComponentEntity,
     CreateComponent,
 )
+from src.infra.db.exception_utils import translate_db_errors
 
 
-class ComponentRepository(BaseRepository):
+class ComponentRepository:
     model = SOQMComponent
 
     def __init__(self, db: AsyncSession):
-        super().__init__(db)
+        self.db: AsyncSession = db
 
     def _to_domain(self, orm: SOQMComponent) -> ComponentEntity:
         return ComponentEntity(
@@ -55,7 +55,7 @@ class ComponentRepository(BaseRepository):
             await self.db.refresh(orm)
             return self._to_domain(orm)
         except Exception as e:
-            raise self._translate_db_errors(e)
+            raise translate_db_errors(e)
 
     async def get_by_id(self, entity_id: UUID) -> ComponentEntity | None:
         stmt = select(self.model).where(self.model.id == entity_id)
@@ -82,10 +82,10 @@ class ComponentRepository(BaseRepository):
             await self.db.flush()
             return entity
         except Exception as e:
-            raise self._translate_db_errors(e)
+            raise translate_db_errors(e)
 
     async def delete(self, entity_id: UUID):
         try:
             await self.db.execute(delete(self.model).where(self.model.id == entity_id))
         except Exception as e:
-            raise self._translate_db_errors(e)
+            raise translate_db_errors(e)
