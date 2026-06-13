@@ -32,7 +32,7 @@ class CreateComponent(BaseModel):
 
     @field_validator("isqm_reference")
     @classmethod
-    def validate_display_order(cls, value: str) -> str:
+    def validate_isqm_ref(cls, value: str) -> str:
         if value.strip() == "" or len(value) == 0:
             raise ValueError("ISQM reference cannot be empty")
         return value
