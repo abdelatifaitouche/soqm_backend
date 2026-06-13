@@ -47,7 +47,7 @@ class ComponentRepository(BaseRepository):
             display_order=entity.display_order,
         )
 
-    async def save(self, entity):
+    async def create(self, entity):
         try:
             orm = self._to_orm(entity)
             self.db.add(orm)

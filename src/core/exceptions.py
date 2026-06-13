@@ -67,24 +67,91 @@ class InvalidStateTransition(AppException):
 
 
 class WrongCredentialsError(AppException):
-    status_code: int = 403
+    def __init__(
+        self,
+        message: str = "Invalid Credentials",
+        *,
+        details: dict | None = None,
+    ):
+        self.message = message
+        super().__init__(
+            message=message,
+            code="AUTH_CODE",
+            status_code=400,
+            details=details,
+        )
 
 
 class TokenExpiredError(AppException):
-    status_code: int = 401
+    def __init__(
+        self,
+        message: str = "Token Expired",
+        *,
+        details: dict | None = None,
+    ):
+        super().__init__(
+            message=message,
+            code="TOKEN_ERROR",
+            status_code=401,
+            details=details,
+        )
 
 
 class TokenInvalidError(AppException):
-    status_code: int = 401
+    def __init__(
+        self,
+        message: str = "Invalid Token",
+        *,
+        details: dict | None = None,
+    ):
+        super().__init__(
+            message=message,
+            code="TOKEN_ERROR",
+            status_code=401,
+            details=details,
+        )
 
 
 class AccessDenied(AppException):
-    status_code: int = 403
+    def __init__(
+        self,
+        message: str = "Access Denied",
+        *,
+        details: dict | None = None,
+    ):
+        super().__init__(
+            message=message,
+            code="TOKEN_ERROR",
+            status_code=403,
+            details=details,
+        )
 
 
 class UserNotFoundError(AppException):
-    status_code: int = 400
+    def __init__(
+        self,
+        message: str = "Invalid Token",
+        *,
+        details: dict | None = None,
+    ):
+        super().__init__(
+            message=message,
+            code="TOKEN_ERROR",
+            status_code=403,
+            details=details,
+        )
 
 
 class RefreshTokenMissingError(AppException):
-    status_code: int = 403
+    def __init__(
+        self,
+        message: str = "Invalid Token",
+        *,
+        details: dict | None = None,
+    ):
+        super().__init__(
+            message=message,
+            code="TOKEN_ERROR",
+            status_code=403,
+            details=details,
+        )

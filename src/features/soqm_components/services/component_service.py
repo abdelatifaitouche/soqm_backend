@@ -36,16 +36,17 @@ class ComponentService:
                 message="Cannot add SOQM Components",
             )
 
-        return await self.repo.save(entity)
-
-    def _change_state(self, entity: SOQMComponent, next_state: str) -> str:
-        """
-        Tranistion checking are handled by the state_machine.transition(from, to)
-        """
-
-        return transition(entity.status, next_state)
+        return await self.repo.create(entity)
 
     async def update(self, entity_id: UUID, data: UpdateComponent):
+        """
+        NOTE:
+            status transition is handled by the state_machine.transition(from, to)
+                returns :
+                    to : next_transition str
+                raises :
+                    InvalidStateTransition()
+        """
         entity: SOQMComponent = await self.get_by_id(entity_id)
 
         if data.name:
@@ -55,7 +56,7 @@ class ComponentService:
             entity.isqm_reference = data.isqm_reference
 
         if data.status:
-            entity.status = self._change_state(entity, data.status)
+            entity.status = transition(entity.status, data.status)
 
         return await self.repo.update(entity)
 
