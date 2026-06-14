@@ -61,11 +61,10 @@ class ComponentService:
         return await self.repo.update(entity)
 
     async def delete(self, entity_id: UUID):
-        entity: SOQMComponent | None = await self.repo.get_by_id(entity_id)
-
-        if not entity:
-            raise NotFoundError(
-                message=f"Entity with ID: {entity_id} was not found",
+        entity: SOQMComponent = await self.get_by_id(entity_id)
+        if entity.status != "ARCHIVED":
+            raise ValidationError(
+                message="Cannot delete a component at this state {entity.status}"
             )
 
         await self.repo.delete(entity_id)
