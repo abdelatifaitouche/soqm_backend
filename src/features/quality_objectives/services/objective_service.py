@@ -111,15 +111,15 @@ class ObjectiveService:
 
     def _transition(self, entity: Objective, next_state: str) -> Objective:
         match next_state:
-            case "approve":
+            case "approved":
                 entity: Objective = entity.approve()
-            case "activate":
+            case "active":
                 entity: Objective = entity.activate()
-            case "suspend":
+            case "suspended":
                 entity: Objective = entity.suspend()
             case "resume":
                 entity: Objective = entity.resume()
-            case "archive":
+            case "archived":
                 entity: Objective = entity.archive()
 
         return entity
