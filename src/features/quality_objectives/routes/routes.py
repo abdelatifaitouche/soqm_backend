@@ -42,7 +42,7 @@ async def get_by_id(
     return obj
 
 
-@router.delete("/{objective_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{objective_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_objective(
     objective_id: UUID,
     service: ObjectiveService = Depends(get_service),
@@ -51,7 +51,7 @@ async def delete_objective(
     return
 
 
-@router.patch("/{objective_id}", status_code=status.HTTP_200_OK)
+@router.patch("/{objective_id}/", status_code=status.HTTP_200_OK)
 async def update(
     objective_id: UUID,
     data: UpdateObjective,
