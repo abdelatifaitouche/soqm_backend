@@ -76,8 +76,8 @@ class WrongCredentialsError(AppException):
         self.message = message
         super().__init__(
             message=message,
-            code="AUTH_CODE",
-            status_code=400,
+            code="AUTH_INVALID_CREDENTIALS",
+            status_code=401,
             details=details,
         )
 
@@ -91,7 +91,7 @@ class TokenExpiredError(AppException):
     ):
         super().__init__(
             message=message,
-            code="TOKEN_ERROR",
+            code="AUTH_TOKEN_EXPIRED",
             status_code=401,
             details=details,
         )
@@ -106,7 +106,7 @@ class TokenInvalidError(AppException):
     ):
         super().__init__(
             message=message,
-            code="TOKEN_ERROR",
+            code="AUTH_TOKEN_INVALID",
             status_code=401,
             details=details,
         )
@@ -121,7 +121,7 @@ class AccessDenied(AppException):
     ):
         super().__init__(
             message=message,
-            code="TOKEN_ERROR",
+            code="AUTH_FORBIDDEN",
             status_code=403,
             details=details,
         )
@@ -136,7 +136,7 @@ class UserNotFoundError(AppException):
     ):
         super().__init__(
             message=message,
-            code="TOKEN_ERROR",
+            code="AUTH_USER_NOT_FOUND",
             status_code=403,
             details=details,
         )
@@ -151,7 +151,7 @@ class RefreshTokenMissingError(AppException):
     ):
         super().__init__(
             message=message,
-            code="TOKEN_ERROR",
+            code="AUTH_TOKEN_INVALID",
             status_code=403,
             details=details,
         )

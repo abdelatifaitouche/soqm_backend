@@ -25,3 +25,9 @@ class SOQMComponent(Base):
         cascade="all, delete",
         back_populates="component",
     )
+
+    risks: Mapped[list["Risk"]] = relationship(
+        "Risk",
+        cascade="all, delete",
+        back_populates="component",
+    )

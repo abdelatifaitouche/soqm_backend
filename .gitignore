@@ -13,3 +13,8 @@ data/
 
 .env
 .env.*
+
+*.log
+logs/
+
+backend.log

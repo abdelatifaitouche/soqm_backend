@@ -1,0 +1,38 @@
+from pydantic import BaseModel, Field
+from uuid import UUID
+from datetime import date
+from src.features.risks.enums.risk_states import RiskStatus
+from src.core.exceptions import ValidationError
+
+
+class CreateRisk(BaseModel):
+    objective_id: UUID
+    component_id: UUID
+    risk_ref: str
+    risk_discription: str
+    occurence: int = Field(
+        ge=1,
+        le=3,
+        description="Likelihood score from 1 to 3",
+    )
+    significance: int = Field(ge=1, le=3, description="Impact score from 1 to 3")
+    date_identified: date = Field(default_factory=date.today)
+    status: str = RiskStatus.IDENTIFIED.value
+
+    date_last_assessed: date | None = None
+    next_review_date: date | None = None
+
+
+class Risk(BaseModel):
+    id: UUID
+    objective_id: UUID
+    component_id: UUID
+    risk_ref: str
+    risk_discription: str
+    occurence: int
+    significance: int
+    date_identified: date
+    status: str
+    score: int
+
+    model_config = {"from_attributes": True}

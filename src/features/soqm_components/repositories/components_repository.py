@@ -7,6 +7,10 @@ from src.features.soqm_components.domain.component import (
     CreateComponent,
 )
 from src.infra.db.exception_utils import translate_db_errors
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class ComponentRepository:
@@ -29,14 +33,17 @@ class ComponentRepository:
         return stmt
 
     async def list(self) -> list[ComponentEntity]:
+        logger.info("repostory start listing")
         stmt = select(self.model)
 
         stmt = self._apply_filters(stmt)
 
+        logger.info("start db executing statement")
         result = await self.db.execute(stmt)
 
         data = result.scalars().all()
 
+        logger.info("data ready to be returned")
         return [self._to_domain(d) for d in data]
 
     def _to_orm(self, entity: CreateComponent):
