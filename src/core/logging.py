@@ -32,7 +32,7 @@ LOGGING_CONFIG = {
         },
     },
     "root": {
-        "handlers": ["console", "file"],
+        "handlers": ["console"],
         "level": "DEBUG",
     },
 }
