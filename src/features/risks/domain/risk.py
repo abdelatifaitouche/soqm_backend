@@ -14,19 +14,18 @@ class Risk:
     risk_discription: str
     occurence: int  # 1 - 3
     significance: int  # 1 - 3
-    score: int  # calculated from occurence * significance
     date_identified: date
     status: str = RiskStatus.IDENTIFIED.value
-    residual_score: int | None = None
+    residual_score: float | None = None
 
     date_last_assessed: date | None = None
     next_review_date: date | None = None
     # we need to think of a way to keep track of the evolutiton of a risk over time
 
     # we will define more state transition once the business logic is clear
-    def calculate_score(self) -> "Risk":
-        self.score = self.occurence * self.significance
-        return self
+    @property
+    def score(self) -> int:
+        return self.occurence * self.significance
 
     def assess(self) -> "Risk":
         if self.status != RiskStatus.IDENTIFIED.value:

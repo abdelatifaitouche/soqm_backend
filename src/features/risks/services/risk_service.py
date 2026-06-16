@@ -11,6 +11,7 @@ from src.features.quality_objectives.enums.objective_states import ObjectiveStat
 from src.features.soqm_components.enums.soqm_component import ComponentState
 from src.features.risks.enums.risk_states import RiskStatus
 from src.core.exceptions import ValidationError, NotFoundError
+from datetime import date
 
 
 class RiskService:
@@ -28,6 +29,35 @@ class RiskService:
         return
 
     async def create_risk(self, entity: Risk) -> Risk:
+        if entity.occurence <= 0 or entity.occurence > 3:
+            raise ValidationError(
+                message="Occurence must be between 1 AND 3",
+                details={
+                    "occurence": entity.occurence,
+                },
+            )
+
+        if entity.significance <= 0 or entity.significance > 3:
+            raise ValidationError(
+                message="Significance must be between 1 AND 3",
+                details={
+                    "significance": entity.significance,
+                },
+            )
+
+        if entity.date_identified > date.today():
+            raise ValidationError(
+                message="cannot identify in the future,",
+            )
+
+        if entity.next_review_date:
+            if entity.next_review_date <= date.today():
+                raise ValidationError(
+                    message="next review date must be in the future",
+                    details={
+                        "next_review_date": entity.next_review_date,
+                    },
+                )
 
         component: SOQMComponent | None = await self.component_repo.get_by_id(
             entity.component_id
@@ -52,7 +82,7 @@ class RiskService:
                 message=f"No Objective with ID {entity.objective_id} was found",
             )
 
-        return
+        return Risk
 
     async def get_risk_by_id(self):
         return
