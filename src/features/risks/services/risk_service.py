@@ -5,6 +5,7 @@ from src.features.quality_objectives.repository.objective_repository import (
 from src.features.soqm_components.repositories.components_repository import (
     ComponentRepository,
 )
+from src.features.risks.repositories.risk_repository import RiskRepository
 from src.features.quality_objectives.domain.objective import Objective
 from src.features.soqm_components.domain.component import SOQMComponent
 from src.features.quality_objectives.enums.objective_states import ObjectiveState
@@ -17,11 +18,11 @@ from datetime import date
 class RiskService:
     def __init__(
         self,
-        repo,
+        repo: RiskRepository,
         objective_repo: ObjectiveRepository,
         component_repo: ComponentRepository,
     ):
-        self.repo = repo
+        self.repo: RiskRepository = repo
         self.objective_repo: ObjectiveRepository = objective_repo
         self.component_repo: ComponentRepository = component_repo
 
@@ -82,7 +83,9 @@ class RiskService:
                 message=f"No Objective with ID {entity.objective_id} was found",
             )
 
-        return Risk
+        entity: Risk = entity.calculate_score()
+
+        return await self.repo.create(entity)
 
     async def get_risk_by_id(self):
         return

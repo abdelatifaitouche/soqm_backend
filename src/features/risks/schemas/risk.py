@@ -24,4 +24,15 @@ class CreateRisk(BaseModel):
 
 
 class Risk(BaseModel):
+    id: UUID
+    objective_id: UUID
+    component_id: UUID
+    risk_ref: str
+    risk_discription: str
+    occurence: int
+    significance: int
+    date_identified: date
+    status: str
+    score: int
+
     model_config = {"from_attributes": True}
