@@ -1,0 +1,54 @@
+from dataclasses import dataclass
+from uuid import UUID
+from datetime import date, datetime
+from src.features.risks.enums.risk_states import RiskStatus
+from src.core.exceptions import ValidationError
+
+
+@dataclass
+class Risk:
+    id: UUID
+    objective_id: UUID
+    component_id: UUID
+    risk_ref: str
+    risk_discription: str
+    occurence: int  # 1 - 3
+    significance: int  # 1 - 3
+    score: int  # calculated from occurence * significance
+    date_identified: date
+    status: str = RiskStatus.IDENTIFIED.value
+    residual_score: int | None = None
+
+    date_last_assessed: date | None = None
+    next_review_date: date | None = None
+    # we need to think of a way to keep track of the evolutiton of a risk over time
+
+    # we will define more state transition once the business logic is clear
+    def calculate_score(self) -> "Risk":
+        self.score = self.occurence * self.significance
+        return self
+
+    def assess(self) -> "Risk":
+        if self.status != RiskStatus.IDENTIFIED.value:
+            raise ValidationError(
+                message="can only assess indentified risk",
+            )
+        self.status = RiskStatus.ASSESSED.value
+        self.date_last_assessed = date.today()
+        return self
+
+    def plan_treatment(self) -> "Risk":
+        if self.status != RiskStatus.ASSESSED.value:
+            raise ValidationError(
+                message="must be assessed to plan treatment",
+            )
+        self.status = RiskStatus.TREATMENT_PLANNED.value
+        return self
+
+    def accept(self) -> "Risk":
+        self.status = RiskStatus.ACCEPTED.value
+        return self
+
+    def close(self) -> "Risk":
+        self.status = RiskStatus.CLOSED.value
+        return self
