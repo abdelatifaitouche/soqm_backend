@@ -9,6 +9,9 @@ from src.features.soqm_components.domain.component import (
     UpdateComponent,
 )
 from src.features.soqm_components.domain.state_machine import transition
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ComponentService:
@@ -16,6 +19,7 @@ class ComponentService:
         self.repo: ComponentRepository = repo
 
     async def list(self) -> list[SOQMComponent]:
+        logger.info("service listing")
         return await self.repo.list()
 
     async def get_by_id(self, entity_id: UUID) -> SOQMComponent:

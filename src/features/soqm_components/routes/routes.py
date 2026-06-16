@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 from src.features.soqm_components.dependencies import get_service
@@ -13,6 +14,9 @@ from src.features.soqm_components.permissions.components_permissions import (
 from src.features.soqm_components.mappers.component_mapper import ComponentMapper
 from src.features.soqm_components.services.component_service import ComponentService
 
+
+logger = logging.getLogger("app.soqm_component.routes")
+
 router = APIRouter(prefix="/components")
 
 
@@ -21,6 +25,7 @@ async def list(
     service=Depends(get_service),
     creds=Depends(require_permissions(ComponentPermissions.READ)),
 ):
+    logger.info("GET list components")
     components = await service.list()
     return [BaseComponent.model_validate(cp) for cp in components]
 
