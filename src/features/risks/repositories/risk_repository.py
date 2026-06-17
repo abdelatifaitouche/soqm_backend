@@ -8,6 +8,10 @@ from src.core.pagination import Pagination
 from src.infra.db.pagination import apply_pagination, apply_ordering
 from src.features.risks.filters.risk_filters import RiskFilters
 from uuid import UUID
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class RiskRepository:
@@ -80,24 +84,34 @@ class RiskRepository:
         return stmt
 
     async def list(self, pagination: Pagination, filters: RiskFilters):
-        """
-        UPDATE THIS METHOD TO  :
-            SELECT ONLY SOME COLUMNS, NOT ALL
-            BUILDS AND RETURN a RiskSummary Dataclass for listing endpoint
-        """
-
-        stmt = select(self.model)
+        stmt = select(
+            self.model.id,
+            self.model.risk_ref,
+            self.model.score,
+            self.model.occurence,
+            self.model.significance,
+            self.model.objective_id,
+            self.model.risk_discription,
+        )
 
         stmt = self.apply_filters(stmt, filters)
         stmt = apply_pagination(stmt, pagination)
 
-        stmt = apply_ordering(stmt, self.model, "created_at")
-
         results = await self.db.execute(stmt)
+        rows = results.mappings().all()
 
-        data = results.scalars().all()
-
-        return [self._to_domain(r) for r in data]
+        return [
+            {
+                "id": r["id"],
+                "risk_ref": r["risk_ref"],
+                "score": r["score"],
+                "occurence": r["occurence"],
+                "significance": r["significance"],
+                "objective_id": r["objective_id"],
+                "risk_discription": r["risk_discription"],
+            }
+            for r in rows
+        ]
 
     async def get_by_id(self, entity_id: UUID) -> RiskEntity | None:
         stmt = (

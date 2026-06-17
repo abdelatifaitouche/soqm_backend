@@ -7,6 +7,17 @@ from src.features.soqm_components.schemas.component import BaseComponent
 from src.features.quality_objectives.schemas.objective import ObjectiveSummary
 
 
+class ListRisk(BaseModel):
+    id: UUID
+    score: int
+    significance: int
+    occurence: int
+    objective_id: UUID
+    risk_ref: str
+    risk_discription: str
+    model_config = {"from_attributes": True}
+
+
 class CreateRisk(BaseModel):
     objective_id: UUID
     component_id: UUID

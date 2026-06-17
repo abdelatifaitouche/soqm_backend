@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 from src.features.risks.dependencies import get_service
-from src.features.risks.schemas.risk import CreateRisk, Risk
+from src.features.risks.schemas.risk import CreateRisk, Risk, ListRisk
 from src.features.risks.services.risk_service import RiskService
 from src.features.risks.mappers.risk_mapper import RiskMapper
 from src.features.risks.domain.risk import Risk as RiskEntity
@@ -18,7 +18,7 @@ async def list_risks(
     service: RiskService = Depends(get_service),
 ):
     risks = await service.list(pagination, filters)
-    return [Risk.model_validate(r) for r in risks]
+    return [ListRisk(**r) for r in risks]
 
 
 @router.get("/{risk_id}")

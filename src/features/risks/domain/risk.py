@@ -26,9 +26,6 @@ class Risk:
 
     component: SOQMComponent | None = None
     objective: ObjectiveSummary | None = None
-    # we need to think of a way to keep track of the evolutiton of a risk over time
-
-    # we will define more state transition once the business logic is clear
 
     def calculate_score(self):
         self.score = self.significance * self.occurence
