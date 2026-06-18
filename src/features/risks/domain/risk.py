@@ -3,6 +3,8 @@ from uuid import UUID
 from datetime import date, datetime
 from src.features.risks.enums.risk_states import RiskStatus
 from src.core.exceptions import ValidationError
+from src.features.soqm_components.domain.component import SOQMComponent
+from src.features.quality_objectives.domain.objective import ObjectiveSummary
 
 
 @dataclass
@@ -21,9 +23,11 @@ class Risk:
 
     date_last_assessed: date | None = None
     next_review_date: date | None = None
-    # we need to think of a way to keep track of the evolutiton of a risk over time
 
-    # we will define more state transition once the business logic is clear
+    component: SOQMComponent | None = None
+    objective: ObjectiveSummary | None = None
+
+    created_by: UUID | None = None
 
     def calculate_score(self):
         self.score = self.significance * self.occurence

@@ -4,6 +4,7 @@
 # commit everything
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.features.risks.models.risk import Risk
 from src.features.auth.models.role import Role as RoleDB
 from src.features.auth.models.user import User as UserDB
 from src.features.auth.models.user_roles import UserRoles as UserRolesDB

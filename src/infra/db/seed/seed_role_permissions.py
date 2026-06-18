@@ -1,4 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.features.soqm_components.models.soqm_component import SOQMComponent
+from src.features.quality_objectives.models.quality_objective import QualityObjective
 from src.features.auth.models.role import Role as RoleDB
 from src.features.auth.models.permission import Permission
 from src.features.auth.models.role_permissions import RolePermissions
@@ -9,7 +12,7 @@ from src.features.auth.permissions.auth_permissions import AuthPermissions
 from src.features.soqm_components.permissions.components_permissions import (
     ComponentPermissions,
 )
-
+from src.features.risks.permissions.risk_permissions import RiskPermissions
 
 ROLES_PERMISSIONS = {
     Role.SUPER_ADMIN: [
@@ -26,6 +29,10 @@ ROLES_PERMISSIONS = {
         ComponentPermissions.DELETE,
         ComponentPermissions.READ,
         ComponentPermissions.UPDATE,
+        RiskPermissions.READ,
+        RiskPermissions.CREATE,
+        RiskPermissions.DELETE,
+        RiskPermissions.UPDATE,
     ],
     Role.ADMIN: [
         AuthPermissions.CREATE,
@@ -41,15 +48,26 @@ ROLES_PERMISSIONS = {
         ComponentPermissions.DELETE,
         ComponentPermissions.READ,
         ComponentPermissions.UPDATE,
+        RiskPermissions.READ,
+        RiskPermissions.CREATE,
+        RiskPermissions.DELETE,
+        RiskPermissions.UPDATE,
     ],
     Role.MANAGER: [
         AuthPermissions.READ,
         AuthPermissions.READ_OWN,
         ComponentPermissions.READ,
+        RiskPermissions.READ,
+        RiskPermissions.CREATE,
+        RiskPermissions.DELETE,
+        RiskPermissions.UPDATE,
     ],
     Role.OPERATOR: [
         AuthPermissions.READ_OWN,
         ComponentPermissions.READ,
+        RiskPermissions.READ,
+        RiskPermissions.CREATE,
+        RiskPermissions.UPDATE,
     ],
 }
 

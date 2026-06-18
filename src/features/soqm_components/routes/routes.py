@@ -25,7 +25,6 @@ async def list(
     service=Depends(get_service),
     creds=Depends(require_permissions(ComponentPermissions.READ)),
 ):
-    logger.info("GET list components")
     components = await service.list()
     return [BaseComponent.model_validate(cp) for cp in components]
 

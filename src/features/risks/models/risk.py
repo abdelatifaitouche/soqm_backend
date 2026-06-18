@@ -61,6 +61,17 @@ class Risk(Base):
         nullable=True,
     )
 
+    created_by: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id"),
+        nullable=True,
+    )
+
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="risks",
+    )
+
     component: Mapped["SOQMComponent"] = relationship(
         "SOQMComponent",
         back_populates="risks",

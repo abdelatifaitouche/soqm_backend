@@ -3,6 +3,19 @@ from uuid import UUID
 from datetime import date
 from src.features.risks.enums.risk_states import RiskStatus
 from src.core.exceptions import ValidationError
+from src.features.soqm_components.schemas.component import BaseComponent
+from src.features.quality_objectives.schemas.objective import ObjectiveSummary
+
+
+class ListRisk(BaseModel):
+    id: UUID
+    score: int
+    significance: int
+    occurence: int
+    objective_id: UUID
+    risk_ref: str
+    risk_discription: str
+    model_config = {"from_attributes": True}
 
 
 class CreateRisk(BaseModel):
@@ -34,5 +47,7 @@ class Risk(BaseModel):
     date_identified: date
     status: str
     score: int
-
+    created_by: UUID | None
+    component: BaseComponent
+    objective: ObjectiveSummary
     model_config = {"from_attributes": True}

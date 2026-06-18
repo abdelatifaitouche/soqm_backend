@@ -1,3 +1,4 @@
+from uuid import UUID
 from src.features.risks.domain.risk import Risk
 from src.features.quality_objectives.repository.objective_repository import (
     ObjectiveRepository,
@@ -26,8 +27,8 @@ class RiskService:
         self.objective_repo: ObjectiveRepository = objective_repo
         self.component_repo: ComponentRepository = component_repo
 
-    async def list(self):
-        return
+    async def list(self, pagination, filters):
+        return await self.repo.list(pagination, filters)
 
     async def create_risk(self, entity: Risk) -> Risk:
         if entity.occurence <= 0 or entity.occurence > 3:
@@ -37,7 +38,6 @@ class RiskService:
                     "occurence": entity.occurence,
                 },
             )
-
         if entity.significance <= 0 or entity.significance > 3:
             raise ValidationError(
                 message="Significance must be between 1 AND 3",
@@ -87,8 +87,13 @@ class RiskService:
 
         return await self.repo.create(entity)
 
-    async def get_risk_by_id(self):
-        return
+    async def get_risk_by_id(self, entity_id: UUID):
+        risk: Risk | None = await self.repo.get_by_id(entity_id)
+
+        if not risk:
+            raise NotFoundError(message=f"Risk with ID {entity_id} was not found")
+
+        return risk
 
     async def update(self):
         return

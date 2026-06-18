@@ -6,6 +6,13 @@ from src.core.exceptions import ValidationError
 
 
 @dataclass
+class ObjectiveSummary:
+    id: UUID
+    objective_text: str
+    status: str
+
+
+@dataclass
 class Objective:
     id: UUID
     objective_text: str
