@@ -35,6 +35,7 @@ class RiskRepository:
             date_last_assessed=entity.date_last_assessed,
             next_review_date=entity.next_review_date,
             residual_score=entity.residual_score,
+            created_by=entity.created_by,
         )
 
     def _to_domain(self, orm: RiskDB) -> RiskEntity:
@@ -52,6 +53,7 @@ class RiskRepository:
             next_review_date=orm.next_review_date,
             residual_score=orm.residual_score,
             risk_discription=orm.risk_discription,
+            created_by=orm.created_by,
             component=orm.component,
             objective=orm.objective,
         )

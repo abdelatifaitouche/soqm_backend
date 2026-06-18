@@ -12,6 +12,11 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
+    risks: Mapped[list["Risk"]] = relationship(
+        "Risk",
+        back_populates="user",
+    )
+
     user_roles: Mapped[list["UserRoles"]] = relationship(
         "UserRoles",
         back_populates="user",

@@ -27,6 +27,8 @@ class Risk:
     component: SOQMComponent | None = None
     objective: ObjectiveSummary | None = None
 
+    created_by: UUID | None = None
+
     def calculate_score(self):
         self.score = self.significance * self.occurence
         return self

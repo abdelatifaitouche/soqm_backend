@@ -7,6 +7,12 @@ from src.features.risks.mappers.risk_mapper import RiskMapper
 from src.features.risks.domain.risk import Risk as RiskEntity
 from src.core.pagination import Pagination
 from src.features.risks.filters.risk_filters import RiskFilters
+from src.features.auth.security.dependencies import require_auth
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 
 router = APIRouter(prefix="/risks")
 
@@ -16,7 +22,9 @@ async def list_risks(
     pagination: Pagination = Depends(),
     filters: RiskFilters = Depends(),
     service: RiskService = Depends(get_service),
+    user=Depends(require_auth),
 ):
+    logger.debug(user.get("sub"))
     risks = await service.list(pagination, filters)
     return [ListRisk(**r) for r in risks]
 
@@ -34,6 +42,8 @@ async def get_risk_by_id(
 async def create_risk(
     data: CreateRisk,
     service: RiskService = Depends(get_service),
+    user=Depends(require_auth),
 ):
+
     risk: RiskEntity = await service.create_risk(RiskMapper.from_create(data))
     return Risk.model_validate(risk)

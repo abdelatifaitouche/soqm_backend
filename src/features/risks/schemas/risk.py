@@ -47,6 +47,7 @@ class Risk(BaseModel):
     date_identified: date
     status: str
     score: int
+    created_by: UUID | None
     component: BaseComponent
     objective: ObjectiveSummary
     model_config = {"from_attributes": True}

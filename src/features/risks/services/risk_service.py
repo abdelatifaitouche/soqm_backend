@@ -38,7 +38,6 @@ class RiskService:
                     "occurence": entity.occurence,
                 },
             )
-
         if entity.significance <= 0 or entity.significance > 3:
             raise ValidationError(
                 message="Significance must be between 1 AND 3",
