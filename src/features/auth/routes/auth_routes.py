@@ -26,7 +26,7 @@ from src.core.exceptions import (
 )
 from src.features.auth.security.dependencies import require_permissions
 from src.features.auth.permissions.auth_permissions import AuthPermissions
-
+from src.core.config import settings
 
 router = APIRouter(prefix="/auth")
 
@@ -48,7 +48,7 @@ async def login(
         key="refresh_token",
         value=refresh,
         path="/",
-        secure=False,
+        secure=False if settings.DEBUG else True,
         httponly=True,
         samesite="lax",
     )
