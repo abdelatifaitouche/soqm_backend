@@ -14,6 +14,7 @@ from src.features.soqm_components.enums.soqm_component import ComponentState
 from src.features.risks.enums.risk_states import RiskStatus
 from src.core.exceptions import ValidationError, NotFoundError
 from datetime import date
+from src.features.risks.schemas.risk import CreateRisk, UpdateRisk
 
 
 class RiskService:
@@ -30,43 +31,14 @@ class RiskService:
     async def list(self, pagination, filters):
         return await self.repo.list(pagination, filters)
 
-    async def create_risk(self, entity: Risk) -> Risk:
-        if entity.occurence <= 0 or entity.occurence > 3:
-            raise ValidationError(
-                message="Occurence must be between 1 AND 3",
-                details={
-                    "occurence": entity.occurence,
-                },
-            )
-        if entity.significance <= 0 or entity.significance > 3:
-            raise ValidationError(
-                message="Significance must be between 1 AND 3",
-                details={
-                    "significance": entity.significance,
-                },
-            )
-
-        if entity.date_identified > date.today():
-            raise ValidationError(
-                message="cannot identify in the future,",
-            )
-
-        if entity.next_review_date:
-            if entity.next_review_date <= date.today():
-                raise ValidationError(
-                    message="next review date must be in the future",
-                    details={
-                        "next_review_date": entity.next_review_date,
-                    },
-                )
-
+    async def _ensure_component_valide(self, component_id: UUID):
         component: SOQMComponent | None = await self.component_repo.get_by_id(
-            entity.component_id
+            component_id
         )
 
         if not component:
             raise NotFoundError(
-                message=f"No SOQM Component with ID {entity.component_id} was found",
+                message=f"No SOQM Component with ID {component_id} was found",
             )
 
         if component.status != ComponentState.ACTIVE.value:
@@ -74,18 +46,31 @@ class RiskService:
                 message="Cannot use a non ACTIVE SOQM Component",
             )
 
-        objective: Objective | None = await self.objective_repo.get_by_id(
-            entity.objective_id
-        )
+    async def _ensure_objective_valide(self, objective_id: UUID):
+        objective: Objective | None = await self.objective_repo.get_by_id(objective_id)
 
         if not objective:
             raise NotFoundError(
-                message=f"No Objective with ID {entity.objective_id} was found",
+                message=f"No Objective with ID {objective_id} was found",
             )
 
-        entity: Risk = entity.calculate_score()
+    async def create_risk(self, user_id: UUID, data: CreateRisk) -> Risk:
 
-        return await self.repo.create(entity)
+        risk: Risk = Risk.create(
+            objective_id=data.objective_id,
+            component_id=data.component_id,
+            risk_ref=data.risk_ref,
+            risk_discription=data.risk_discription,
+            created_by=user_id,
+            next_review_date=data.next_review_date,
+            occurence=data.occurence,
+            significance=data.significance,
+        )
+
+        await self._ensure_component_valide(risk.component_id)
+        await self._ensure_objective_valide(risk.objective_id)
+
+        return await self.repo.create(risk)
 
     async def get_risk_by_id(self, entity_id: UUID):
         risk: Risk | None = await self.repo.get_by_id(entity_id)
@@ -95,8 +80,39 @@ class RiskService:
 
         return risk
 
-    async def update(self):
-        return
+    async def assess_risk(self, user_id: UUID, entity_id: UUID):
+        """
+        SAME CODE IS DUPLICATED IN THREE DIFFERENT METHODS
+
+        We can refactor this later by introducing lambda fuunction on the get_by_d and save()
+        """
+        risk: Risk = await self.get_risk_by_id(entity_id)
+        risk.assess()
+        return await self.repo.update(risk)
+
+    async def plan_treatment(self, user_id: UUID, entity_id: UUID):
+        risk: Risk = await self.get_risk_by_id(entity_id)
+        risk.plan_treatment()
+        return await self.repo.update(risk)
+
+    async def close_risk(self, user_id: UUID, entity_id: UUID):
+        risk: Risk = await self.get_risk_by_id(entity_id)
+        risk.close()
+        return await self.repo.update(risk)
+
+    async def update(self, user_id: UUID, entity_id: UUID, data: UpdateRisk):
+
+        risk: Risk = await self.get_risk_by_id(entity_id)
+
+        risk.update(
+            risk_ref=data.risk_ref,
+            risk_discreption=data.risk_discription,
+            next_review_date=data.next_review_date,
+            occurence=data.occurence,
+            significance=data.significance,
+        )
+
+        return await self.repo.update(risk)
 
     async def delete(self):
         return

@@ -5,6 +5,7 @@ from src.features.risks.enums.risk_states import RiskStatus
 from src.core.exceptions import ValidationError
 from src.features.soqm_components.domain.component import SOQMComponent
 from src.features.quality_objectives.domain.objective import ObjectiveSummary
+import uuid
 
 
 @dataclass
@@ -29,31 +30,110 @@ class Risk:
 
     created_by: UUID | None = None
 
+    @classmethod
+    def create(
+        cls,
+        *,
+        objective_id,
+        component_id,
+        risk_ref: str,
+        risk_discription: str,
+        occurence: int,
+        significance: int,
+        next_review_date: date,
+        created_by: UUID,
+    ):
+        risk = cls(
+            id=uuid.uuid4(),
+            objective_id=objective_id,
+            component_id=component_id,
+            risk_ref=risk_ref,
+            risk_discription=risk_discription,
+            occurence=occurence,
+            significance=significance,
+            next_review_date=next_review_date,
+            created_by=created_by,
+            date_identified=date.today(),
+        )
+
+        risk.validate()
+        risk.calculate_score()
+        return risk
+
+    def update(
+        self,
+        *,
+        risk_ref: str | None = None,
+        risk_discreption: str | None = None,
+        occurence: int | None = None,
+        significance: int | None = None,
+        next_review_date: date | None = None,
+    ):
+        if risk_ref is not None:
+            self.risk_ref = risk_ref
+
+        if risk_discreption is not None:
+            self.risk_discription = risk_discreption
+
+        if occurence is not None:
+            self.occurence = occurence
+
+        if significance is not None:
+            self.significance = significance
+
+        if next_review_date is not None:
+            self.next_review_date
+
+        self.validate()
+        self.calculate_score()
+
+    def validate(self) -> None:
+        if self.occurence <= 0 or self.occurence > 3:
+            raise ValidationError(
+                message="Occurence must be between 1 AND 3",
+                details={
+                    "occurence": self.occurence,
+                },
+            )
+        if self.significance <= 0 or self.significance > 3:
+            raise ValidationError(
+                message="Significance must be between 1 AND 3",
+                details={
+                    "significance": self.significance,
+                },
+            )
+
+        if self.date_identified > date.today():
+            raise ValidationError(
+                message="cannot identify in the future,",
+            )
+
+        if self.next_review_date:
+            if self.next_review_date <= date.today():
+                raise ValidationError(
+                    message="next review date must be in the future",
+                    details={
+                        "next_review_date": self.next_review_date,
+                    },
+                )
+
     def calculate_score(self):
         self.score = self.significance * self.occurence
-        return self
 
-    def assess(self) -> "Risk":
+    def assess(self) -> None:
         if self.status != RiskStatus.IDENTIFIED.value:
             raise ValidationError(
                 message="can only assess indentified risk",
             )
         self.status = RiskStatus.ASSESSED.value
         self.date_last_assessed = date.today()
-        return self
 
-    def plan_treatment(self) -> "Risk":
+    def plan_treatment(self) -> None:
         if self.status != RiskStatus.ASSESSED.value:
             raise ValidationError(
                 message="must be assessed to plan treatment",
             )
         self.status = RiskStatus.TREATMENT_PLANNED.value
-        return self
 
-    def accept(self) -> "Risk":
-        self.status = RiskStatus.ACCEPTED.value
-        return self
-
-    def close(self) -> "Risk":
+    def close(self) -> None:
         self.status = RiskStatus.CLOSED.value
-        return self

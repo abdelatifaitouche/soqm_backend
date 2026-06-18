@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 from src.features.risks.dependencies import get_service
-from src.features.risks.schemas.risk import CreateRisk, Risk, ListRisk
+from src.features.risks.schemas.risk import CreateRisk, Risk, ListRisk, UpdateRisk
 from src.features.risks.services.risk_service import RiskService
 from src.features.risks.mappers.risk_mapper import RiskMapper
 from src.features.risks.domain.risk import Risk as RiskEntity
@@ -45,5 +45,20 @@ async def create_risk(
     user=Depends(require_auth),
 ):
 
-    risk: RiskEntity = await service.create_risk(RiskMapper.from_create(data))
+    risk: RiskEntity = await service.create_risk(user.get("sub"), data)
     return Risk.model_validate(risk)
+
+
+@router.patch("/{risk_id}")
+async def update(
+    risk_id: UUID,
+    data: UpdateRisk,
+    user=Depends(require_auth),
+    service: RiskService = Depends(get_service),
+):
+    updated_risk: RiskEntity = await service.update(user.get("sub"), risk_id, data)
+    return Risk.model_validate(updated_risk)
+
+
+async def delete():
+    return
