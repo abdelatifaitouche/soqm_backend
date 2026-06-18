@@ -1,10 +1,12 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from uuid import UUID
 from datetime import date, datetime
 from src.features.risks.enums.risk_states import RiskStatus
 from src.core.exceptions import ValidationError
 from src.features.soqm_components.domain.component import SOQMComponent
 from src.features.quality_objectives.domain.objective import ObjectiveSummary
+from src.features.risks.domain.events.risk_events import RiskCreatedEvent
+from src.core.events import DomainEvent
 import uuid
 
 
@@ -29,6 +31,8 @@ class Risk:
     objective: ObjectiveSummary | None = None
 
     created_by: UUID | None = None
+
+    _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
     @classmethod
     def create(
@@ -58,6 +62,20 @@ class Risk:
 
         risk.validate()
         risk.calculate_score()
+
+        risk._emit_event(
+            RiskCreatedEvent(
+                aggrergate_id=risk.id,
+                risk_ref=risk.risk_ref,
+                risk_discription=risk.risk_discription,
+                objective_id=risk.objective_id,
+                component_id=risk.component_id,
+                occurence=risk.occurence,
+                significance=risk.significance,
+                score=risk.score,
+            ),
+        )
+
         return risk
 
     def update(
@@ -116,6 +134,19 @@ class Risk:
                         "next_review_date": self.next_review_date,
                     },
                 )
+
+    def clear_events(self):
+        """Clear the event list"""
+        self._events.clear()
+
+    def pull_events(self):
+        events = self._events
+        self._events = []
+        return events
+
+    def _emit_event(self, event: DomainEvent):
+        """Since we are treating this as a mutable object, we just append a new event into the _event list"""
+        self._events.append(event)
 
     def calculate_score(self):
         self.score = self.significance * self.occurence

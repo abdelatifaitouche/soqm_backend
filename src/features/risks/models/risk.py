@@ -81,3 +81,8 @@ class Risk(Base):
         "QualityObjective",
         back_populates="risks",
     )
+
+    risk_audit_log: Mapped[list["RiskAuditLog"]] = relationship(
+        "RiskAuditLog",
+        back_populates="risk",
+    )
