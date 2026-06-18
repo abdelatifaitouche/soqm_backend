@@ -60,5 +60,21 @@ async def update(
     return Risk.model_validate(updated_risk)
 
 
-async def delete():
-    return
+@router.patch("/{risk_id}/assess")
+async def assess_risk(
+    risk_id: UUID,
+    user=Depends(require_auth),
+    service: RiskService = Depends(get_service),
+):
+    updated_risk: RiskEntity = await service.assess_risk(user.get("sub"), risk_id)
+    return Risk.model_validate(updated_risk)
+
+
+@router.patch("/{risk_id}/close")
+async def close_risk(
+    risk_id: UUID,
+    user=Depends(require_auth),
+    service: RiskService = Depends(get_service),
+):
+    updated_risk: RiskEntity = await service.close_risk(user.get("sub"), risk_id)
+    return Risk.model_validate(updated_risk)
