@@ -28,12 +28,14 @@ class User(Base):
         back_populates="user",
     )
 
-    risk_responses: Mapped[list["RiskResponse"]] = relationship(
+    created_risk_responses: Mapped[list["RiskResponse"]] = relationship(
         "RiskResponse",
-        back_populates="user",
+        foreign_keys="RiskResponse.created_by",
+        back_populates="created_by_user",
     )
 
     assigned_responses: Mapped[list["RiskResponse"]] = relationship(
-        "RiskReponse",
+        "RiskResponse",
+        foreign_keys="RiskResponse.responsible_employee",
         back_populates="assigned_employee",
     )

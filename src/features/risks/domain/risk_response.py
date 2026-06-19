@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
 from datetime import date
+from src.features.risks.enums.risk_response import ResponseState
 
 
 @dataclass
@@ -9,13 +10,14 @@ class RiskResponse:
     risk_id: UUID
     response_description: str
     response_type: str
-    date_implementation: str
-    date_monitored_design: date
-    date_monitored_operating: date
     status: str
     responsible_employee: UUID
     evidence_notes: str
     created_by: UUID
+
+    date_implementation: date | None = None
+    date_monitored_design: date | None = None
+    date_monitored_operating: date | None = None
 
     @classmethod
     def response_create(
@@ -42,7 +44,7 @@ class RiskResponse:
             responsible_employee=responsible_employee,
             created_by=created_by,
             evidence_notes=evidence_notes,
-            status="",
+            status=ResponseState.DRAFT.value,
             date_monitored_operating=date_monitored_operating,
         )
 

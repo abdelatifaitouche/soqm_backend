@@ -1,5 +1,5 @@
-from src.features.risks.models.risk_response import RiskResponse
 from src.features.risks.models.risk_audit_log import RiskAuditLog
+from src.features.risks.models.risk_response import RiskResponse
 
 from src.features.risks.models.risk import Risk
 

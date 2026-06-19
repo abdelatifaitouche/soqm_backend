@@ -53,11 +53,13 @@ class RiskResponse(Base):
         back_populates="risk_responses",
     )
 
-    user: Mapped["User"] = relationship(
+    created_by_user: Mapped["User"] = relationship(
         "User",
-        back_populates="risk_responses",
+        foreign_keys=[created_by],
+        back_populates="created_risk_responses",
     )
     assigned_employee: Mapped["User"] = relationship(
         "User",
+        foreign_keys=[responsible_employee],
         back_populates="assigned_responses",
     )
