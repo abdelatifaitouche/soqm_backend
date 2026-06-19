@@ -27,3 +27,13 @@ class User(Base):
         "RiskAuditLog",
         back_populates="user",
     )
+
+    risk_responses: Mapped[list["RiskResponse"]] = relationship(
+        "RiskResponse",
+        back_populates="user",
+    )
+
+    assigned_responses: Mapped[list["RiskResponse"]] = relationship(
+        "RiskReponse",
+        back_populates="assigned_employee",
+    )
