@@ -24,7 +24,6 @@ async def list_risks(
     service: RiskService = Depends(get_service),
     user=Depends(require_auth),
 ):
-    logger.debug(user.get("sub"))
     risks = await service.list(pagination, filters)
     return [ListRisk(**r) for r in risks]
 

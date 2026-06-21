@@ -21,7 +21,7 @@ def get_service(db: AsyncSession = Depends(get_db)) -> ResponseService:
 router = APIRouter(prefix="/responses")
 
 
-@router.get("")
+@router.get("/{risk_id}")
 async def list(
     risk_id: UUID,
     pagination: Pagination = Depends(),

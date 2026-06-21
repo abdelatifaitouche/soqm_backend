@@ -114,5 +114,8 @@ class RiskService:
 
         return await self.repo.update(risk)
 
+    async def list_risks_by_objective(self, objective_id: UUID):
+        return await self.repo.list_by_objective(objective_id)
+
     async def delete(self):
         return

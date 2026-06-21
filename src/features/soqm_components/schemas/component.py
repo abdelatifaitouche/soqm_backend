@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 from uuid import UUID
+from src.features.quality_objectives.schemas.objective import ReadObjective
 
 
 class BaseComponent(BaseModel):
@@ -7,6 +8,13 @@ class BaseComponent(BaseModel):
     name: str
     isqm_reference: str
     status: str
+    model_config = {"from_attributes": True}
+
+
+class Component(BaseComponent):
+    description: str
+    status: str
+
     model_config = {"from_attributes": True}
 
 

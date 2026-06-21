@@ -80,9 +80,6 @@ class RiskRepository:
         if filters.objective_id:
             stmt = stmt.where(self.model.objective_id == filters.objective_id)
 
-        if filters.score:
-            stmt = stmt.where(self.model.score < filters.score)
-
         return stmt
 
     async def list(self, pagination: Pagination, filters: RiskFilters):
@@ -114,6 +111,13 @@ class RiskRepository:
             }
             for r in rows
         ]
+
+    async def list_by_objective(self, objective_id: UUID):
+        stmt = select(self.model).where(self.model.objective_id == objective_id)
+
+        results = (await self.db.execute(stmt)).scalars().all()
+
+        return [self._to_domain(risk) for risk in results]
 
     async def get_by_id(self, entity_id: UUID) -> RiskEntity | None:
         stmt = (

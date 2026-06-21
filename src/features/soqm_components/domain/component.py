@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID
+from src.features.quality_objectives.domain.objective import Objective
 
 
 @dataclass

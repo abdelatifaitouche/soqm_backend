@@ -54,6 +54,15 @@ class ObjectiveRepository:
 
         return [self._to_domain(d) for d in data]
 
+    async def list_by_component(self, component_id: UUID, pagination: Pagination):
+        stmt = select(self.model).where(self.model.component_id == component_id)
+
+        stmt = apply_pagination(stmt, pagination)
+
+        results = (await self.db.execute(stmt)).scalars().all()
+
+        return [self._to_domain(obj) for obj in results]
+
     async def create(self, entity: ObjectiveEntity) -> ObjectiveEntity:
         orm: ObjectiveDB = self._to_orm(entity)
 
