@@ -15,6 +15,10 @@ from src.features.risks.enums.risk_states import RiskStatus
 from src.core.exceptions import ValidationError, NotFoundError
 from datetime import date
 from src.features.risks.schemas.risk import CreateRisk, UpdateRisk
+from src.features.risks.repositories.risk_response_repository import (
+    RiskResponseRepository,
+)
+from src.features.risks.domain.risk_response import RiskResponse as RiskResponseEntity
 
 
 class RiskService:
@@ -92,7 +96,9 @@ class RiskService:
 
     async def plan_treatment(self, user_id: UUID, entity_id: UUID):
         risk: Risk = await self.get_risk_by_id(entity_id)
+
         risk.plan_treatment()
+
         return await self.repo.update(risk)
 
     async def close_risk(self, user_id: UUID, entity_id: UUID):
