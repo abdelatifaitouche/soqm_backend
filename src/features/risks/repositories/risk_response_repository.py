@@ -2,10 +2,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.features.risks.models.risk_response import RiskResponse as ResponseDB
 from src.features.risks.domain.risk_response import RiskResponse as ResponseEntity
 from src.infra.db.exception_utils import translate_db_errors
-from sqlalchemy import select
+from sqlalchemy import select, Select
+from sqlalchemy.orm import joinedload
 from src.core.pagination import Pagination
 from src.infra.db.pagination import apply_pagination
 from uuid import UUID
+from src.features.risks.filters.response_filters import ResponseFilters
+from typing import Any
 
 
 class RiskResponseRepository:
@@ -42,6 +45,7 @@ class RiskResponseRepository:
             date_monitored_design=orm.date_monitored_design,
             date_monitored_operating=orm.date_monitored_operating,
             response_type=orm.response_type,
+            risk=orm.risk,
         )
 
     async def create(self, entity: ResponseEntity) -> ResponseEntity:
@@ -54,16 +58,59 @@ class RiskResponseRepository:
         except Exception as e:
             raise translate_db_errors(e)
 
-    async def list(self, risk_id: UUID, pagination: Pagination):
-        stmt = select(self.model).where(self.model.risk_id == risk_id)
+    def apply_filters(self, stmt: Select[Any], filters: ResponseFilters) -> Select[Any]:
+
+        if filters.risk_id:
+            stmt = stmt.where(self.model.risk_id == filters.risk_id)
+
+        if filters.status:
+            stmt = stmt.where(self.model.status == filters.status)
+
+        if filters.created_by:
+            stmt = stmt.where(self.model.created_by == filters.created_by)
+
+        if filters.assigned_employee:
+            stmt = stmt.where(
+                self.model.responsible_employee == filters.assigned_employee
+            )
+
+        return stmt
+
+    async def list(self, pagination: Pagination, filters: ResponseFilters):
+        stmt = select(
+            self.model.id,
+            self.model.risk_id,
+            self.model.status,
+            self.model.response_type,
+            self.model.responsible_employee,
+            self.model.response_description,
+        )
+        stmt = self.apply_filters(stmt, filters)
         stmt = apply_pagination(stmt, pagination)
 
-        results = (await self.db.execute(stmt)).scalars().all()
+        results = await self.db.execute(stmt)
+        rows = results.mappings().all()
 
-        return [self._to_domain(resp) for resp in results]
+        return [
+            {
+                "id": resp["id"],
+                "risk_id": resp["risk_id"],
+                "status": resp["status"],
+                "response_type": resp["response_type"],
+                "responsible_employee": resp["responsible_employee"],
+                "response_description": resp["response_description"],
+            }
+            for resp in rows
+        ]
 
     async def get_by_id(self, entity_id: UUID) -> ResponseEntity | None:
-        stmt = select(self.model).where(self.model.id == entity_id)
+        stmt = (
+            select(self.model)
+            .where(self.model.id == entity_id)
+            .options(
+                joinedload(self.model.risk),
+            )
+        )
 
         result = (await self.db.execute(stmt)).scalar_one_or_none()
 

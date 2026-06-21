@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID, uuid4
 from datetime import date
 from src.features.risks.enums.risk_response import ResponseState
+from src.features.risks.domain.risk import RiskSummary
 
 
 @dataclass
@@ -18,6 +19,8 @@ class RiskResponse:
     date_implementation: date | None = None
     date_monitored_design: date | None = None
     date_monitored_operating: date | None = None
+
+    risk: RiskSummary | None = None
 
     @classmethod
     def response_create(

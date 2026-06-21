@@ -9,7 +9,13 @@ from src.features.risks.repositories.risk_response_repository import (
 from src.features.risks.repositories.risk_repository import RiskRepository
 from src.features.risks.services.response_service import ResponseService
 from src.core.pagination import Pagination
-from src.features.risks.schemas.risk_response import RiskResponse, CreateRiskResponse
+from src.features.risks.schemas.risk_response import (
+    RiskSummary,
+    Response,
+    RiskResponse,
+    CreateRiskResponse,
+)
+from src.features.risks.filters.response_filters import ResponseFilters
 
 
 def get_service(db: AsyncSession = Depends(get_db)) -> ResponseService:
@@ -21,17 +27,17 @@ def get_service(db: AsyncSession = Depends(get_db)) -> ResponseService:
 router = APIRouter(prefix="/responses")
 
 
-@router.get("/{risk_id}")
+@router.get("")
 async def list(
-    risk_id: UUID,
     pagination: Pagination = Depends(),
+    filters: ResponseFilters = Depends(),
     user=Depends(require_auth),
     service: ResponseService = Depends(
         get_service,
     ),
 ):
-    responses = await service.list(risk_id, pagination)
-    return [RiskResponse.model_validate(resp) for resp in responses]
+    responses = await service.list(pagination, filters)
+    return [Response.model_validate(resp) for resp in responses]
 
 
 @router.post("/{risk_id}/")
@@ -46,5 +52,10 @@ async def create_response(
 
 
 @router.get("/{response_id}")
-async def get_by_id(risk_id: UUID, response_id: UUID, creds, service):
-    return
+async def get_by_id(
+    response_id: UUID,
+    creds=Depends(require_auth),
+    service: ResponseService = Depends(get_service),
+):
+    response = await service.get_by_id(response_id)
+    return RiskResponse.model_validate(response)

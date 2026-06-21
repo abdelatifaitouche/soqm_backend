@@ -7,6 +7,7 @@ from src.features.risks.repositories.risk_repository import RiskRepository
 from uuid import UUID
 from src.core.exceptions import NotFoundError
 from src.core.pagination import Pagination
+from src.features.risks.filters.response_filters import ResponseFilters
 
 
 class ResponseService:
@@ -18,9 +19,9 @@ class ResponseService:
         self.repo: RiskResponseRepository = repo
         self.risk_repo: RiskRepository = risk_repo
 
-    async def list(self, risk_id: UUID, pagination: Pagination) -> list[ResponseEntity]:
+    async def list(self, pagination: Pagination, filters: ResponseFilters):
         """THIS NEEDS TO BE DYNAMIC BASED ON THE USER"""
-        return await self.repo.list(risk_id, pagination)
+        return await self.repo.list(pagination, filters)
 
     async def create_response(
         self, risk_id: UUID, user_id: UUID, data: CreateRiskResponse

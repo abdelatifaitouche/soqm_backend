@@ -11,6 +11,14 @@ import uuid
 
 
 @dataclass
+class RiskSummary:
+    id: UUID
+    risk_ref: str
+    score: int
+    status: str
+
+
+@dataclass
 class Risk:
     id: UUID
     objective_id: UUID
