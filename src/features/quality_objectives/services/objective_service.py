@@ -133,3 +133,10 @@ class ObjectiveService:
             )
 
         await self.repo.delete(entity_id)
+
+    async def list_objectives_by_component(
+        self, component_id: UUID, pagination: Pagination
+    ):
+        # first check for the existance of the component
+
+        return await self.repo.list_by_component(component_id, pagination)

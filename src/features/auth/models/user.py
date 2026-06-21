@@ -22,3 +22,20 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+
+    risk_audit_log: Mapped[list["RiskAuditLog"]] = relationship(
+        "RiskAuditLog",
+        back_populates="user",
+    )
+
+    created_risk_responses: Mapped[list["RiskResponse"]] = relationship(
+        "RiskResponse",
+        foreign_keys="RiskResponse.created_by",
+        back_populates="created_by_user",
+    )
+
+    assigned_responses: Mapped[list["RiskResponse"]] = relationship(
+        "RiskResponse",
+        foreign_keys="RiskResponse.responsible_employee",
+        back_populates="assigned_employee",
+    )

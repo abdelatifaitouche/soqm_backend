@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
 from src.features.risks.models.risk import Risk as RiskDB
 from src.features.risks.domain.risk import Risk as RiskEntity
@@ -9,7 +9,7 @@ from src.infra.db.pagination import apply_pagination, apply_ordering
 from src.features.risks.filters.risk_filters import RiskFilters
 from uuid import UUID
 import logging
-
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -54,12 +54,12 @@ class RiskRepository:
             residual_score=orm.residual_score,
             risk_discription=orm.risk_discription,
             created_by=orm.created_by,
-            component=orm.component,
-            objective=orm.objective,
         )
 
     async def create(self, entity: RiskEntity) -> RiskEntity:
         try:
+            logger.debug("am i here ??")
+            logger.debug(entity)
             orm: RiskDB = self._to_orm(entity)
 
             self.db.add(orm)
@@ -79,9 +79,6 @@ class RiskRepository:
 
         if filters.objective_id:
             stmt = stmt.where(self.model.objective_id == filters.objective_id)
-
-        if filters.score:
-            stmt = stmt.where(self.model.score < filters.score)
 
         return stmt
 
@@ -115,6 +112,13 @@ class RiskRepository:
             for r in rows
         ]
 
+    async def list_by_objective(self, objective_id: UUID):
+        stmt = select(self.model).where(self.model.objective_id == objective_id)
+
+        results = (await self.db.execute(stmt)).scalars().all()
+
+        return [self._to_domain(risk) for risk in results]
+
     async def get_by_id(self, entity_id: UUID) -> RiskEntity | None:
         stmt = (
             select(self.model)
@@ -134,3 +138,30 @@ class RiskRepository:
         data = result.scalar_one_or_none()
 
         return self._to_domain(data) if data else None
+
+    async def update(self, entity: RiskEntity) -> RiskEntity:
+
+        try:
+            updated_risk = (
+                await self.db.execute(
+                    update(self.model)
+                    .where(self.model.id == entity.id)
+                    .values(
+                        status=entity.status,
+                        risk_ref=entity.risk_ref,
+                        risk_discription=entity.risk_discription,
+                        occurence=entity.occurence,
+                        significance=entity.significance,
+                        score=entity.score,
+                        next_review_date=entity.next_review_date,
+                        date_last_assessed=entity.date_last_assessed,
+                        residual_score=entity.residual_score,
+                        updated_at=datetime.now(),
+                    )
+                    .returning(self.model)
+                )
+            ).scalar_one()
+
+            return self._to_domain(updated_risk)
+        except Exception as e:
+            raise translate_db_errors(e)

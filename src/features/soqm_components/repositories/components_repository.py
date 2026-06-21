@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from sqlalchemy import select, delete, update
+from sqlalchemy.orm import selectinload
 from src.features.soqm_components.models.soqm_component import SOQMComponent
 from src.features.soqm_components.domain.component import (
     SOQMComponent as ComponentEntity,

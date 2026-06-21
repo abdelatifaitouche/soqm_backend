@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 from src.features.risks.dependencies import get_service
-from src.features.risks.schemas.risk import CreateRisk, Risk, ListRisk
+from src.features.risks.schemas.risk import CreateRisk, Risk, ListRisk, UpdateRisk
 from src.features.risks.services.risk_service import RiskService
 from src.features.risks.mappers.risk_mapper import RiskMapper
 from src.features.risks.domain.risk import Risk as RiskEntity
@@ -24,7 +24,6 @@ async def list_risks(
     service: RiskService = Depends(get_service),
     user=Depends(require_auth),
 ):
-    logger.debug(user.get("sub"))
     risks = await service.list(pagination, filters)
     return [ListRisk(**r) for r in risks]
 
@@ -45,5 +44,36 @@ async def create_risk(
     user=Depends(require_auth),
 ):
 
-    risk: RiskEntity = await service.create_risk(RiskMapper.from_create(data))
+    risk: RiskEntity = await service.create_risk(user.get("sub"), data)
     return Risk.model_validate(risk)
+
+
+@router.patch("/{risk_id}")
+async def update(
+    risk_id: UUID,
+    data: UpdateRisk,
+    user=Depends(require_auth),
+    service: RiskService = Depends(get_service),
+):
+    updated_risk: RiskEntity = await service.update(user.get("sub"), risk_id, data)
+    return Risk.model_validate(updated_risk)
+
+
+@router.patch("/{risk_id}/assess")
+async def assess_risk(
+    risk_id: UUID,
+    user=Depends(require_auth),
+    service: RiskService = Depends(get_service),
+):
+    updated_risk: RiskEntity = await service.assess_risk(user.get("sub"), risk_id)
+    return Risk.model_validate(updated_risk)
+
+
+@router.patch("/{risk_id}/close")
+async def close_risk(
+    risk_id: UUID,
+    user=Depends(require_auth),
+    service: RiskService = Depends(get_service),
+):
+    updated_risk: RiskEntity = await service.close_risk(user.get("sub"), risk_id)
+    return Risk.model_validate(updated_risk)

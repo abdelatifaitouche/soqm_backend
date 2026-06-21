@@ -32,8 +32,7 @@ class CreateRisk(BaseModel):
     date_identified: date = Field(default_factory=date.today)
     status: str = RiskStatus.IDENTIFIED.value
 
-    date_last_assessed: date | None = None
-    next_review_date: date | None = None
+    next_review_date: date
 
 
 class Risk(BaseModel):
@@ -48,6 +47,14 @@ class Risk(BaseModel):
     status: str
     score: int
     created_by: UUID | None
-    component: BaseComponent
-    objective: ObjectiveSummary
     model_config = {"from_attributes": True}
+
+
+class UpdateRisk(BaseModel):
+    risk_ref: str | None = None
+    risk_discription: str | None = None
+    occurence: int | None = None
+    significance: int | None = None
+    next_review_date: date | None = None
+    component_id: UUID | None = None
+    objective_id: UUID | None = None

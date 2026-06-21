@@ -6,6 +6,7 @@ from src.features.soqm_components.schemas.component import (
     BaseComponent,
     CreateComponent,
     UpdateComponent,
+    Component,
 )
 from src.features.auth.security.dependencies import require_permissions
 from src.features.soqm_components.permissions.components_permissions import (
@@ -13,7 +14,7 @@ from src.features.soqm_components.permissions.components_permissions import (
 )
 from src.features.soqm_components.mappers.component_mapper import ComponentMapper
 from src.features.soqm_components.services.component_service import ComponentService
-
+from src.core.pagination import Pagination
 
 logger = logging.getLogger("app.soqm_component.routes")
 
@@ -50,7 +51,7 @@ async def get_component_by_id(
     ),
 ):
     component = await service.get_by_id(component_id)
-    return BaseComponent.model_validate(component)
+    return Component.model_validate(component)
 
 
 @router.patch("/{component_id}/", status_code=status.HTTP_200_OK)
@@ -78,3 +79,17 @@ async def delete(
     ),
 ):
     await service.delete(component_id)
+
+
+from src.features.quality_objectives.dependencies import get_service as get_obj_service
+from src.features.quality_objectives.schemas.objective import ReadObjective
+
+
+@router.get("/{component_id}/objectives")
+async def list_objectives(
+    component_id: UUID,
+    service=Depends(get_obj_service),
+    pagination: Pagination = Depends(),
+):
+    objectives = await service.list_objectives_by_component(component_id, pagination)
+    return [ReadObjective.model_validate(obj) for obj in objectives]
