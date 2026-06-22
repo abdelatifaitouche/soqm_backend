@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, update
+from sqlalchemy import select, delete, update, Select
 from src.infra.db.exception_utils import translate_db_errors
 from src.features.quality_objectives.domain.objective import (
     Objective as ObjectiveEntity,
@@ -13,6 +13,8 @@ from src.core.pagination import Pagination
 from uuid import UUID
 from src.core.exceptions import NotFoundError
 from src.features.quality_objectives.enums.objective_states import ObjectiveState
+from src.features.quality_objectives.filters.filters import ObjectiveFilters
+from typing import Any
 
 
 class ObjectiveRepository:
@@ -42,6 +44,17 @@ class ObjectiveRepository:
             updated_at=orm.updated_at,
         )
 
+    def apply_filters(
+        self, stmt: Select[Any], filters: ObjectiveFilters
+    ) -> Select[Any]:
+        if filters.component_id:
+            stmt = stmt.where(self.model.component_id == filters.component_id)
+
+        if filters.status:
+            stmt = stmt.where(self.model.status == filters.status.value)
+
+        return stmt
+
     async def list(self, pagination: Pagination) -> list[ObjectiveEntity]:
         stmt = select(self.model)
         stmt = apply_pagination(stmt, pagination)
@@ -55,7 +68,7 @@ class ObjectiveRepository:
 
         return [self._to_domain(d) for d in data]
 
-    async def list_options(self):
+    async def list_options(self, filters: ObjectiveFilters):
         stmt = select(
             self.model.id,
             self.model.objective_text,
@@ -64,6 +77,7 @@ class ObjectiveRepository:
                 [ObjectiveState.DRAFT.value, ObjectiveState.SUSPENDED.value],
             )
         )
+        stmt = self.apply_filters(stmt, filters)
         results = (await self.db.execute(stmt)).mappings().all()
 
         return [

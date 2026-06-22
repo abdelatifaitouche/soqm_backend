@@ -12,6 +12,7 @@ from src.features.quality_objectives.schemas.objective import (
 
 from src.features.quality_objectives.domain.objective import Objective
 from src.core.pagination import Pagination
+from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from uuid import UUID
 
 router = APIRouter(prefix="/objectives")
@@ -19,9 +20,10 @@ router = APIRouter(prefix="/objectives")
 
 @router.get("/options")
 async def list_options(
+    filters: ObjectiveFilters = Depends(),
     service: ObjectiveService = Depends(get_service),
 ):
-    options = await service.list_options()
+    options = await service.list_options(filters)
     return [ObjectiveOption.model_validate(opt) for opt in options]
 
 
