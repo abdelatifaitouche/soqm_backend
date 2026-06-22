@@ -12,6 +12,7 @@ from src.infra.db.pagination import apply_pagination, apply_ordering
 from src.core.pagination import Pagination
 from uuid import UUID
 from src.core.exceptions import NotFoundError
+from src.features.quality_objectives.enums.objective_states import ObjectiveState
 
 
 class ObjectiveRepository:
@@ -53,6 +54,25 @@ class ObjectiveRepository:
             return []
 
         return [self._to_domain(d) for d in data]
+
+    async def list_options(self):
+        stmt = select(
+            self.model.id,
+            self.model.objective_text,
+        ).where(
+            self.model.status.not_in(
+                [ObjectiveState.DRAFT.value, ObjectiveState.SUSPENDED.value],
+            )
+        )
+        results = (await self.db.execute(stmt)).mappings().all()
+
+        return [
+            {
+                "id": obj["id"],
+                "ref": obj["objective_text"],
+            }
+            for obj in results
+        ]
 
     async def list_by_component(self, component_id: UUID, pagination: Pagination):
         stmt = select(self.model).where(self.model.component_id == component_id)

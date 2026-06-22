@@ -49,6 +49,9 @@ class ObjectiveService:
 
         return await self.repo.create(entity)
 
+    async def list_options(self):
+        return await self.repo.list_options()
+
     async def list(self, pagination: Pagination) -> list[Objective]:
         return await self.repo.list(pagination)
 

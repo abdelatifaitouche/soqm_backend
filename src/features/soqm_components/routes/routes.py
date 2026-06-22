@@ -7,6 +7,7 @@ from src.features.soqm_components.schemas.component import (
     CreateComponent,
     UpdateComponent,
     Component,
+    ComponentOption,
 )
 from src.features.auth.security.dependencies import require_permissions
 from src.features.soqm_components.permissions.components_permissions import (
@@ -19,6 +20,14 @@ from src.core.pagination import Pagination
 logger = logging.getLogger("app.soqm_component.routes")
 
 router = APIRouter(prefix="/components")
+
+
+@router.get("/options")
+async def list_options(
+    service: ComponentService = Depends(get_service),
+):
+    options = await service.list_options()
+    return [ComponentOption.model_validate(opt) for opt in options]
 
 
 @router.get("")
