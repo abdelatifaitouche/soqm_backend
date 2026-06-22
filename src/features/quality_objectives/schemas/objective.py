@@ -3,6 +3,12 @@ from datetime import datetime
 from uuid import UUID
 
 
+class ObjectiveOption(BaseModel):
+    id: UUID
+    ref: str
+    model_config = {"from_attributes": True}
+
+
 class ObjectiveSummary(BaseModel):
     id: UUID
     objective_text: str

@@ -33,6 +33,13 @@ class ComponentRepository:
     def _apply_filters(self, stmt):
         return stmt
 
+    async def list_options(self):
+        stmt = select(self.model.id, self.model.name)
+
+        results = (await self.db.execute(stmt)).mappings().all()
+
+        return [{"id": cp.get("id"), "name": cp.get("name")} for cp in results]
+
     async def list(self) -> list[ComponentEntity]:
         logger.info("repostory start listing")
         stmt = select(self.model)

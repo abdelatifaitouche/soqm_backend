@@ -3,6 +3,13 @@ from uuid import UUID
 from src.features.quality_objectives.schemas.objective import ReadObjective
 
 
+class ComponentOption(BaseModel):
+    id: UUID
+    name: str
+
+    model_config = {"from_attributes": True}
+
+
 class BaseComponent(BaseModel):
     id: UUID
     name: str

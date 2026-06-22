@@ -7,12 +7,24 @@ from src.features.quality_objectives.schemas.objective import (
     CreateObjective,
     ReadObjective,
     UpdateObjective,
+    ObjectiveOption,
 )
+
 from src.features.quality_objectives.domain.objective import Objective
 from src.core.pagination import Pagination
+from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from uuid import UUID
 
 router = APIRouter(prefix="/objectives")
+
+
+@router.get("/options")
+async def list_options(
+    filters: ObjectiveFilters = Depends(),
+    service: ObjectiveService = Depends(get_service),
+):
+    options = await service.list_options(filters)
+    return [ObjectiveOption.model_validate(opt) for opt in options]
 
 
 @router.get("", status_code=status.HTTP_200_OK)

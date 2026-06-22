@@ -46,8 +46,6 @@ class CreateRisk(BaseModel):
 
 class Risk(BaseModel):
     id: UUID
-    objective_id: UUID
-    component_id: UUID
     risk_ref: str
     risk_discription: str
     occurence: int
@@ -56,6 +54,8 @@ class Risk(BaseModel):
     status: str
     score: int
     created_by: UUID | None
+    objective: ObjectiveSummary | None = None
+    component: BaseComponent | None = None
     model_config = {"from_attributes": True}
 
 

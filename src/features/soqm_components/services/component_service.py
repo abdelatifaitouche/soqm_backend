@@ -22,6 +22,9 @@ class ComponentService:
         logger.info("service listing")
         return await self.repo.list()
 
+    async def list_options(self):
+        return await self.repo.list_options()
+
     async def get_by_id(self, entity_id: UUID) -> SOQMComponent:
         entity: SOQMComponent | None = await self.repo.get_by_id(entity_id)
 

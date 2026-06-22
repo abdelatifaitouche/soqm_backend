@@ -15,6 +15,7 @@ from src.core.exceptions import NotFoundError, ValidationError
 from src.features.soqm_components.enums.soqm_component import ComponentState
 from src.features.quality_objectives.enums.objective_states import ObjectiveState
 from src.core.pagination import Pagination
+from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from uuid import UUID
 
 
@@ -48,6 +49,9 @@ class ObjectiveService:
             )
 
         return await self.repo.create(entity)
+
+    async def list_options(self, filters: ObjectiveFilters):
+        return await self.repo.list_options(filters)
 
     async def list(self, pagination: Pagination) -> list[Objective]:
         return await self.repo.list(pagination)

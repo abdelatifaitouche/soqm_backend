@@ -38,7 +38,7 @@ class RiskRepository:
             created_by=entity.created_by,
         )
 
-    def _to_domain(self, orm: RiskDB) -> RiskEntity:
+    def _to_domain(self, orm: RiskDB, options: bool = False) -> RiskEntity:
         return RiskEntity(
             id=orm.id,
             objective_id=orm.objective_id,
@@ -54,6 +54,8 @@ class RiskRepository:
             residual_score=orm.residual_score,
             risk_discription=orm.risk_discription,
             created_by=orm.created_by,
+            component=orm.component if options else None,
+            objective=orm.objective if options else None,
         )
 
     async def create(self, entity: RiskEntity) -> RiskEntity:
@@ -117,7 +119,7 @@ class RiskRepository:
 
         results = (await self.db.execute(stmt)).scalars().all()
 
-        return [self._to_domain(risk) for risk in results]
+        return [self._to_domain(risk, options=False) for risk in results]
 
     async def get_by_id(self, entity_id: UUID) -> RiskEntity | None:
         stmt = (
@@ -137,7 +139,7 @@ class RiskRepository:
 
         data = result.scalar_one_or_none()
 
-        return self._to_domain(data) if data else None
+        return self._to_domain(data, options=True) if data else None
 
     async def update(self, entity: RiskEntity) -> RiskEntity:
 
