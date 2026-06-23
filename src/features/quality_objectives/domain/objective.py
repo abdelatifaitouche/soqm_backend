@@ -8,7 +8,6 @@ from src.core.exceptions import ValidationError
 @dataclass
 class ObjectiveSummary:
     id: UUID
-    objective_text: str
     status: str
     objective_reference: str | None = None
 
@@ -16,7 +15,6 @@ class ObjectiveSummary:
 @dataclass
 class Objective:
     id: UUID
-    objective_text: str
     description: str
     review_date: datetime
     component_id: UUID
@@ -29,7 +27,6 @@ class Objective:
     def create(
         cls,
         *,
-        objective_text: str,
         description: str,
         review_date: datetime,
         component_id: UUID,
@@ -57,7 +54,6 @@ class Objective:
             review_date=review_date,
             component_id=component_id,
             description=description,
-            objective_text=objective_text,
             status=ObjectiveState.DRAFT,
         )
 
@@ -111,7 +107,6 @@ class Objective:
 
 @dataclass
 class UpdateObjective:
-    objective_text: str | None = None
     description: str | None = None
     component_id: UUID | None = None
     status: str | None = None

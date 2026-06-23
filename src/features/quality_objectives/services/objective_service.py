@@ -1,7 +1,6 @@
 import uuid
 from src.features.quality_objectives.domain.objective import (
     Objective,
-    UpdateObjective as UpdateDTO,
 )
 from src.features.soqm_components.domain.component import SOQMComponent
 from datetime import datetime, UTC
@@ -23,7 +22,10 @@ from src.features.quality_objectives.repository.component_objective_seq_reposito
 from src.features.quality_objectives.domain.objective_ref_generator import (
     ObjectiveRefGenerator,
 )
-from src.features.quality_objectives.schemas.objective import CreateObjective
+from src.features.quality_objectives.schemas.objective import (
+    CreateObjective,
+    UpdateObjective,
+)
 
 
 class ObjectiveService:
@@ -59,7 +61,6 @@ class ObjectiveService:
             component.display_order, next_seq
         )
         entity = Objective.create(
-            objective_text=data.objective_text,
             description=data.description,
             review_date=data.review_date,
             objective_reference=seq,
@@ -84,17 +85,12 @@ class ObjectiveService:
 
         return entity
 
-    async def update(self, entity_id: UUID, data: UpdateDTO):
+    async def update(self, entity_id: UUID, data: UpdateObjective):
         """
         For now we are handling the state transitions inside the self._transition()
         update later to handle each transition inside its own methods/usecase once we define the whole workflow
         """
         entity: Objective = await self.get_by_id(entity_id)
-
-        if data.objective_text:
-            if entity.status != "draft":
-                raise ValidationError("Cannot update non draft")
-            entity.objective_text = data.objective_text
 
         if data.component_id:
             if entity.status != "draft":

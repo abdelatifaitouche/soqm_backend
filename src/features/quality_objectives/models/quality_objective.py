@@ -10,7 +10,6 @@ class QualityObjective(Base):
     __tablename__ = "quality_objectives"
 
     objective_reference: Mapped[str] = mapped_column(String, nullable=True)
-    objective_text: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=False)
     status: Mapped[str] = mapped_column(
         String, nullable=False, default=ObjectiveState.DRAFT.value

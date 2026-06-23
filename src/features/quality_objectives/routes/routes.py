@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, status
 from src.infra.db.uow import get_db
 from src.features.quality_objectives.dependencies import get_service
 from src.features.quality_objectives.services.objective_service import ObjectiveService
-from src.features.quality_objectives.mappers.objective_mapper import ObjectiveMapper
 from src.features.quality_objectives.schemas.objective import (
     CreateObjective,
     ReadObjective,
@@ -69,7 +68,7 @@ async def update(
     data: UpdateObjective,
     service: ObjectiveService = Depends(get_service),
 ):
-    obj = await service.update(objective_id, ObjectiveMapper.from_update(data))
+    obj = await service.update(objective_id, data)
     return ReadObjective.model_validate(obj)
 
 
