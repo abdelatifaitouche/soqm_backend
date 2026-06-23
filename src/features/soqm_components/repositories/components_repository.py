@@ -5,7 +5,6 @@ from sqlalchemy.orm import selectinload
 from src.features.soqm_components.models.soqm_component import SOQMComponent
 from src.features.soqm_components.domain.component import (
     SOQMComponent as ComponentEntity,
-    CreateComponent,
 )
 from src.infra.db.exception_utils import translate_db_errors
 import logging
@@ -54,7 +53,7 @@ class ComponentRepository:
         logger.info("data ready to be returned")
         return [self._to_domain(d) for d in data]
 
-    def _to_orm(self, entity: CreateComponent):
+    def _to_orm(self, entity: ComponentEntity):
         return self.model(
             name=entity.name,
             description=entity.description,

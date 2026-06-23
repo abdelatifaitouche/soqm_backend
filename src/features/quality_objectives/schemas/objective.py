@@ -11,6 +11,7 @@ class ObjectiveOption(BaseModel):
 
 class ObjectiveSummary(BaseModel):
     id: UUID
+    objective_reference: str | None = None
     objective_text: str
     status: str
     model_config = {"from_attributes": True}
@@ -26,6 +27,7 @@ class CreateObjective(BaseModel):
 class ReadObjective(BaseModel):
     id: UUID
     objective_text: str
+    objective_reference: str | None = None
     description: str
     review_date: datetime
     component_id: UUID

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from uuid import UUID
+from uuid import UUID, uuid4
 from datetime import datetime
 from src.features.quality_objectives.enums.objective_states import ObjectiveState
 from src.core.exceptions import ValidationError
@@ -10,6 +10,7 @@ class ObjectiveSummary:
     id: UUID
     objective_text: str
     status: str
+    objective_reference: str | None = None
 
 
 @dataclass
@@ -19,8 +20,48 @@ class Objective:
     description: str
     review_date: datetime
     component_id: UUID
-    status: str = "draft"
+    status: str
     updated_at: datetime | None = None
+
+    objective_reference: str | None = None
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        objective_text: str,
+        description: str,
+        review_date: datetime,
+        component_id: UUID,
+        objective_reference: str,
+    ) -> "Objective":
+
+        if not description or description.strip() == "":
+            raise ValidationError(
+                "Invalid Objective description",
+            )
+
+        if not objective_reference or objective_reference.strip() == "":
+            raise ValidationError(
+                "Invalid Objective reference",
+            )
+
+        if review_date <= datetime.now():
+            raise ValidationError(
+                "Invalid Review date for objective",
+            )
+
+        objective = cls(
+            id=uuid4(),
+            objective_reference=objective_reference,
+            review_date=review_date,
+            component_id=component_id,
+            description=description,
+            objective_text=objective_text,
+            status=ObjectiveState.DRAFT,
+        )
+
+        return objective
 
     def approve(self):
         """TRANSITION FROM DRAFT TO APPROVED"""

@@ -1,3 +1,6 @@
+from src.features.quality_objectives.models.component_objective_seq import (
+    ComponentObjectiveSeq,
+)
 from src.features.risks.models.risk_audit_log import RiskAuditLog
 from src.features.risks.models.risk_response import RiskResponse
 

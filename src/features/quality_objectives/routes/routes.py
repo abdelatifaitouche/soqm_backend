@@ -41,7 +41,7 @@ async def create_objective(
     data: CreateObjective,
     service: ObjectiveService = Depends(get_service),
 ):
-    obj: Objective = await service.create(ObjectiveMapper.from_create(data))
+    obj: Objective = await service.create(data)
     return ReadObjective.model_validate(obj)
 
 
