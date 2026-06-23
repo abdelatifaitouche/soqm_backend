@@ -9,6 +9,7 @@ from src.features.risks.domain.risk import RiskSummary
 class RiskResponse:
     id: UUID
     risk_id: UUID
+    response_name: str
     response_description: str
     response_type: str
     status: str
@@ -27,6 +28,7 @@ class RiskResponse:
         cls,
         *,
         risk_id,
+        response_name,
         response_description,
         response_type,
         date_implementation,
@@ -40,6 +42,7 @@ class RiskResponse:
         response: RiskResponse = cls(
             id=uuid4(),
             risk_id=risk_id,
+            response_name=response_name,
             response_description=response_description,
             response_type=response_type,
             date_implementation=date_implementation,

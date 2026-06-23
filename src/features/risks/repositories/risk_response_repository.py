@@ -32,7 +32,7 @@ class RiskResponseRepository:
             response_description=entity.response_description,
         )
 
-    def _to_domain(self, orm: ResponseDB) -> ResponseEntity:
+    def _to_domain(self, orm: ResponseDB, options: bool = False) -> ResponseEntity:
         return ResponseEntity(
             id=orm.id,
             risk_id=orm.risk_id,
@@ -45,7 +45,7 @@ class RiskResponseRepository:
             date_monitored_design=orm.date_monitored_design,
             date_monitored_operating=orm.date_monitored_operating,
             response_type=orm.response_type,
-            risk=orm.risk,
+            risk=orm.risk if options else None,
         )
 
     async def create(self, entity: ResponseEntity) -> ResponseEntity:
@@ -54,7 +54,7 @@ class RiskResponseRepository:
             self.db.add(orm)
             await self.db.flush()
             await self.db.refresh(orm)
-            return self._to_domain(orm)
+            return self._to_domain(orm, options=False)
         except Exception as e:
             raise translate_db_errors(e)
 
@@ -117,7 +117,7 @@ class RiskResponseRepository:
         if not result:
             return None
 
-        return self._to_domain(result)
+        return self._to_domain(result, options=True)
 
     async def update(self):
         return
