@@ -36,6 +36,7 @@ class RiskResponse(BaseModel):
 
 
 class CreateRiskResponse(BaseModel):
+    response_name: str
     response_description: str
     response_type: ResponseType
     response_employee: UUID

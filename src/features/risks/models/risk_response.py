@@ -8,6 +8,12 @@ import uuid
 
 class RiskResponse(Base):
     __tablename__ = "risk_responses"
+
+    response_name: Mapped[str] = mapped_column(
+        String,
+        nullable=True,
+    )
+
     response_description: Mapped[str] = mapped_column(
         String,
         nullable=False,

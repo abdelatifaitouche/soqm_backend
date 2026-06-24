@@ -26,20 +26,20 @@ class ObjectiveRepository:
     def _to_orm(self, entity: ObjectiveEntity) -> ObjectiveDB:
         return ObjectiveDB(
             id=entity.id,
-            objective_text=entity.objective_text,
             description=entity.description,
             component_id=entity.component_id,
             review_date=entity.review_date,
+            objective_reference=entity.objective_reference,
             status=entity.status,
         )
 
     def _to_domain(self, orm: ObjectiveDB) -> ObjectiveEntity:
         return ObjectiveEntity(
             id=orm.id,
-            objective_text=orm.objective_text,
             description=orm.description,
             review_date=orm.review_date,
             status=orm.status,
+            objective_reference=orm.objective_reference,
             component_id=orm.component_id,
             updated_at=orm.updated_at,
         )
@@ -71,7 +71,7 @@ class ObjectiveRepository:
     async def list_options(self, filters: ObjectiveFilters):
         stmt = select(
             self.model.id,
-            self.model.objective_text,
+            self.model.objective_reference,
         ).where(
             self.model.status.not_in(
                 [ObjectiveState.DRAFT.value, ObjectiveState.SUSPENDED.value],
@@ -80,10 +80,13 @@ class ObjectiveRepository:
         stmt = self.apply_filters(stmt, filters)
         results = (await self.db.execute(stmt)).mappings().all()
 
+        for result in results:
+            print(f"{result.get('id')} ---- {result.get('objective_reference')}")
+
         return [
             {
                 "id": obj["id"],
-                "ref": obj["objective_text"],
+                "ref": obj["objective_reference"],
             }
             for obj in results
         ]
@@ -135,7 +138,6 @@ class ObjectiveRepository:
                 update(self.model)
                 .where(self.model.id == entity.id)
                 .values(
-                    objective_text=entity.objective_text,
                     description=entity.description,
                     review_date=entity.review_date,
                     status=entity.status,

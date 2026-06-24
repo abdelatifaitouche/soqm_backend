@@ -13,7 +13,6 @@ from src.features.auth.security.dependencies import require_permissions
 from src.features.soqm_components.permissions.components_permissions import (
     ComponentPermissions,
 )
-from src.features.soqm_components.mappers.component_mapper import ComponentMapper
 from src.features.soqm_components.services.component_service import ComponentService
 from src.core.pagination import Pagination
 
@@ -45,7 +44,7 @@ async def create(
     service: ComponentService = Depends(get_service),
     crds=Depends(require_permissions(ComponentPermissions.CREATE)),
 ):
-    cp = await service.create(ComponentMapper.from_create(data))
+    cp = await service.create(data)
     return BaseComponent.model_validate(cp)
 
 
@@ -72,10 +71,7 @@ async def update(
         require_permissions(ComponentPermissions.UPDATE),
     ),
 ):
-    component = await service.update(
-        component_id,
-        ComponentMapper.from_update(data),
-    )
+    component = await service.update(component_id, data)
     return BaseComponent.model_validate(component)
 
 
@@ -88,6 +84,33 @@ async def delete(
     ),
 ):
     await service.delete(component_id)
+
+
+@router.patch("/{component_id}/activate/", status_code=status.HTTP_200_OK)
+async def activate_component(
+    component_id: UUID,
+    service: ComponentService = Depends(get_service),
+):
+    updated = await service.activate_component(component_id)
+    return BaseComponent.model_validate(updated)
+
+
+@router.patch("/{component_id}/deactivate/", status_code=status.HTTP_200_OK)
+async def deactivate_component(
+    component_id: UUID,
+    service: ComponentService = Depends(get_service),
+):
+    deactivated = await service.deactivate_component(component_id)
+    return BaseComponent.model_validate(deactivated)
+
+
+@router.patch("/{component_id}/archive/", status_code=status.HTTP_200_OK)
+async def archive_component(
+    component_id: UUID,
+    service: ComponentService = Depends(get_service),
+):
+    archived = await service.archive_component(component_id)
+    return BaseComponent.model_validate(archived)
 
 
 from src.features.quality_objectives.dependencies import get_service as get_obj_service

@@ -1,7 +1,6 @@
 import uuid
 from src.features.quality_objectives.domain.objective import (
     Objective,
-    UpdateObjective as UpdateDTO,
 )
 from src.features.soqm_components.domain.component import SOQMComponent
 from datetime import datetime, UTC
@@ -17,22 +16,35 @@ from src.features.quality_objectives.enums.objective_states import ObjectiveStat
 from src.core.pagination import Pagination
 from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from uuid import UUID
+from src.features.quality_objectives.repository.component_objective_seq_repository import (
+    ComponentObjectiveSeqRepository,
+)
+from src.features.quality_objectives.domain.objective_ref_generator import (
+    ObjectiveRefGenerator,
+)
+from src.features.quality_objectives.schemas.objective import (
+    CreateObjective,
+    UpdateObjective,
+)
 
 
 class ObjectiveService:
     def __init__(self, obj_repo: ObjectiveRepository):
         self.repo: ObjectiveRepository = obj_repo
         self.component_repo: ComponentRepository = ComponentRepository(self.repo.db)
+        self.seq_repo: ComponentObjectiveSeqRepository = (
+            ComponentObjectiveSeqRepository(self.repo.db)
+        )
 
-    async def create(self, entity: Objective) -> Objective:
+    async def create(self, data: CreateObjective) -> Objective:
 
         component: SOQMComponent | None = await self.component_repo.get_by_id(
-            entity.component_id
+            data.component_id
         )
 
         if not component:
             raise NotFoundError(
-                message=f"Component with {entity.component_id} was not found",
+                message=f"Component with {data.component_id} was not found",
             )
 
         if component.status in (
@@ -43,10 +55,17 @@ class ObjectiveService:
                 message=f"Cannot add objective to component with state : {component.status}",
             )
 
-        if entity.review_date <= datetime.now():
-            raise ValidationError(
-                message="Invalid review date",
-            )
+        next_seq: int = await self.seq_repo.get_next_val(component.id)
+
+        seq: str = ObjectiveRefGenerator.generate_objective_ref(
+            component.display_order, next_seq
+        )
+        entity = Objective.create(
+            description=data.description,
+            review_date=data.review_date,
+            objective_reference=seq,
+            component_id=component.id,
+        )
 
         return await self.repo.create(entity)
 
@@ -66,17 +85,12 @@ class ObjectiveService:
 
         return entity
 
-    async def update(self, entity_id: UUID, data: UpdateDTO):
+    async def update(self, entity_id: UUID, data: UpdateObjective):
         """
         For now we are handling the state transitions inside the self._transition()
         update later to handle each transition inside its own methods/usecase once we define the whole workflow
         """
         entity: Objective = await self.get_by_id(entity_id)
-
-        if data.objective_text:
-            if entity.status != "draft":
-                raise ValidationError("Cannot update non draft")
-            entity.objective_text = data.objective_text
 
         if data.component_id:
             if entity.status != "draft":

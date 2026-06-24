@@ -61,4 +61,4 @@ class UpdateComponent(BaseModel):
     name: str | None = None
     description: str | None = None
     isqm_reference: str | None = None
-    status: str | None = None
+    display_order: int | None = None

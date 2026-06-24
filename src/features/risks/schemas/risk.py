@@ -30,7 +30,6 @@ class ListRisk(BaseModel):
 class CreateRisk(BaseModel):
     objective_id: UUID
     component_id: UUID
-    risk_ref: str
     risk_discription: str
     occurence: int = Field(
         ge=1,
@@ -60,7 +59,6 @@ class Risk(BaseModel):
 
 
 class UpdateRisk(BaseModel):
-    risk_ref: str | None = None
     risk_discription: str | None = None
     occurence: int | None = None
     significance: int | None = None

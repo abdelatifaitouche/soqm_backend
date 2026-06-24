@@ -18,7 +18,11 @@ class SOQMComponent(Base):
         nullable=True,
         default=ComponentState.ACTIVE.value,
     )
-    display_order: Mapped[int] = mapped_column(Integer, nullable=False)
+    display_order: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        unique=True,
+    )
 
     quality_objectives: Mapped[list["QualityObjective"]] = relationship(
         "QualityObjective",

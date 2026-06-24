@@ -5,9 +5,10 @@ from src.features.risks.domain.risk_response import RiskResponse as ResponseEnti
 from src.features.risks.schemas.risk_response import CreateRiskResponse, RiskResponse
 from src.features.risks.repositories.risk_repository import RiskRepository
 from uuid import UUID
-from src.core.exceptions import NotFoundError
+from src.core.exceptions import NotFoundError, ValidationError
 from src.core.pagination import Pagination
 from src.features.risks.filters.response_filters import ResponseFilters
+from src.features.risks.enums.risk_states import RiskStatus
 
 
 class ResponseService:
@@ -33,6 +34,8 @@ class ResponseService:
             raise NotFoundError(
                 message=f"Risk with ID {risk_id} was not found",
             )
+        # idk if i should keep this here or not, lets pretend that i know what am doing
+        risk.plan_treatment()
 
         response: ResponseEntity = ResponseEntity.response_create(
             risk_id=risk.id,
@@ -45,6 +48,9 @@ class ResponseService:
             date_monitored_design=data.date_monitored_design,
             date_monitored_operating=data.date_monitored_operating,
         )
+        print("before the update risk")
+        await self.risk_repo.update(risk)
+        print("after update risk thus it must be the response creation")
         # this will emit an event here to be logged or notify (NOT IMPLEMENTED YET)
         return await self.repo.create(response)
 

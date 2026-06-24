@@ -9,7 +9,7 @@ from datetime import datetime
 class QualityObjective(Base):
     __tablename__ = "quality_objectives"
 
-    objective_text: Mapped[str] = mapped_column(String, nullable=False)
+    objective_reference: Mapped[str] = mapped_column(String, nullable=True)
     description: Mapped[str] = mapped_column(String, nullable=False)
     status: Mapped[str] = mapped_column(
         String, nullable=False, default=ObjectiveState.DRAFT.value

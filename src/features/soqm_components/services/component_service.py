@@ -5,10 +5,13 @@ from src.features.soqm_components.repositories.components_repository import (
 )
 from src.features.soqm_components.domain.component import (
     SOQMComponent,
+)
+from src.features.soqm_components.schemas.component import (
     CreateComponent,
     UpdateComponent,
 )
 from src.features.soqm_components.domain.state_machine import transition
+from src.features.soqm_components.enums.soqm_component import ComponentState
 import logging
 
 logger = logging.getLogger(__name__)
@@ -35,7 +38,7 @@ class ComponentService:
 
         return entity
 
-    async def create(self, entity: CreateComponent) -> SOQMComponent:
+    async def create(self, data: CreateComponent) -> SOQMComponent:
         cps = await self.repo.list()
 
         if len(cps) >= 8:
@@ -43,33 +46,49 @@ class ComponentService:
                 message="Cannot add SOQM Components",
             )
 
+        entity: SOQMComponent = SOQMComponent.create(
+            name=data.name,
+            isqm_reference=data.isqm_reference,
+            display_order=data.display_order,
+            description=data.description,
+        )
+
         return await self.repo.create(entity)
 
     async def update(self, entity_id: UUID, data: UpdateComponent):
-        """
-        NOTE:
-            status transition is handled by the state_machine.transition(from, to)
-                returns :
-                    to : next_transition str
-                raises :
-                    InvalidStateTransition()
-        """
         entity: SOQMComponent = await self.get_by_id(entity_id)
 
-        if data.name:
-            entity.name = data.name
+        entity.update(
+            name=data.name,
+            display_order=data.display_order,
+            description=data.description,
+            isqm_reference=data.isqm_reference,
+        )
 
-        if data.isqm_reference:
-            entity.isqm_reference = data.isqm_reference
+        return await self.repo.update(entity)
 
-        if data.status:
-            entity.status = transition(entity.status, data.status)
+    async def deactivate_component(self, entity_id: UUID):
+        """
+        THERE MIGHT BE TOO MUCH REPITIION BETWEEN THESE THREE FUNCTIONS ,
+        I chose readability over abstraction here
+        """
+        entity: SOQMComponent = await self.get_by_id(entity_id)
+        entity.deactivate()
+        return await self.repo.update(entity)
 
+    async def activate_component(self, entity_id: UUID):
+        entity: SOQMComponent = await self.get_by_id(entity_id)
+        entity.activate()
+        return await self.repo.update(entity)
+
+    async def archive_component(self, entity_id: UUID):
+        entity: SOQMComponent = await self.get_by_id(entity_id)
+        entity.archive()
         return await self.repo.update(entity)
 
     async def delete(self, entity_id: UUID):
         entity: SOQMComponent = await self.get_by_id(entity_id)
-        if entity.status != "ARCHIVED":
+        if entity.get_status() != ComponentState.ARCHIVED.value:
             raise ValidationError(
                 message="Cannot delete a component at this state {entity.status}"
             )
