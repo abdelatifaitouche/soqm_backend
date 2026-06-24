@@ -80,10 +80,13 @@ class ObjectiveRepository:
         stmt = self.apply_filters(stmt, filters)
         results = (await self.db.execute(stmt)).mappings().all()
 
+        for result in results:
+            print(f"{result.get('id')} ---- {result.get('objective_reference')}")
+
         return [
             {
                 "id": obj["id"],
-                "objective_reference": obj["objective_reference"],
+                "ref": obj["objective_reference"],
             }
             for obj in results
         ]
