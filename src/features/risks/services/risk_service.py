@@ -19,6 +19,9 @@ from src.features.risks.repositories.risk_response_repository import (
     RiskResponseRepository,
 )
 from src.features.risks.domain.risk_response import RiskResponse as RiskResponseEntity
+from src.features.risks.repositories.component_risk_seq_repository import (
+    ComponentRiskSeqRepository,
+)
 
 
 class RiskService:
@@ -31,11 +34,14 @@ class RiskService:
         self.repo: RiskRepository = repo
         self.objective_repo: ObjectiveRepository = objective_repo
         self.component_repo: ComponentRepository = component_repo
+        self.sequence_repo: ComponentRiskSeqRepository = ComponentRiskSeqRepository(
+            self.repo.db
+        )
 
     async def list(self, pagination, filters):
         return await self.repo.list(pagination, filters)
 
-    async def _ensure_component_valide(self, component_id: UUID):
+    async def _ensure_component_valide(self, component_id: UUID) -> int:
         component: SOQMComponent | None = await self.component_repo.get_by_id(
             component_id
         )
@@ -49,6 +55,7 @@ class RiskService:
             raise ValidationError(
                 message="Cannot use a non ACTIVE SOQM Component",
             )
+        return component.display_order
 
     async def _ensure_objective_valide(self, objective_id: UUID):
         objective: Objective | None = await self.objective_repo.get_by_id(objective_id)
@@ -58,21 +65,28 @@ class RiskService:
                 message=f"No Objective with ID {objective_id} was found",
             )
 
+    def _generate_risk_reference(self, component_order: int, seq: int):
+        """this might change later, i wanted to keep it easy to change in one place"""
+        return f"{component_order}.{seq}"
+
     async def create_risk(self, user_id: UUID, data: CreateRisk) -> Risk:
+        """A check that needs to be done, is to verify that this objective is part of the component selected"""
+
+        component_order: int = await self._ensure_component_valide(data.component_id)
+        await self._ensure_objective_valide(data.objective_id)
+
+        sequence: int = await self.sequence_repo.get_next_val(data.component_id)
 
         risk: Risk = Risk.create(
             objective_id=data.objective_id,
             component_id=data.component_id,
-            risk_ref=data.risk_ref,
+            risk_ref=self._generate_risk_reference(component_order, sequence),
             risk_discription=data.risk_discription,
             created_by=user_id,
             next_review_date=data.next_review_date,
             occurence=data.occurence,
             significance=data.significance,
         )
-
-        await self._ensure_component_valide(risk.component_id)
-        await self._ensure_objective_valide(risk.objective_id)
 
         return await self.repo.create(risk)
 
@@ -111,7 +125,6 @@ class RiskService:
         risk: Risk = await self.get_risk_by_id(entity_id)
 
         risk.update(
-            risk_ref=data.risk_ref,
             risk_discreption=data.risk_discription,
             next_review_date=data.next_review_date,
             occurence=data.occurence,

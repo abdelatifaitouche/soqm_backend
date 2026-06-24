@@ -89,14 +89,11 @@ class Risk:
     def update(
         self,
         *,
-        risk_ref: str | None = None,
         risk_discreption: str | None = None,
         occurence: int | None = None,
         significance: int | None = None,
         next_review_date: date | None = None,
     ):
-        if risk_ref is not None:
-            self.risk_ref = risk_ref
 
         if risk_discreption is not None:
             self.risk_discription = risk_discreption
