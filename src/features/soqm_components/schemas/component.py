@@ -15,6 +15,7 @@ class BaseComponent(BaseModel):
     name: str
     isqm_reference: str
     status: str
+    display_order: int
     model_config = {"from_attributes": True}
 
 

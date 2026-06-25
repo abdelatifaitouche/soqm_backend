@@ -56,6 +56,11 @@ async def login(
     return {"access_token": access}
 
 
+@router.post("/logout/")
+async def logout():
+    raise NotImplementedError()
+
+
 @router.post("/refresh/")
 async def get_refresh(
     request: Request,
