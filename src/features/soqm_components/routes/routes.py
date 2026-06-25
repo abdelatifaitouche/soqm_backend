@@ -72,7 +72,7 @@ async def update(
     ),
 ):
     component = await service.update(component_id, data)
-    return BaseComponent.model_validate(component)
+    return Component.model_validate(component)
 
 
 @router.delete("/{component_id}/", status_code=status.HTTP_204_NO_CONTENT)
