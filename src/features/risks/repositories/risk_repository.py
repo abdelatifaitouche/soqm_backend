@@ -10,6 +10,9 @@ from src.features.risks.filters.risk_filters import RiskFilters
 from uuid import UUID
 import logging
 from datetime import datetime
+from src.features.risks.models.risk_objective_association import (
+    RiskObjectiveAssociation,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,10 +24,9 @@ class RiskRepository:
         self.db: AsyncSession = db
 
     def _to_orm(self, entity: RiskEntity) -> RiskDB:
-        return RiskDB(
+        orm: RiskDB = RiskDB(
             id=entity.id,
             component_id=entity.component_id,
-            objective_id=entity.objective_id,
             risk_ref=entity.risk_ref,
             risk_discription=entity.risk_discription,
             score=entity.score,
@@ -38,10 +40,11 @@ class RiskRepository:
             created_by=entity.created_by,
         )
 
+        return orm
+
     def _to_domain(self, orm: RiskDB, options: bool = False) -> RiskEntity:
         return RiskEntity(
             id=orm.id,
-            objective_id=orm.objective_id,
             component_id=orm.component_id,
             risk_ref=orm.risk_ref,
             status=orm.status,
@@ -55,22 +58,28 @@ class RiskRepository:
             risk_discription=orm.risk_discription,
             created_by=orm.created_by,
             component=orm.component if options else None,
-            objective=orm.objective if options else None,
         )
 
     async def create(self, entity: RiskEntity) -> RiskEntity:
         try:
-            logger.debug("am i here ??")
-            logger.debug(entity)
             orm: RiskDB = self._to_orm(entity)
-
             self.db.add(orm)
 
+            if entity.objectives:
+                """ objectives is a list of UUIDs """
+                self.db.add_all(
+                    [
+                        RiskObjectiveAssociation(risk_id=orm.id, objective_id=obj)
+                        for obj in entity.objectives
+                    ],
+                )
             await self.db.flush()
-            await self.db.refresh(orm)
             return self._to_domain(orm)
         except Exception as e:
             raise translate_db_errors(e)
+
+    async def attach_objectives(self, risk_id: UUID, objectives: list[UUID]):
+        return
 
     def apply_filters(self, stmt, filters: RiskFilters):
         if filters.status:
@@ -115,7 +124,15 @@ class RiskRepository:
         ]
 
     async def list_by_objective(self, objective_id: UUID):
-        stmt = select(self.model).where(self.model.objective_id == objective_id)
+        """this should be updated to use a join to the association table"""
+
+        stmt = (
+            select(self.model)
+            .join(RiskObjectiveAssociation)
+            .where(
+                RiskObjectiveAssociation.objective_id == objective_id,
+            )
+        )
 
         results = (await self.db.execute(stmt)).scalars().all()
 

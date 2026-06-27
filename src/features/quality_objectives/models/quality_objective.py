@@ -23,7 +23,11 @@ class QualityObjective(Base):
         "SOQMComponent",
         back_populates="quality_objectives",
     )
-
+    # this one is going to get droped on the next version after the many to many relationship
     risks: Mapped[list["Risk"]] = relationship(
         "Risk", back_populates="objective", cascade="all, delete"
+    )
+
+    risk_association: Mapped[list["RiskObjectiveAssociation"]] = relationship(
+        back_populates="objective",
     )

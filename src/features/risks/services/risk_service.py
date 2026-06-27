@@ -73,12 +73,11 @@ class RiskService:
         """A check that needs to be done, is to verify that this objective is part of the component selected"""
 
         component_order: int = await self._ensure_component_valide(data.component_id)
-        await self._ensure_objective_valide(data.objective_id)
 
         sequence: int = await self.sequence_repo.get_next_val(data.component_id)
 
         risk: Risk = Risk.create(
-            objective_id=data.objective_id,
+            objectives=data.objectives,
             component_id=data.component_id,
             risk_ref=self._generate_risk_reference(component_order, sequence),
             risk_discription=data.risk_discription,

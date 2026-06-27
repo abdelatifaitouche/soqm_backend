@@ -1,3 +1,7 @@
+from src.features.risks.models.risk_objective_association import (
+    RiskObjectiveAssociation,
+)
+
 from src.features.risks.models.component_risk_seq import ComponentRiskSequence
 
 from src.features.quality_objectives.models.component_objective_seq import (

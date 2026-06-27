@@ -21,7 +21,6 @@ class RiskSummary:
 @dataclass
 class Risk:
     id: UUID
-    objective_id: UUID
     component_id: UUID
     risk_ref: str
     risk_discription: str
@@ -32,11 +31,12 @@ class Risk:
     score: int = 0
     residual_score: float | None = None
 
+    objectives: list[UUID] | None = None
+
     date_last_assessed: date | None = None
     next_review_date: date | None = None
 
     component: SOQMComponent | None = None
-    objective: ObjectiveSummary | None = None
 
     created_by: UUID | None = None
 
@@ -46,7 +46,6 @@ class Risk:
     def create(
         cls,
         *,
-        objective_id,
         component_id,
         risk_ref: str,
         risk_discription: str,
@@ -54,10 +53,10 @@ class Risk:
         significance: int,
         next_review_date: date,
         created_by: UUID,
+        objectives: list[UUID],
     ):
         risk = cls(
             id=uuid.uuid4(),
-            objective_id=objective_id,
             component_id=component_id,
             risk_ref=risk_ref,
             risk_discription=risk_discription,
@@ -65,24 +64,12 @@ class Risk:
             significance=significance,
             next_review_date=next_review_date,
             created_by=created_by,
+            objectives=objectives,
             date_identified=date.today(),
         )
 
         risk.validate()
         risk.calculate_score()
-
-        risk._emit_event(
-            RiskCreatedEvent(
-                aggrergate_id=risk.id,
-                risk_ref=risk.risk_ref,
-                risk_discription=risk.risk_discription,
-                objective_id=risk.objective_id,
-                component_id=risk.component_id,
-                occurence=risk.occurence,
-                significance=risk.significance,
-                score=risk.score,
-            ),
-        )
 
         return risk
 
