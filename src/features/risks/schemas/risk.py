@@ -21,14 +21,13 @@ class ListRisk(BaseModel):
     score: int
     significance: int
     occurence: int
-    objective_id: UUID
     risk_ref: str
     risk_discription: str
     model_config = {"from_attributes": True}
 
 
 class CreateRisk(BaseModel):
-    objective_id: UUID
+    objectives: list[UUID] = Field(min_length=1)
     component_id: UUID
     risk_discription: str
     occurence: int = Field(

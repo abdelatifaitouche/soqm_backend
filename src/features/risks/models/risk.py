@@ -12,7 +12,7 @@ class Risk(Base):
     objective_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("quality_objectives.id"),
-        nullable=False,
+        nullable=True,
     )
     component_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -76,7 +76,7 @@ class Risk(Base):
         "SOQMComponent",
         back_populates="risks",
     )
-
+    # this one is going to get dropped on the next version
     objective: Mapped["QualityObjective"] = relationship(
         "QualityObjective",
         back_populates="risks",
@@ -89,5 +89,9 @@ class Risk(Base):
 
     risk_audit_logs: Mapped[list["RiskAuditLog"]] = relationship(
         "RiskAuditLog",
+        back_populates="risk",
+    )
+
+    objective_association: Mapped[list["RiskObjectiveAssociation"]] = relationship(
         back_populates="risk",
     )
