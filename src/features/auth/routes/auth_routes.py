@@ -7,6 +7,7 @@ from src.features.auth.schemas.user import (
     CreateUser,
     UserRead,
     AssignRoleRequest,
+    UserOption,
 )
 from src.features.auth.schemas.role import Role as RoleRead
 from src.features.auth.domain.user import User
@@ -112,18 +113,6 @@ async def list_users(
     return [UserRead.model_validate(u) for u in users]
 
 
-@router.patch("/{user_id}/block/")
-async def deactivate_user(
-    user_id: str,
-    service: AuthService = Depends(get_service),
-    creds=Depends(
-        require_permissions(AuthPermissions.BLOCK),
-    ),
-):
-
-    return
-
-
 @router.get("/roles")
 async def list_roles(
     service: AuthService = Depends(get_service),
@@ -139,3 +128,12 @@ async def assing_role(
     service: AuthService = Depends(get_service),
 ):
     return await service.assign_role(UUID(user_id), payload.role_id)
+
+
+@router.get("/users/options")
+async def list_options(
+    creds=Depends(require_auth),
+    service: AuthService = Depends(get_service),
+):
+    options = await service.list_options()
+    return [UserOption.model_validate(opt) for opt in options]

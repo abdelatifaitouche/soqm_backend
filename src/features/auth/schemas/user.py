@@ -17,6 +17,13 @@ class UserLogin(BaseModel):
     password: str
 
 
+class UserOption(BaseModel):
+    id: UUID
+    email: str
+
+    model_config = {"from_attributes": True}
+
+
 class CreateUser(BaseModel):
     first_name: str
     last_name: str

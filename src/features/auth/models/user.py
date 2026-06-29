@@ -39,3 +39,7 @@ class User(Base):
         foreign_keys="RiskResponse.responsible_employee",
         back_populates="assigned_employee",
     )
+
+    profile: Mapped["Employee"] = relationship(
+        back_populates="user",
+    )

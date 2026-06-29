@@ -79,10 +79,10 @@ class UserRepository:
         result = await self.db.execute(stmt)
 
         data = result.unique().scalar_one_or_none()
-
+        print(f"from the repo getting the data : {data}")
         if not data:
             return None
-
+        print(f"from the repoistory : {data.id}")
         return self._to_domain(data)
 
     async def get_by_email(self, email: str) -> UserEntity | None:
@@ -120,5 +120,11 @@ class UserRepository:
 
         return [{"id": r.id, "name": r.name} for r in data]
 
-    async def get_role_permissions(self, role: str):
-        return
+    async def list_options(self):
+        stmt = select(self.model.id, self.model.email).where(
+            self.model.is_active == True
+        )
+
+        results = (await self.db.execute(stmt)).mappings().all()
+
+        return [{"id": res.id, "email": res.email} for res in results]

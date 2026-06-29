@@ -28,3 +28,7 @@ class Department(Base):
         "Department",
         back_populates="parent",
     )
+
+    employees: Mapped[list["Employee"]] = relationship(
+        back_populates="department",
+    )
