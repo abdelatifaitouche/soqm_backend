@@ -101,6 +101,9 @@ class AuthService:
 
         await self.repo.add_user_role(user_id, role_id)
 
+    async def list_options(self):
+        return await self.repo.list_options()
+
     async def update(self):
         return
 

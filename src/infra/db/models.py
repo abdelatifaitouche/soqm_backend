@@ -1,3 +1,5 @@
+from src.features.organizations.models.employee import Employee
+
 from src.features.risks.models.risk_objective_association import (
     RiskObjectiveAssociation,
 )
