@@ -95,3 +95,5 @@ class Risk(Base):
     objective_association: Mapped[list["RiskObjectiveAssociation"]] = relationship(
         back_populates="risk",
     )
+
+    responses: Mapped[list["RiskResponse"]] = relationship(back_populates="risks")

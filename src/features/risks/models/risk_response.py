@@ -69,3 +69,7 @@ class RiskResponse(Base):
         foreign_keys=[responsible_employee],
         back_populates="assigned_responses",
     )
+
+    risks: Mapped[list["Risk"]] = relationship(
+        back_populates="responses",
+    )

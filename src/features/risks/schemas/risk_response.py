@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 from datetime import date
 from src.features.risks.enums.risk_response import ResponseType
@@ -36,6 +36,8 @@ class RiskResponse(BaseModel):
 
 
 class CreateRiskResponse(BaseModel):
+    risks: list[UUID] = Field(min_length=1)
+    component_id: UUID
     response_name: str
     response_description: str
     response_type: ResponseType
