@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
 from datetime import date
-from src.features.risks.enums.risk_response import ResponseState
-from src.features.risks.domain.risk import RiskSummary
+from src.features.risks.enums.risk_response import ResponseState, ResponseType
 
 
 @dataclass
@@ -49,7 +48,7 @@ class RiskResponse:
             response_ref=response_ref,
             response_name=response_name,
             response_description=response_description,
-            response_type=response_type,
+            response_type=ResponseType.DETECTIVE.value,
             date_implementation=date_implementation,
             date_monitored_design=date_monitored_design,
             created_by=created_by,

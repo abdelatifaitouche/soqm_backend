@@ -5,13 +5,22 @@ from src.features.risks.enums.risk_response import ResponseType
 from src.features.risks.schemas.risk import RiskSummary
 
 
+class Owner(BaseModel):
+    first_name: str
+    last_name: str
+    model_config = {
+        "from_attributes": True,
+    }
+
+
 class Response(BaseModel):
     id: UUID
-    risk_id: UUID
+    response_name: str | None = None
+    response_ref: str
     response_description: str
     response_type: str
     status: str
-    responsible_employee: UUID
+    owner: Owner
     date_implementation: date | None = None
 
     model_config = {"from_attributes": True}
@@ -19,18 +28,17 @@ class Response(BaseModel):
 
 class RiskResponse(BaseModel):
     id: UUID
-    risk_id: UUID
+    response_name: str | None = None
+    response_ref: str
     response_description: str
     response_type: str
     date_implementation: date | None = None
     date_monitored_design: date | None = None
     date_monitored_operating: date | None = None
     status: str
-    responsible_employee: UUID
+    owner: UUID
     evidence_notes: str
     created_by: UUID
-
-    risk: RiskSummary | None = None
 
     model_config = {"from_attributes": True}
 

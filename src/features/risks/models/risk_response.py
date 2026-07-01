@@ -9,6 +9,11 @@ import uuid
 class RiskResponse(Base):
     __tablename__ = "risk_responses"
 
+    response_ref: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+    )
+
     response_name: Mapped[str] = mapped_column(
         String,
         nullable=True,
@@ -35,10 +40,15 @@ class RiskResponse(Base):
     status: Mapped[str] = mapped_column(
         String,
         nullable=False,
-        default=ResponseState.DRAFT,
+        default=ResponseState.DRAFT.value,
     )
-    responsible_employee: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id")
+    owner: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("employees.id")
+    )
+
+    component_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=False,
     )
     evidence_notes: Mapped[str] = mapped_column(
         String,
@@ -48,28 +58,17 @@ class RiskResponse(Base):
         UUID(as_uuid=True),
         ForeignKey("users.id"),
     )
-    risk_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("risks.id"),
-        nullable=False,
-    )
-
-    risk: Mapped["Risk"] = relationship(
-        "Risk",
-        back_populates="risk_responses",
-    )
 
     created_by_user: Mapped["User"] = relationship(
         "User",
         foreign_keys=[created_by],
         back_populates="created_risk_responses",
     )
-    assigned_employee: Mapped["User"] = relationship(
-        "User",
-        foreign_keys=[responsible_employee],
+    assigned_employee: Mapped["Employee"] = relationship(
+        foreign_keys=[owner],
         back_populates="assigned_responses",
     )
 
-    risks: Mapped[list["Risk"]] = relationship(
-        back_populates="responses",
+    risk_associations: Mapped[list["RiskResponseAssociation"]] = relationship(
+        back_populates="response"
     )

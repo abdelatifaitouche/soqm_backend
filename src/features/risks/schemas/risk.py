@@ -16,6 +16,16 @@ class RiskSummary(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class RiskOption(BaseModel):
+    id: UUID
+    risk_ref: str
+    score: int
+
+    model_config = {
+        "from_attributes": True,
+    }
+
+
 class ListRisk(BaseModel):
     id: UUID
     score: int

@@ -34,12 +34,6 @@ class User(Base):
         back_populates="created_by_user",
     )
 
-    assigned_responses: Mapped[list["RiskResponse"]] = relationship(
-        "RiskResponse",
-        foreign_keys="RiskResponse.responsible_employee",
-        back_populates="assigned_employee",
-    )
-
     profile: Mapped["Employee"] = relationship(
         back_populates="user",
     )

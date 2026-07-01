@@ -17,8 +17,6 @@ class RiskResponseAssociation(Base):
         primary_key=True,
     )
 
-    risk: Mapped["Risk"] = relationship(
-        back_populates="responses",
-    )
+    risk: Mapped["Risk"] = relationship(back_populates="response_associations")
 
-    response: Mapped["RiskResponse"] = relationship(back_populates="risks")
+    response: Mapped["RiskResponse"] = relationship(back_populates="risk_associations")

@@ -93,6 +93,17 @@ class RiskRepository:
 
         return stmt
 
+    async def list_options(self, filters: RiskFilters):
+        stmt = select(self.model.id, self.model.risk_ref, self.model.score)
+        stmt = self.apply_filters(stmt, filters)
+
+        results = (await self.db.execute(stmt)).mappings().all()
+
+        return [
+            {"id": res["id"], "risk_ref": res["risk_ref"], "score": res["score"]}
+            for res in results
+        ]
+
     async def list(self, pagination: Pagination, filters: RiskFilters):
         stmt = select(
             self.model.id,

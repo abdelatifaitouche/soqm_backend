@@ -22,6 +22,7 @@ from src.features.risks.domain.risk_response import RiskResponse as RiskResponse
 from src.features.risks.repositories.component_risk_seq_repository import (
     ComponentRiskSeqRepository,
 )
+from src.core.pagination import Pagination
 
 
 class RiskService:
@@ -38,7 +39,15 @@ class RiskService:
             self.repo.db
         )
 
-    async def list(self, pagination, filters):
+    async def list(
+        self,
+        filters,
+        options: bool = False,
+        pagination: Pagination | None = None,
+    ):
+        if options:
+            return await self.repo.list_options(filters)
+
         return await self.repo.list(pagination, filters)
 
     async def _ensure_component_valide(self, component_id: UUID) -> int:

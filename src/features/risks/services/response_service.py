@@ -79,7 +79,7 @@ class ResponseService:
         return component
 
     async def create_response(
-        self, risk_id: UUID, user_id: UUID, data: CreateRiskResponse
+        self, user_id: UUID, data: CreateRiskResponse
     ) -> ResponseEntity:
 
         component: SOQMComponent = await self._get_valid_component(data.component_id)
