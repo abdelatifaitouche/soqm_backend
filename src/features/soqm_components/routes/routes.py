@@ -1,7 +1,8 @@
 import logging
 from fastapi import APIRouter, Depends, status
+from fastapi.exceptions import HTTPException
 from uuid import UUID
-from src.features.soqm_components.dependencies import get_service
+from src.features.soqm_components.dependencies import get_service, get_queries
 from src.features.soqm_components.schemas.component import (
     BaseComponent,
     CreateComponent,
@@ -15,26 +16,31 @@ from src.features.soqm_components.permissions.components_permissions import (
 )
 from src.features.soqm_components.services.component_service import ComponentService
 from src.core.pagination import Pagination
+from src.features.soqm_components.repositories.queries.component_query_service import (
+    ComponentQueries,
+)
+from src.features.soqm_components.filters.filters import ComponentFilters
 
 logger = logging.getLogger("app.soqm_component.routes")
 
 router = APIRouter(prefix="/components")
 
 
-@router.get("/options")
+@router.get("/options", status_code=status.HTTP_200_OK)
 async def list_options(
-    service: ComponentService = Depends(get_service),
+    queries: ComponentQueries = Depends(get_queries),
 ):
-    options = await service.list_options()
+    options = await queries.list_options()
     return [ComponentOption.model_validate(opt) for opt in options]
 
 
-@router.get("")
+@router.get("", status_code=status.HTTP_200_OK)
 async def list(
-    service=Depends(get_service),
+    queries: ComponentQueries = Depends(get_queries),
+    filters: ComponentFilters = Depends(),
     creds=Depends(require_permissions(ComponentPermissions.READ)),
 ):
-    components = await service.list()
+    components = await queries.list(filters)
     return [BaseComponent.model_validate(cp) for cp in components]
 
 
@@ -49,16 +55,23 @@ async def create(
 
 
 @router.get("/{component_id}", status_code=status.HTTP_200_OK)
-async def get_component_by_id(
+async def get_component_details(
     component_id: UUID,
-    service: ComponentService = Depends(get_service),
+    queries: ComponentQueries = Depends(get_queries),
     creds=Depends(
         require_permissions(
             ComponentPermissions.READ,
         ),
     ),
 ):
-    component = await service.get_by_id(component_id)
+    component = await queries.get_component_details(component_id)
+
+    if not component:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Component Not Found",
+        )
+
     return Component.model_validate(component)
 
 
