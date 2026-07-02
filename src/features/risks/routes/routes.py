@@ -49,8 +49,8 @@ async def get_risk_by_id(
     risk_id: UUID,
     service: RiskService = Depends(get_service),
 ):
-    risk = await service.get_risk_by_id(risk_id)
-    return Risk.model_validate(risk)
+    risk = await service.get_risk_details(risk_id)
+    return risk
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=Risk)

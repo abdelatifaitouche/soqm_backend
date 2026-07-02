@@ -106,6 +106,10 @@ class RiskService:
 
         return risk
 
+    async def get_risk_details(self, entity_id: UUID):
+        risk = await self.repo.get_risk_details(entity_id)
+        return risk
+
     async def assess_risk(self, user_id: UUID, entity_id: UUID):
         """
         SAME CODE IS DUPLICATED IN THREE DIFFERENT METHODS

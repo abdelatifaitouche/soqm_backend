@@ -149,7 +149,67 @@ class RiskRepository:
 
         return [self._to_domain(risk, options=False) for risk in results]
 
+    async def get_risk_details(self, entity_id: UUID):
+        """this is for projection"""
+        from src.features.quality_objectives.models.quality_objective import (
+            QualityObjective,
+        )
+        from src.features.risks.models.risk_objective_association import (
+            RiskObjectiveAssociation,
+        )
+        from sqlalchemy.orm import selectinload
+
+        risk = await self.db.get(
+            self.model,
+            entity_id,
+            options=[
+                selectinload(self.model.objective_association)
+                .selectinload(RiskObjectiveAssociation.objective)
+                .load_only(
+                    QualityObjective.id,
+                    QualityObjective.objective_reference,
+                    QualityObjective.status,
+                ),
+                selectinload(self.model.component),
+            ],
+        )
+        from typing import Any
+
+        if not risk:
+            return
+        risk_details: dict[str, Any] = {
+            "score": risk.score,
+            "id": risk.id,
+            "risk_discription": risk.risk_discription,
+            "date_last_assessed": risk.date_last_assessed,
+            "occurence": risk.occurence,
+            "next_review_date": risk.next_review_date,
+            "significance": risk.significance,
+            "created_by": risk.created_by,
+            "date_identified": risk.date_identified,
+            "status": risk.status,
+            "created_at": risk.created_at,
+            "updated_at": risk.updated_at,
+            "risk_ref": risk.risk_ref,
+            "residual_score": risk.residual_score,
+            "component": risk.component,
+        }
+
+        objectives: list[dict[str, Any]] = [
+            {
+                "objective_id": obj.objective.id,
+                "status": obj.objective.status,
+                "objective_reference": obj.objective.objective_reference,
+            }
+            for obj in risk.objective_association
+        ]
+
+        risk_details["objectives"] = objectives
+
+        return risk_details
+
     async def get_by_id(self, entity_id: UUID) -> RiskEntity | None:
+        """this returns the actual domain entity, use it for business rules"""
         stmt = (
             select(self.model)
             .where(self.model.id == entity_id)
