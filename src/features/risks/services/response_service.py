@@ -9,6 +9,18 @@ from src.core.exceptions import NotFoundError, ValidationError
 from src.core.pagination import Pagination
 from src.features.risks.filters.response_filters import ResponseFilters
 from src.features.risks.enums.risk_states import RiskStatus
+from src.features.risks.domain.response_ref_generator import ResponseRefGenerator
+from src.features.risks.repositories.component_response_seq_repository import (
+    ComponentResponseSeqRepository,
+)
+from src.features.soqm_components.repositories.components_repository import (
+    ComponentRepository,
+)
+from src.features.soqm_components.domain.component import SOQMComponent
+from src.features.organizations.repositories.employee_repository import (
+    EmployeeRepository,
+)
+from src.features.organizations.domain.employee import Employee
 
 
 class ResponseService:
@@ -16,41 +28,81 @@ class ResponseService:
         self,
         repo: RiskResponseRepository,
         risk_repo: RiskRepository,
+        component_repo: ComponentRepository,
+        employee_repo: EmployeeRepository,
     ):
         self.repo: RiskResponseRepository = repo
         self.risk_repo: RiskRepository = risk_repo
+        self.seq_repo: ComponentResponseSeqRepository = ComponentResponseSeqRepository(
+            self.repo.db
+        )
+        self.component_repo: ComponentRepository = component_repo
+        self.employee_repo: EmployeeRepository = employee_repo
 
     async def list(self, pagination: Pagination, filters: ResponseFilters):
         """THIS NEEDS TO BE DYNAMIC BASED ON THE USER"""
         return await self.repo.list(pagination, filters)
 
+    async def _get_active_employee(self, employee_id: UUID) -> Employee:
+        owner: Employee | None = await self.employee_repo.get_by_id(employee_id)
+
+        if not owner:
+            raise NotFoundError(
+                message=f"Employee with ID {employee_id} was not found",
+            )
+
+        if owner.status in (
+            "IN_ACTIVE",
+            "TERMINATED",
+        ):
+            raise ValidationError(
+                message=f"Employee choosen is not active",
+                details={"status": owner.status},
+            )
+        return owner
+
+    async def _get_valid_component(self, component_id: UUID) -> SOQMComponent:
+        component: SOQMComponent | None = await self.component_repo.get_by_id(
+            component_id
+        )
+
+        if not component:
+            raise NotFoundError(
+                message=f"ISQM Component with {component_id} not found,",
+            )
+
+        if component.status != "ACTIVE":
+            raise ValidationError(
+                message="ISQM Component is not active",
+            )
+
+        return component
+
     async def create_response(
-        self, risk_id: UUID, user_id: UUID, data: CreateRiskResponse
+        self, user_id: UUID, data: CreateRiskResponse
     ) -> ResponseEntity:
 
-        risk = await self.risk_repo.get_by_id(risk_id)
+        component: SOQMComponent = await self._get_valid_component(data.component_id)
+        owner: Employee = await self._get_active_employee(data.response_employee)
 
-        if not risk:
-            raise NotFoundError(
-                message=f"Risk with ID {risk_id} was not found",
-            )
-        # idk if i should keep this here or not, lets pretend that i know what am doing
-        risk.plan_treatment()
+        sequence: int = await self.seq_repo.get_next_val(data.component_id)
+
+        response_ref: str = ResponseRefGenerator.generate(component.name, sequence)
 
         response: ResponseEntity = ResponseEntity.response_create(
-            risk_id=risk.id,
+            risks=data.risks,
+            response_name=data.response_name,
+            response_ref=response_ref,
+            component_id=component.id,
             response_description=data.response_description,
             evidence_notes=data.evidence_notes,
             response_type=data.response_type,
             created_by=user_id,
-            responsible_employee=data.response_employee,
+            owner=data.response_employee,
             date_implementation=data.date_implementation,
             date_monitored_design=data.date_monitored_design,
             date_monitored_operating=data.date_monitored_operating,
         )
-        print("before the update risk")
-        await self.risk_repo.update(risk)
-        print("after update risk thus it must be the response creation")
         # this will emit an event here to be logged or notify (NOT IMPLEMENTED YET)
         return await self.repo.create(response)
 

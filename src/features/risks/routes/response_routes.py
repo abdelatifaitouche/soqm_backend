@@ -16,12 +16,20 @@ from src.features.risks.schemas.risk_response import (
     CreateRiskResponse,
 )
 from src.features.risks.filters.response_filters import ResponseFilters
+from src.features.organizations.repositories.employee_repository import (
+    EmployeeRepository,
+)
+from src.features.soqm_components.repositories.components_repository import (
+    ComponentRepository,
+)
 
 
 def get_service(db: AsyncSession = Depends(get_db)) -> ResponseService:
     risk_repo: RiskRepository = RiskRepository(db)
     response_repo: RiskResponseRepository = RiskResponseRepository(db)
-    return ResponseService(response_repo, risk_repo)
+    employee_repo: EmployeeRepository = EmployeeRepository(db)
+    component_repo: ComponentRepository = ComponentRepository(db)
+    return ResponseService(response_repo, risk_repo, component_repo, employee_repo)
 
 
 router = APIRouter(prefix="/responses")
@@ -40,14 +48,13 @@ async def list(
     return [Response.model_validate(resp) for resp in responses]
 
 
-@router.post("/{risk_id}/")
+@router.post("/")
 async def create_response(
-    risk_id: UUID,
     data: CreateRiskResponse,
     user=Depends(require_auth),
     service: ResponseService = Depends(get_service),
 ):
-    response = await service.create_response(risk_id, user.get("sub"), data)
+    response = await service.create_response(user.get("sub"), data)
     return RiskResponse.model_validate(response)
 
 

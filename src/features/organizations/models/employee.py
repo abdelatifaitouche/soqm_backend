@@ -37,5 +37,7 @@ class Employee(Base):
 
     department: Mapped["Department"] = relationship(back_populates="employees")
     user: Mapped["User"] = relationship(back_populates="profile")
-
+    assigned_responses: Mapped[list["RiskResponse"]] = relationship(
+        back_populates="assigned_employee"
+    )
     __table_args__ = (UniqueConstraint("user_id"),)

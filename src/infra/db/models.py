@@ -1,3 +1,6 @@
+from src.features.risks.models.risk_response_association import RiskResponseAssociation
+from src.features.risks.models.component_response_seq import ComponentResponseSeq
+
 from src.features.organizations.models.employee import Employee
 
 from src.features.risks.models.risk_objective_association import (

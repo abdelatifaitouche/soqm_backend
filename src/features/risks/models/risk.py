@@ -82,11 +82,6 @@ class Risk(Base):
         back_populates="risks",
     )
 
-    risk_responses: Mapped["RiskResponse"] = relationship(
-        "RiskResponse",
-        back_populates="risk",
-    )
-
     risk_audit_logs: Mapped[list["RiskAuditLog"]] = relationship(
         "RiskAuditLog",
         back_populates="risk",
@@ -94,4 +89,8 @@ class Risk(Base):
 
     objective_association: Mapped[list["RiskObjectiveAssociation"]] = relationship(
         back_populates="risk",
+    )
+
+    response_associations: Mapped[list["RiskResponseAssociation"]] = relationship(
+        back_populates="risk"
     )

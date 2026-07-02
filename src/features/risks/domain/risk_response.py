@@ -1,57 +1,61 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
 from datetime import date
-from src.features.risks.enums.risk_response import ResponseState
-from src.features.risks.domain.risk import RiskSummary
+from src.features.risks.enums.risk_response import ResponseState, ResponseType
 
 
 @dataclass
 class RiskResponse:
     id: UUID
-    risk_id: UUID
+    response_ref: str
     response_name: str
     response_description: str
     response_type: str
     status: str
-    responsible_employee: UUID
+    owner: UUID
     evidence_notes: str
     created_by: UUID
+    component_id: UUID
+
+    risks: list[UUID] | None = None
 
     date_implementation: date | None = None
     date_monitored_design: date | None = None
     date_monitored_operating: date | None = None
 
-    risk: RiskSummary | None = None
-
     @classmethod
     def response_create(
         cls,
         *,
-        risk_id,
+        component_id: UUID,
+        response_ref: str,
+        risks: list[UUID] | None = None,
         response_name,
         response_description,
         response_type,
         date_implementation,
         date_monitored_design,
         date_monitored_operating,
-        responsible_employee,
+        owner: UUID,
         created_by,
         evidence_notes,
     ) -> "RiskResponse":
         """Factory for creating a risk response"""
         response: RiskResponse = cls(
+            component_id=component_id,
             id=uuid4(),
-            risk_id=risk_id,
+            risks=risks,
+            response_ref=response_ref,
             response_name=response_name,
             response_description=response_description,
-            response_type=response_type,
+            response_type=ResponseType.DETECTIVE.value,
             date_implementation=date_implementation,
             date_monitored_design=date_monitored_design,
-            responsible_employee=responsible_employee,
             created_by=created_by,
             evidence_notes=evidence_notes,
             status=ResponseState.DRAFT.value,
             date_monitored_operating=date_monitored_operating,
+            owner=owner,
         )
 
         return response
