@@ -45,11 +45,11 @@ class ComponentService:
     async def update(self, entity_id: UUID, data: UpdateComponent):
         entity: SOQMComponent = await self.get_by_id(entity_id)
 
-        entity.update(
+        entity.update_details(
             name=data.name,
-            display_order=data.display_order,
+            order=data.display_order,
+            reference=data.isqm_reference,
             description=data.description,
-            isqm_reference=data.isqm_reference,
         )
 
         return await self.repo.update(entity)
