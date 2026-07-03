@@ -20,6 +20,7 @@ class Employee:
     @classmethod
     def add_profile(
         cls,
+        *,
         first_name: str,
         last_name: str,
         department_id: UUID,

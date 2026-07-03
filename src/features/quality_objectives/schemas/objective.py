@@ -5,7 +5,7 @@ from uuid import UUID
 
 class ObjectiveOption(BaseModel):
     id: UUID
-    ref: str
+    objective_reference: str
     model_config = {"from_attributes": True}
 
 
