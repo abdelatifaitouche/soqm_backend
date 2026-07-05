@@ -8,6 +8,7 @@ from src.features.quality_objectives.schemas.objective import (
     ReadObjective,
     UpdateObjective,
     ObjectiveOption,
+    PaginatedResponse,
 )
 
 from src.features.quality_objectives.domain.objective import Objective
@@ -33,10 +34,10 @@ async def list_options(
 @router.get("", status_code=status.HTTP_200_OK)
 async def list_objectives(
     pagination: Pagination = Depends(),
-    service: ObjectiveService = Depends(get_service),
+    queries: ObjectiveQueries = Depends(get_queries),
 ):
-    objs: list[Objective] = await service.list(pagination)
-    return [ReadObjective.model_validate(obj) for obj in objs]
+    paginated_dto = await queries.list_objectives(pagination)
+    return PaginatedResponse.model_validate(paginated_dto)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Select
+from sqlalchemy import select, Select, func
 from typing import Any
 from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from src.features.quality_objectives.models.quality_objective import (
@@ -11,7 +11,10 @@ from src.features.quality_objectives.services.dto import (
     BaseObjective,
     ObjectiveList,
     ObjectiveDetails,
+    PaginatedResponse,
 )
+from src.infra.db.pagination import apply_pagination
+from src.core.pagination import Pagination
 
 
 class ObjectiveQueries:
@@ -50,16 +53,19 @@ class ObjectiveQueries:
             stmt = stmt.where(ObjectiveDB.status == filters.status.value)
         return stmt
 
-    async def list_objectives(self, pagination) -> list[ObjectiveList]:
-        """
-        TO DO
+    async def list_objectives(self, pagination: Pagination) -> PaginatedResponse:
+        total_count = select(func.count()).select_from(ObjectiveDB)
 
-        GOTTA ADD PAGINATED DTO STRUCTURE ,
-        Thaat includes :
-            - number of pages,
-            - total items
-            - items included
-        """
+        total_items: int | None = await self.db.scalar(total_count)
+
+        if not total_items:
+            return PaginatedResponse(
+                items=[],
+                total=0,
+                page=pagination.page,
+                size=pagination.limit,
+            )
+
         stmt = select(
             ObjectiveDB.id,
             ObjectiveDB.status,
@@ -68,8 +74,10 @@ class ObjectiveQueries:
         ).order_by(
             "objective_reference",
         )
-        results = (await self.db.execute(stmt)).scalars().all()
-        return [
+        stmt = apply_pagination(stmt, pagination)
+
+        results = (await self.db.execute(stmt)).mappings().all()
+        items = [
             ObjectiveList(
                 id=obj.id,
                 status=obj.status,
@@ -78,6 +86,13 @@ class ObjectiveQueries:
             )
             for obj in results
         ]
+
+        return PaginatedResponse(
+            total=total_items,
+            items=items,
+            page=pagination.page,
+            size=pagination.limit,
+        )
 
     async def list_options(self, filters: ObjectiveFilters) -> list[BaseObjective]:
         stmt = select(

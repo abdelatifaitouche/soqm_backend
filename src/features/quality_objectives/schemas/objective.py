@@ -1,6 +1,27 @@
 from pydantic import BaseModel
 from datetime import datetime
 from uuid import UUID
+from typing import Any
+
+
+class ObjectiveList(BaseModel):
+    id: UUID
+    status: str
+    review_date: datetime
+    objective_reference: str
+
+    model_config = {
+        "from_attributes": True,
+    }
+
+
+class PaginatedResponse(BaseModel):
+    total: int = 0
+    page: int = 0
+    size: int = 0
+    items: list[ObjectiveList] | None
+
+    model_config = {"from_attributes": True}
 
 
 class ObjectiveOption(BaseModel):

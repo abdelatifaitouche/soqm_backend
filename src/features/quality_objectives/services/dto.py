@@ -23,3 +23,12 @@ class ObjectiveDetails(BaseObjective):
     updated_at: datetime
     created_at: datetime
     description: str
+
+
+@dataclass(frozen=True)
+class PaginatedResponse:
+    page: int
+    size: int
+    total: int
+
+    items: list[ObjectiveList] | None
