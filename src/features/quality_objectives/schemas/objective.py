@@ -9,7 +9,7 @@ class ObjectiveList(BaseModel):
     status: str
     review_date: datetime
     objective_reference: str
-
+    component_name: str
     model_config = {
         "from_attributes": True,
     }

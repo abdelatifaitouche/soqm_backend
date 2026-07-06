@@ -46,6 +46,7 @@ class ObjectiveQueries:
     def apply_filters(
         self, stmt: Select[Any], filters: ObjectiveFilters
     ) -> Select[Any]:
+        """NEEDS TO ADD ?search=objective_ref"""
         if filters.component_id:
             stmt = stmt.where(ObjectiveDB.component_id == filters.component_id)
 
@@ -53,9 +54,11 @@ class ObjectiveQueries:
             stmt = stmt.where(ObjectiveDB.status == filters.status.value)
         return stmt
 
-    async def list_objectives(self, pagination: Pagination) -> PaginatedResponse:
+    async def list_objectives(
+        self, pagination: Pagination, filters: ObjectiveFilters
+    ) -> PaginatedResponse:
         total_count = select(func.count()).select_from(ObjectiveDB)
-
+        total_count = self.apply_filters(total_count, filters)
         total_items: int | None = await self.db.scalar(total_count)
 
         if not total_items:
@@ -65,24 +68,34 @@ class ObjectiveQueries:
                 page=pagination.page,
                 size=pagination.limit,
             )
+        from src.features.soqm_components.models.soqm_component import SOQMComponent
+        from sqlalchemy.orm import joinedload, selectinload
 
-        stmt = select(
-            ObjectiveDB.id,
-            ObjectiveDB.status,
-            ObjectiveDB.objective_reference,
-            ObjectiveDB.review_date,
-        ).order_by(
-            "objective_reference",
+        stmt = (
+            select(
+                ObjectiveDB.id,
+                ObjectiveDB.status,
+                ObjectiveDB.objective_reference,
+                ObjectiveDB.review_date,
+                SOQMComponent.name,
+            )
+            .join(SOQMComponent)
+            .order_by(
+                "objective_reference",
+            )
         )
+        stmt = self.apply_filters(stmt, filters)
         stmt = apply_pagination(stmt, pagination)
 
         results = (await self.db.execute(stmt)).mappings().all()
+
         items = [
             ObjectiveList(
                 id=obj.id,
                 status=obj.status,
                 review_date=obj.review_date,
                 objective_reference=obj.objective_reference,
+                component_name=obj.name,
             )
             for obj in results
         ]

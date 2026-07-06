@@ -11,6 +11,7 @@ class BaseObjective:
 
 @dataclass(frozen=True)
 class ObjectiveList(BaseObjective):
+    component_name: str
     review_date: datetime
     status: str
 

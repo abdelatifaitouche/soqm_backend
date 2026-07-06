@@ -17,6 +17,7 @@ from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from src.features.quality_objectives.repository.queries.objective_query_service import (
     ObjectiveQueries,
 )
+
 from uuid import UUID
 
 router = APIRouter(prefix="/objectives")
@@ -34,9 +35,10 @@ async def list_options(
 @router.get("", status_code=status.HTTP_200_OK)
 async def list_objectives(
     pagination: Pagination = Depends(),
+    filters: ObjectiveFilters = Depends(),
     queries: ObjectiveQueries = Depends(get_queries),
 ):
-    paginated_dto = await queries.list_objectives(pagination)
+    paginated_dto = await queries.list_objectives(pagination, filters)
     return PaginatedResponse.model_validate(paginated_dto)
 
 
