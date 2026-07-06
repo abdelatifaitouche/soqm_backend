@@ -1,17 +1,23 @@
 from fastapi import APIRouter, Depends, status
+from fastapi.exceptions import HTTPException
 from src.infra.db.uow import get_db
-from src.features.quality_objectives.dependencies import get_service
+from src.features.quality_objectives.dependencies import get_service, get_queries
 from src.features.quality_objectives.services.objective_service import ObjectiveService
 from src.features.quality_objectives.schemas.objective import (
     CreateObjective,
     ReadObjective,
     UpdateObjective,
     ObjectiveOption,
+    PaginatedResponse,
 )
 
 from src.features.quality_objectives.domain.objective import Objective
 from src.core.pagination import Pagination
 from src.features.quality_objectives.filters.filters import ObjectiveFilters
+from src.features.quality_objectives.repository.queries.objective_query_service import (
+    ObjectiveQueries,
+)
+
 from uuid import UUID
 
 router = APIRouter(prefix="/objectives")
@@ -20,19 +26,20 @@ router = APIRouter(prefix="/objectives")
 @router.get("/options")
 async def list_options(
     filters: ObjectiveFilters = Depends(),
-    service: ObjectiveService = Depends(get_service),
+    queries: ObjectiveQueries = Depends(get_queries),
 ):
-    options = await service.list_options(filters)
+    options = await queries.list_options(filters)
     return [ObjectiveOption.model_validate(opt) for opt in options]
 
 
 @router.get("", status_code=status.HTTP_200_OK)
 async def list_objectives(
     pagination: Pagination = Depends(),
-    service: ObjectiveService = Depends(get_service),
+    filters: ObjectiveFilters = Depends(),
+    queries: ObjectiveQueries = Depends(get_queries),
 ):
-    objs: list[Objective] = await service.list(pagination)
-    return [ReadObjective.model_validate(obj) for obj in objs]
+    paginated_dto = await queries.list_objectives(pagination, filters)
+    return PaginatedResponse.model_validate(paginated_dto)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -47,10 +54,15 @@ async def create_objective(
 @router.get("/{objective_id}", status_code=status.HTTP_200_OK)
 async def get_by_id(
     objective_id: UUID,
-    service: ObjectiveService = Depends(get_service),
+    queries: ObjectiveQueries = Depends(get_queries),
 ):
-    obj: Objective = await service.get_by_id(objective_id)
-    return obj
+    obj = await queries.get_objective_details(objective_id)
+    if not obj:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Objective not found",
+        )
+    return ReadObjective.model_validate(obj)
 
 
 @router.delete("/{objective_id}/", status_code=status.HTTP_204_NO_CONTENT)

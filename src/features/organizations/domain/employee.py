@@ -20,6 +20,7 @@ class Employee:
     @classmethod
     def add_profile(
         cls,
+        *,
         first_name: str,
         last_name: str,
         department_id: UUID,
@@ -28,17 +29,7 @@ class Employee:
         user_id: UUID | None = None,
     ) -> "Employee":
 
-        if not first_name or first_name.strip() == "":
-            raise ValidationError(
-                message="Invalid first name for employee",
-                details={"first_name": first_name},
-            )
-
-        if not last_name or last_name.strip() == "":
-            raise ValidationError(
-                message="Invalid last name for employee",
-                details={"last_name": last_name},
-            )
+        cls._validate(first_name, last_name, job_title)
 
         employee = cls(
             id=uuid4(),
@@ -51,3 +42,22 @@ class Employee:
             status=EmployeeState.ACTIVE.value,
         )
         return employee
+
+    @staticmethod
+    def _validate(first_name: str, last_name: str, job_title: str) -> None:
+        if not first_name or first_name.strip() == "":
+            raise ValidationError(
+                message="Invalid first name for employee",
+                details={"first_name": first_name},
+            )
+
+        if not last_name or last_name.strip() == "":
+            raise ValidationError(
+                message="Invalid last name for employee",
+                details={"last_name": last_name},
+            )
+        if not job_title or job_title.strip() == "":
+            raise ValidationError(
+                message="Invalid job title for employee",
+                details={"job title": job_title},
+            )

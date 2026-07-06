@@ -55,10 +55,7 @@ class SOQMComponent:
         self.status = ComponentState.ACTIVE
 
     def archive(self):
-        if self.status in (
-            ComponentState.ACTIVE.value,
-            ComponentState.ARCHIVED.value,
-        ):
+        if self.status in (ComponentState.ARCHIVED.value,):
             raise ValidationError(
                 "Cannot archive a component in this state",
                 details={"state": self.status},
@@ -66,30 +63,33 @@ class SOQMComponent:
 
         self.status = ComponentState.ARCHIVED.value
 
-    def update(
-        self,
-        name: str | None = None,
-        display_order: int | None = None,
-        description: str | None = None,
-        isqm_reference: str | None = None,
-    ):
-
+    def _ensure_can_update(self):
         if self.status == ComponentState.ARCHIVED.value:
             raise ValidationError(
-                "Cannot update an archived component",
+                message="Cannot update a component",
+                details={"staate": self.status},
             )
+
+    def update_details(
+        self,
+        name: str | None = None,
+        order: int | None = None,
+        reference: str | None = None,
+        description: str | None = None,
+    ):
+        self._ensure_can_update()
 
         if name:
             self.name = name
 
-        if display_order:
-            self.display_order = display_order
+        if order:
+            self.display_order = order
+
+        if reference:
+            self.isqm_reference = reference
 
         if description:
             self.description = description
-
-        if isqm_reference:
-            self.isqm_reference = isqm_reference
 
     def get_status(self) -> str:
         return self.status

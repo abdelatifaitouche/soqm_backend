@@ -1,6 +1,5 @@
 from pydantic import BaseModel, field_validator
 from uuid import UUID
-from src.features.quality_objectives.schemas.objective import ReadObjective
 
 
 class ComponentOption(BaseModel):
