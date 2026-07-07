@@ -9,6 +9,7 @@ from src.features.soqm_components.repositories.components_repository import (
     ComponentRepository,
 )
 from src.features.risks.services.risk_service import RiskService
+from src.features.risks.repositories.queries.risk_query_service import RiskQueryService
 
 
 def get_service(
@@ -25,3 +26,6 @@ def get_service(
         component_repo=component_repo,
     )
 
+
+def get_queries(db: AsyncSession = Depends(get_db)):
+    return RiskQueryService(db)

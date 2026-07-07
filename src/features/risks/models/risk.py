@@ -94,3 +94,9 @@ class Risk(Base):
     response_associations: Mapped[list["RiskResponseAssociation"]] = relationship(
         back_populates="risk"
     )
+
+
+RISK_ORDER_FIELDS = {
+    "score": Risk.score,
+    "created_at": Risk.created_at,
+}

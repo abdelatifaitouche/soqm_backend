@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
-from src.features.risks.dependencies import get_service
+from src.features.risks.dependencies import get_service, get_queries
 from src.features.risks.schemas.risk import (
     CreateRisk,
     Risk,
     ListRisk,
     UpdateRisk,
     RiskOption,
+    PaginatedResponse,
 )
 from src.features.risks.services.risk_service import RiskService
 from src.features.risks.mappers.risk_mapper import RiskMapper
@@ -14,6 +15,9 @@ from src.features.risks.domain.risk import Risk as RiskEntity
 from src.core.pagination import Pagination
 from src.features.risks.filters.risk_filters import RiskFilters
 from src.features.auth.security.dependencies import require_auth
+from src.features.risks.repositories.queries.risk_query_service import RiskQueryService
+from src.core.ordering import OrderBy
+from src.api.deps.ordering import parse_ordering
 import logging
 
 
@@ -27,11 +31,12 @@ router = APIRouter(prefix="/risks")
 async def list_risks(
     pagination: Pagination = Depends(),
     filters: RiskFilters = Depends(),
-    service: RiskService = Depends(get_service),
+    order: OrderBy = Depends(parse_ordering),
+    queries: RiskQueryService = Depends(get_queries),
     user=Depends(require_auth),
 ):
-    risks = await service.list(filters, options=False, pagination=pagination)
-    return [ListRisk(**r) for r in risks]
+    risks = await queries.list(pagination, filters, order)
+    return PaginatedResponse.model_validate(risks)
 
 
 @router.get("/options")
