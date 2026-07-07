@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Select, func
+from sqlalchemy import select, Select, func, text
 from src.features.risks.models.risk import Risk as RiskDB, RISK_ORDER_FIELDS
 from src.features.risks.filters.risk_filters import (
     RiskFilters,
@@ -8,7 +8,12 @@ from typing import Any
 from src.core.pagination import Pagination
 from src.core.ordering import apply_ordering, resolve_order_column, OrderBy
 from src.infra.db.pagination import apply_pagination
-from src.features.risks.services.risk_dto import PaginatedResponse, RiskList
+from src.features.risks.services.risk_dto import (
+    PaginatedResponse,
+    RiskList,
+    RiskMatrix,
+    RiskMatrixCell,
+)
 
 
 class RiskQueryService:
@@ -92,6 +97,49 @@ class RiskQueryService:
             page=pagination.page,
             size=pagination.limit,
             items=items,
+        )
+
+    async def get_risk_matrix_summary(self) -> RiskMatrix:
+        """
+        Builds a 3 X 3 risk matrix (fixed by the isqm requirements)
+
+        Returns:
+            RiskMatrix object of  RiskMatrixCells, occurence/significance fetched
+            calculate the total from the database otherwise set to 0
+        """
+        significance_range = range(1, 4)  # 1 to 3 values for significance
+        occurence_range = range(1, 4)  # 1 to 3 values for occurence
+        stmt = (
+            select(
+                RiskDB.occurence,
+                RiskDB.significance,
+                func.count(RiskDB.id).label("total"),
+            )
+            .select_from(RiskDB)
+            .group_by(
+                RiskDB.occurence,
+                RiskDB.significance,
+            )
+        )
+
+        result = (await self.db.execute(stmt)).mappings().all()
+
+        total = sum(r.total for r in result)
+
+        counts = {(r["occurence"], r["significance"]): r["total"] for r in result}
+
+        cells = [
+            RiskMatrixCell(
+                occurence=occurence,
+                significance=significance,
+                percent=counts.get((occurence, significance), 0) / total * 100,
+            )
+            for occurence in range(1, 4)
+            for significance in range(1, 4)
+        ]
+
+        return RiskMatrix(
+            cells=cells,
         )
 
     """
