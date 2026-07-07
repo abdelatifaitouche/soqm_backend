@@ -80,6 +80,14 @@ async def update(
     return Risk.model_validate(updated_risk)
 
 
+@router.get("/matrix/summary")
+async def get_risk_matrix(
+    queries: RiskQueryService = Depends(get_queries),
+):
+    matrix = await queries.get_risk_matrix_summary()
+    return matrix
+
+
 @router.patch("/{risk_id}/assess")
 async def assess_risk(
     risk_id: UUID,

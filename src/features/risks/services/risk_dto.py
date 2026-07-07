@@ -19,3 +19,15 @@ class PaginatedResponse:
     page: int
     size: int
     items: list[RiskList] | None
+
+
+@dataclass
+class RiskMatrixCell:
+    occurence: int
+    significance: int
+    percent: float
+
+
+@dataclass
+class RiskMatrix:
+    cells: list[RiskMatrixCell] | None = None
