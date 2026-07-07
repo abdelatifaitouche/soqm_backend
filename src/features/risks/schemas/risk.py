@@ -7,6 +7,27 @@ from src.features.soqm_components.schemas.component import BaseComponent
 from src.features.quality_objectives.schemas.objective import ObjectiveSummary
 
 
+class ListRisk(BaseModel):
+    id: UUID
+    score: int
+    significance: int
+    occurence: int
+    risk_ref: str
+    status: str
+    risk_description: str
+    model_config = {"from_attributes": True}
+
+
+class PaginatedResponse(BaseModel):
+    total: int
+    page: int
+    size: int
+    items: list[ListRisk] | None
+    model_config = {
+        "from_attributes": True,
+    }
+
+
 class RiskSummary(BaseModel):
     id: UUID
     risk_ref: str
@@ -24,16 +45,6 @@ class RiskOption(BaseModel):
     model_config = {
         "from_attributes": True,
     }
-
-
-class ListRisk(BaseModel):
-    id: UUID
-    score: int
-    significance: int
-    occurence: int
-    risk_ref: str
-    risk_discription: str
-    model_config = {"from_attributes": True}
 
 
 class CreateRisk(BaseModel):
