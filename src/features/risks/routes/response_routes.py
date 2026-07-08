@@ -16,6 +16,8 @@ from src.features.risks.routes.response_deps import get_service, get_queries
 from src.features.risks.repositories.queries.response_query_service import (
     ResponseQueryService,
 )
+from src.api.deps.ordering import parse_ordering
+from src.core.ordering import OrderBy
 
 router = APIRouter(prefix="/responses")
 
@@ -24,10 +26,11 @@ router = APIRouter(prefix="/responses")
 async def list(
     pagination: Pagination = Depends(),
     filters: ResponseFilters = Depends(),
+    order: OrderBy = Depends(parse_ordering),
     user=Depends(require_auth),
     queries: ResponseQueryService = Depends(get_queries),
 ):
-    responses = await queries.list(pagination, filters)
+    responses = await queries.list(pagination, filters, order)
 
     return PaginatedResponse.model_validate(responses)
 
