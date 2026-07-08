@@ -1,12 +1,7 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 from src.infra.db.uow import get_db
 from src.features.auth.security.dependencies import require_auth, require_permissions
 from uuid import UUID
-from src.features.risks.repositories.risk_response_repository import (
-    RiskResponseRepository,
-)
-from src.features.risks.repositories.risk_repository import RiskRepository
 from src.features.risks.services.response_service import ResponseService
 from src.core.pagination import Pagination
 from src.features.risks.schemas.risk_response import (
@@ -14,23 +9,13 @@ from src.features.risks.schemas.risk_response import (
     Response,
     RiskResponse,
     CreateRiskResponse,
+    PaginatedResponse,
 )
 from src.features.risks.filters.response_filters import ResponseFilters
-from src.features.organizations.repositories.employee_repository import (
-    EmployeeRepository,
+from src.features.risks.routes.response_deps import get_service, get_queries
+from src.features.risks.repositories.queries.response_query_service import (
+    ResponseQueryService,
 )
-from src.features.soqm_components.repositories.components_repository import (
-    ComponentRepository,
-)
-
-
-def get_service(db: AsyncSession = Depends(get_db)) -> ResponseService:
-    risk_repo: RiskRepository = RiskRepository(db)
-    response_repo: RiskResponseRepository = RiskResponseRepository(db)
-    employee_repo: EmployeeRepository = EmployeeRepository(db)
-    component_repo: ComponentRepository = ComponentRepository(db)
-    return ResponseService(response_repo, risk_repo, component_repo, employee_repo)
-
 
 router = APIRouter(prefix="/responses")
 
@@ -40,12 +25,11 @@ async def list(
     pagination: Pagination = Depends(),
     filters: ResponseFilters = Depends(),
     user=Depends(require_auth),
-    service: ResponseService = Depends(
-        get_service,
-    ),
+    queries: ResponseQueryService = Depends(get_queries),
 ):
-    responses = await service.list(pagination, filters)
-    return [Response.model_validate(resp) for resp in responses]
+    responses = await queries.list(pagination, filters)
+
+    return PaginatedResponse.model_validate(responses)
 
 
 @router.post("/")

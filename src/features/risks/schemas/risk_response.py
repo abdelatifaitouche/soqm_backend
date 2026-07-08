@@ -17,13 +17,25 @@ class Response(BaseModel):
     id: UUID
     response_name: str | None = None
     response_ref: str
-    response_description: str
     response_type: str
     status: str
+    frequency: str
+    execution_type: str
     owner: Owner
     date_implementation: date | None = None
 
     model_config = {"from_attributes": True}
+
+
+class PaginatedResponse(BaseModel):
+    total: int
+    size: int
+    page: int
+    items: list[Response] | None = None
+
+    model_config = {
+        "from_attributes": True,
+    }
 
 
 class RiskResponse(BaseModel):

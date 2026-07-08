@@ -7,3 +7,5 @@ class ResponseFilters(BaseModel):
     risk_id: UUID | None = None
     assigned_employee: UUID | None = None
     created_by: UUID | None = None
+    execution_type: str | None = None
+    frequency: str | None = None
