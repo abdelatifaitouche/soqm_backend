@@ -13,7 +13,18 @@ from src.features.risks.services.risk_dto import (
     RiskList,
     RiskMatrix,
     RiskMatrixCell,
+    RiskOption,
+    Risk,
+    ComponentSummary,
+    ObjectiveSummary,
 )
+from src.features.quality_objectives.models.quality_objective import (
+    QualityObjective,
+)
+from src.features.risks.models.risk_objective_association import (
+    RiskObjectiveAssociation,
+)
+from uuid import UUID
 
 
 class RiskQueryService:
@@ -32,14 +43,18 @@ class RiskQueryService:
 
         return stmt
 
-    async def list_options(self, filters: RiskFilters):
+    async def list_options(self, filters: RiskFilters) -> list[RiskOption]:
         stmt = select(RiskDB.id, RiskDB.risk_ref, RiskDB.score)
         stmt = self.apply_filters(stmt, filters)
 
         results = (await self.db.execute(stmt)).mappings().all()
 
         return [
-            {"id": res["id"], "risk_ref": res["risk_ref"], "score": res["score"]}
+            RiskOption(
+                id=res["id"],
+                risk_ref=res["risk_ref"],
+                score=res["score"],
+            )
             for res in results
         ]
 
@@ -48,7 +63,7 @@ class RiskQueryService:
         pagination: Pagination,
         filters: RiskFilters,
         order: OrderBy,
-    ):
+    ) -> PaginatedResponse:
 
         total_query = select(func.count()).select_from(RiskDB)
         total_result = await self.db.scalar(total_query)
@@ -79,7 +94,7 @@ class RiskQueryService:
 
         results = (await self.db.execute(stmt)).mappings().all()
 
-        items = [
+        items: list[RiskList] = [
             RiskList(
                 id=r["id"],
                 risk_ref=r["risk_ref"],
@@ -124,7 +139,7 @@ class RiskQueryService:
 
         result = (await self.db.execute(stmt)).mappings().all()
 
-        total = sum(r.total for r in result)
+        total: int = sum(r.total for r in result)
 
         counts = {(r["occurence"], r["significance"]): r["total"] for r in result}
 
@@ -142,6 +157,65 @@ class RiskQueryService:
             cells=cells,
         )
 
+    async def get_risk_details(self, entity_id: UUID) -> Risk | None:
+        from src.features.quality_objectives.models.quality_objective import (
+            QualityObjective,
+        )
+        from src.features.risks.models.risk_objective_association import (
+            RiskObjectiveAssociation,
+        )
+        from sqlalchemy.orm import selectinload
+
+        risk = await self.db.get(
+            RiskDB,
+            entity_id,
+            options=[
+                selectinload(RiskDB.objective_association)
+                .selectinload(RiskObjectiveAssociation.objective)
+                .load_only(
+                    QualityObjective.id,
+                    QualityObjective.objective_reference,
+                    QualityObjective.status,
+                ),
+                selectinload(RiskDB.component),
+            ],
+        )
+
+        if not risk:
+            return None
+        objectives: list[ObjectiveSummary] = [
+            ObjectiveSummary(
+                id=obj.objective.id,
+                status=obj.objective.status,
+                objective_reference=obj.objective.objective_reference,
+            )
+            for obj in risk.objective_association
+        ]
+
+        component: ComponentSummary = ComponentSummary(
+            id=risk.component.id,
+            name=risk.component.name,
+            description=risk.component.description,
+        )
+
+        risk_details: Risk = Risk(
+            id=risk.id,
+            risk_ref=risk.risk_ref,
+            risk_discreption=risk.risk_discription,
+            score=risk.score,
+            occurence=risk.occurence,
+            significance=risk.significance,
+            status=risk.status,
+            date_identified=risk.date_identified,
+            next_review_date=risk.next_review_date,
+            residual_score=risk.residual_score,
+            date_last_assessed=risk.date_last_assessed,
+            objectives=objectives,
+            component=component,
+        )
+
+        return risk_details
+
     """
     async def list_by_objective(self, objective_id: UUID):
 
@@ -156,63 +230,4 @@ class RiskQueryService:
         results = (await self.db.execute(stmt)).scalars().all()
 
         return [self._to_domain(risk, options=False) for risk in results]
-
-    async def get_risk_details(self, entity_id: UUID):
-        from src.features.quality_objectives.models.quality_objective import (
-            QualityObjective,
-        )
-        from src.features.risks.models.risk_objective_association import (
-            RiskObjectiveAssociation,
-        )
-        from sqlalchemy.orm import selectinload
-
-        risk = await self.db.get(
-            self.model,
-            entity_id,
-            options=[
-                selectinload(self.model.objective_association)
-                .selectinload(RiskObjectiveAssociation.objective)
-                .load_only(
-                    QualityObjective.id,
-                    QualityObjective.objective_reference,
-                    QualityObjective.status,
-                ),
-                selectinload(self.model.component),
-            ],
-        )
-        from typing import Any
-
-        if not risk:
-            return
-        risk_details: dict[str, Any] = {
-            "score": risk.score,
-            "id": risk.id,
-            "risk_discription": risk.risk_discription,
-            "date_last_assessed": risk.date_last_assessed,
-            "occurence": risk.occurence,
-            "next_review_date": risk.next_review_date,
-            "significance": risk.significance,
-            "created_by": risk.created_by,
-            "date_identified": risk.date_identified,
-            "status": risk.status,
-            "created_at": risk.created_at,
-            "updated_at": risk.updated_at,
-            "risk_ref": risk.risk_ref,
-            "residual_score": risk.residual_score,
-            "component": risk.component,
-        }
-
-        objectives: list[dict[str, Any]] = [
-            {
-                "objective_id": obj.objective.id,
-                "status": obj.objective.status,
-                "objective_reference": obj.objective.objective_reference,
-            }
-            for obj in risk.objective_association
-        ]
-
-        risk_details["objectives"] = objectives
-
-        return risk_details
-
-        """
+    """
