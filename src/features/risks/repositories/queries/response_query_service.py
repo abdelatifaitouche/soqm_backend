@@ -8,7 +8,7 @@ from src.features.risks.models.risk_response import (
 from src.features.risks.filters.response_filters import ResponseFilters
 from src.core.pagination import Pagination
 from src.infra.db.pagination import apply_pagination
-from src.core.ordering import apply_ordering, resolve_order_column
+from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
 from src.features.organizations.models.employee import Employee as EmployeeDB
 from src.features.risks.services.response_dto import (
     ResponseList,
@@ -41,7 +41,7 @@ class ResponseQueryService:
         return stmt
 
     async def list(
-        self, pagination: Pagination, filters: ResponseFilters
+        self, pagination: Pagination, filters: ResponseFilters, order: OrderBy
     ) -> PaginatedResponse:
 
         total_query = select(func.count()).select_from(ResponseDB)
@@ -67,6 +67,15 @@ class ResponseQueryService:
             EmployeeDB.last_name,
         ).join(ResponseDB.assigned_employee)
         stmt = self.apply_filters(stmt, filters)
+
+        column = resolve_order_column(
+            ResponseDB,
+            order.column,
+            RESPONSE_ORDER_FIELDS,
+        )
+
+        stmt = apply_ordering(stmt, column, direction=order.direction)
+
         stmt = apply_pagination(stmt, pagination)
 
         results = (await self.db.execute(stmt)).mappings().all()
