@@ -52,9 +52,9 @@ async def list_options(
 @router.get("/{risk_id}")
 async def get_risk_by_id(
     risk_id: UUID,
-    service: RiskService = Depends(get_service),
+    queries: RiskQueryService = Depends(get_queries),
 ):
-    risk = await service.get_risk_details(risk_id)
+    risk = await queries.get_risk_details(risk_id)
     return risk
 
 
