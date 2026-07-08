@@ -1,7 +1,12 @@
 from src.infra.db.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import UUID, ForeignKey, String, Date
-from src.features.risks.enums.risk_response import ResponseState, ResponseType
+from src.features.risks.enums.risk_response import (
+    ResponseState,
+    ResponseType,
+    ExecutionType,
+    Frequency,
+)
 from datetime import date
 import uuid
 
@@ -59,6 +64,17 @@ class RiskResponse(Base):
         ForeignKey("users.id"),
     )
 
+    frequency: Mapped[str] = mapped_column(
+        String,
+        nullable=True,
+        default=Frequency.CONTINUOUS.value,
+    )
+    execution_type: Mapped[str] = mapped_column(
+        String,
+        nullable=True,
+        default=ExecutionType.MANUAL.value,
+    )
+
     created_by_user: Mapped["User"] = relationship(
         "User",
         foreign_keys=[created_by],
@@ -72,3 +88,8 @@ class RiskResponse(Base):
     risk_associations: Mapped[list["RiskResponseAssociation"]] = relationship(
         back_populates="response"
     )
+
+
+RESPONSE_ORDER_FIELDS = {
+    "created_at": RiskResponse.created_at,
+}
