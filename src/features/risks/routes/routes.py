@@ -106,3 +106,8 @@ async def close_risk(
 ):
     updated_risk: RiskEntity = await service.close_risk(user.get("sub"), risk_id)
     return Risk.model_validate(updated_risk)
+
+
+@router.get("/{objective_id}/risks")
+async def get_objective_risks():
+    return

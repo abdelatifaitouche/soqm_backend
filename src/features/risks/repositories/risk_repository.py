@@ -230,7 +230,6 @@ class RiskRepository:
         return self._to_domain(data, options=True) if data else None
 
     async def update(self, entity: RiskEntity) -> RiskEntity:
-
         try:
             updated_risk = (
                 await self.db.execute(

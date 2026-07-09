@@ -6,6 +6,7 @@ from src.features.quality_objectives.routes.routes import router as objective_ro
 from src.features.risks.routes.routes import router as risk_router
 from src.features.risks.routes.response_routes import router as response_router
 from src.features.organizations.routes.employee_routes import router as employee_router
+from src.features.documents.api.routes import router as document_router
 
 router = APIRouter(prefix="/api/v1")
 
@@ -17,3 +18,4 @@ router.include_router(objective_router)
 router.include_router(risk_router)
 router.include_router(response_router)
 router.include_router(employee_router)
+router.include_router(document_router)

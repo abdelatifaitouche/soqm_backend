@@ -84,6 +84,7 @@ async def update(
     return ReadObjective.model_validate(obj)
 
 
+"""
 from src.features.risks.dependencies import get_service as get_risk_service
 from src.features.risks.schemas.risk import ListRisk
 
@@ -95,3 +96,4 @@ async def list_objective_risks(
 ):
     risks = await service.list_risks_by_objective(objective_id)
     return [ListRisk.model_validate(risk) for risk in risks]
+"""

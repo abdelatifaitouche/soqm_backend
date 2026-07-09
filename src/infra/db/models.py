@@ -1,3 +1,8 @@
+from src.features.documents.infrastructure.models.document_version import (
+    DocumentVersion,
+)
+from src.features.documents.infrastructure.models.document import Document
+
 from src.features.risks.models.risk_response_association import RiskResponseAssociation
 from src.features.risks.models.component_response_seq import ComponentResponseSeq
 
