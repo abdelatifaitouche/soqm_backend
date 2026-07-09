@@ -216,11 +216,10 @@ class RiskQueryService:
 
         return risk_details
 
-    """
     async def list_by_objective(self, objective_id: UUID):
 
         stmt = (
-            select(self.model)
+            select(RiskDB)
             .join(RiskObjectiveAssociation)
             .where(
                 RiskObjectiveAssociation.objective_id == objective_id,
@@ -229,5 +228,4 @@ class RiskQueryService:
 
         results = (await self.db.execute(stmt)).scalars().all()
 
-        return [self._to_domain(risk, options=False) for risk in results]
-    """
+        return
