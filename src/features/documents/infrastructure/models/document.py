@@ -1,7 +1,8 @@
 from src.infra.db.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, Text
+from sqlalchemy import String, Integer, Text, UUID
 from src.features.documents.domain.enums import DocumentStatus, DocumentType
+import uuid
 
 
 class Document(Base):
@@ -21,6 +22,11 @@ class Document(Base):
         String,
         nullable=False,
         default=DocumentStatus.ACTIVE.value,
+    )
+
+    current_version_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=False,
     )
 
     versions: Mapped[list["DocumentVersion"]] = relationship(

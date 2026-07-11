@@ -17,4 +17,7 @@ data/
 *.log
 logs/
 
+uploaded/
+test.txt
+
 backend.log
