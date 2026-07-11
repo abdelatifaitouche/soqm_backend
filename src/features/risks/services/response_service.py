@@ -39,10 +39,6 @@ class ResponseService:
         self.component_repo: ComponentRepository = component_repo
         self.employee_repo: EmployeeRepository = employee_repo
 
-    async def list(self, pagination: Pagination, filters: ResponseFilters):
-        """THIS NEEDS TO BE DYNAMIC BASED ON THE USER"""
-        return await self.repo.list(pagination, filters)
-
     async def _get_active_employee(self, employee_id: UUID) -> Employee:
         owner: Employee | None = await self.employee_repo.get_by_id(employee_id)
 
@@ -102,6 +98,8 @@ class ResponseService:
             date_implementation=data.date_implementation,
             date_monitored_design=data.date_monitored_design,
             date_monitored_operating=data.date_monitored_operating,
+            frequency=data.frequency.value,
+            execution_type=data.execution_type.value,
         )
         # this will emit an event here to be logged or notify (NOT IMPLEMENTED YET)
         return await self.repo.create(response)

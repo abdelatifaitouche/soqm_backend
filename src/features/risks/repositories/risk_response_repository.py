@@ -33,6 +33,8 @@ class RiskResponseRepository:
             owner=entity.owner,
             response_description=entity.response_description,
             component_id=entity.component_id,
+            frequency=entity.frequency,
+            execution_type=entity.execution_type,
         )
 
     def _to_domain(self, orm: ResponseDB, options: bool = False) -> ResponseEntity:
@@ -50,6 +52,8 @@ class RiskResponseRepository:
             date_monitored_design=orm.date_monitored_design,
             date_monitored_operating=orm.date_monitored_operating,
             response_type=orm.response_type,
+            frequency=orm.frequency,
+            execution_type=orm.execution_type,
         )
 
     async def create(self, entity: ResponseEntity) -> ResponseEntity:
@@ -72,54 +76,6 @@ class RiskResponseRepository:
             return self._to_domain(orm, options=False)
         except Exception as e:
             raise translate_db_errors(e)
-
-    def apply_filters(self, stmt: Select[Any], filters: ResponseFilters) -> Select[Any]:
-
-        if filters.status:
-            stmt = stmt.where(self.model.status == filters.status)
-
-        if filters.created_by:
-            stmt = stmt.where(self.model.created_by == filters.created_by)
-
-        if filters.assigned_employee:
-            stmt = stmt.where(self.model.owner == filters.assigned_employee)
-
-        return stmt
-
-    async def list(self, pagination: Pagination, filters: ResponseFilters):
-        from src.features.organizations.models.employee import Employee as EmployeeDB
-
-        stmt = select(
-            self.model.id,
-            self.model.response_name,
-            self.model.response_ref,
-            self.model.status,
-            self.model.response_type,
-            self.model.response_description,
-            EmployeeDB.first_name,
-            EmployeeDB.last_name,
-        ).join(self.model.assigned_employee)
-        stmt = self.apply_filters(stmt, filters)
-        stmt = apply_pagination(stmt, pagination)
-
-        results = await self.db.execute(stmt)
-        rows = results.mappings().all()
-
-        return [
-            {
-                "id": resp["id"],
-                "response_name": resp["response_name"],
-                "response_ref": resp["response_ref"],
-                "status": resp["status"],
-                "response_type": resp["response_type"],
-                "response_description": resp["response_description"],
-                "owner": {
-                    "first_name": resp["first_name"],
-                    "last_name": resp["last_name"],
-                },
-            }
-            for resp in rows
-        ]
 
     async def get_by_id(self, entity_id: UUID) -> ResponseEntity | None:
         stmt = select(self.model).where(self.model.id == entity_id)

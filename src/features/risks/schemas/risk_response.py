@@ -3,6 +3,7 @@ from uuid import UUID
 from datetime import date
 from src.features.risks.enums.risk_response import ResponseType
 from src.features.risks.schemas.risk import RiskSummary
+from src.features.risks.enums.risk_response import ExecutionType, Frequency
 
 
 class Owner(BaseModel):
@@ -63,7 +64,8 @@ class CreateRiskResponse(BaseModel):
     response_type: ResponseType
     response_employee: UUID
     evidence_notes: str
-
+    frequency: Frequency
+    execution_type: ExecutionType
     date_implementation: date | None = None
     date_monitored_design: date | None = None
     date_monitored_operating: date | None = None
