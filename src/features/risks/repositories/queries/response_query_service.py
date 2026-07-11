@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, Select, func
+from sqlalchemy.orm import joinedload
 from typing import Any
 from src.features.risks.models.risk_response import (
     RiskResponse as ResponseDB,
@@ -14,7 +15,9 @@ from src.features.risks.services.response_dto import (
     ResponseList,
     ResponseOwner,
     PaginatedResponse,
+    ResponseDetails,
 )
+from uuid import UUID
 
 
 class ResponseQueryService:
@@ -104,5 +107,29 @@ class ResponseQueryService:
             items=responses,
         )
 
-    async def get_response_details(self):
-        return
+    async def get_response_details(self, response_id: UUID):
+        from src.features.soqm_components.models.soqm_component import SOQMComponent
+        from src.features.organizations.models.employee import Employee
+
+        stmt = (
+            select(
+                ResponseDB,
+                SOQMComponent.id,
+                SOQMComponent.name,
+                SOQMComponent.description,
+                SOQMComponent.display_order,
+            )
+            .options(
+                joinedload(ResponseDB.assigned_employee).joinedload(Employee.department)
+            )
+            .join(
+                SOQMComponent,
+                SOQMComponent.id == ResponseDB.component_id,
+            )
+            .where(
+                ResponseDB.id == response_id,
+            )
+        )
+        result = (await self.db.execute(stmt)).mappings().one()
+
+        return result

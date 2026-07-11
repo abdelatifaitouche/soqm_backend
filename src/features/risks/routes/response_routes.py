@@ -49,7 +49,7 @@ async def create_response(
 async def get_by_id(
     response_id: UUID,
     creds=Depends(require_auth),
-    service: ResponseService = Depends(get_service),
+    queries: ResponseQueryService = Depends(get_queries),
 ):
-    response = await service.get_by_id(response_id)
-    return RiskResponse.model_validate(response)
+    response = await queries.get_response_details(response_id)
+    return response
