@@ -25,6 +25,9 @@ from src.features.risks.models.risk_objective_association import (
     RiskObjectiveAssociation,
 )
 from uuid import UUID
+from src.features.risks.models.risk_response_association import (
+    RiskResponseAssociation,
+)
 
 
 class RiskQueryService:
@@ -229,3 +232,35 @@ class RiskQueryService:
         results = (await self.db.execute(stmt)).scalars().all()
 
         return
+
+    async def get_response_risks(self, response_id: UUID, filters: RiskFilters):
+
+        stmt = (
+            select(
+                RiskDB.id,
+                RiskDB.risk_ref,
+                RiskDB.occurence,
+                RiskDB.significance,
+                RiskDB.score,
+                RiskDB.risk_discription,
+                RiskDB.status,
+            )
+            .join(RiskResponseAssociation, RiskDB.id == RiskResponseAssociation.risk_id)
+            .where(
+                RiskResponseAssociation.response_id == response_id,
+            )
+        )
+        results = (await self.db.execute(stmt)).mappings().all()
+        items: list[RiskList] = [
+            RiskList(
+                id=r["id"],
+                risk_ref=r["risk_ref"],
+                score=r["score"],
+                occurence=r["occurence"],
+                significance=r["significance"],
+                risk_description=r["risk_discription"],
+                status=r["status"],
+            )
+            for r in results
+        ]
+        return items
