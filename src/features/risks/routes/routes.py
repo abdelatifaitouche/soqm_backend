@@ -99,6 +99,15 @@ async def list_response_risks(
     return [ListRisk.model_validate(risk) for risk in risks]
 
 
+@router.get("/{objective_id}/list")
+async def list_objective_risks(
+    objective_id: UUID,
+    queries: RiskQueryService = Depends(get_queries),
+):
+    risks = await queries.list_by_objective(objective_id)
+    return [ListRisk.model_validate(risk) for risk in risks]
+
+
 @router.patch("/{risk_id}/assess")
 async def assess_risk(
     risk_id: UUID,

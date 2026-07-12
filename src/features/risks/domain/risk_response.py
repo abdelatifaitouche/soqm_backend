@@ -51,7 +51,7 @@ class RiskResponse:
             response_ref=response_ref,
             response_name=response_name,
             response_description=response_description,
-            response_type=ResponseType.DETECTIVE.value,
+            response_type=response_type,
             date_implementation=date_implementation,
             date_monitored_design=date_monitored_design,
             created_by=created_by,
