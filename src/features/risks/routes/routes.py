@@ -88,6 +88,17 @@ async def get_risk_matrix(
     return matrix
 
 
+@router.get("/{response_id}/list")
+async def list_response_risks(
+    response_id: UUID,
+    pagination: Pagination = Depends(),
+    filters: RiskFilters = Depends(),
+    queries: RiskQueryService = Depends(get_queries),
+):
+    risks = await queries.get_response_risks(response_id, filters)
+    return [ListRisk.model_validate(risk) for risk in risks]
+
+
 @router.patch("/{risk_id}/assess")
 async def assess_risk(
     risk_id: UUID,
