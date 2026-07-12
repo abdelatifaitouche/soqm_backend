@@ -220,18 +220,36 @@ class RiskQueryService:
         return risk_details
 
     async def list_by_objective(self, objective_id: UUID):
-
         stmt = (
-            select(RiskDB)
+            select(
+                RiskDB.id,
+                RiskDB.risk_ref,
+                RiskDB.occurence,
+                RiskDB.significance,
+                RiskDB.score,
+                RiskDB.risk_discription,
+                RiskDB.status,
+            )
             .join(RiskObjectiveAssociation)
             .where(
                 RiskObjectiveAssociation.objective_id == objective_id,
             )
         )
+        results = (await self.db.execute(stmt)).mappings().all()
 
-        results = (await self.db.execute(stmt)).scalars().all()
-
-        return
+        items: list[RiskList] = [
+            RiskList(
+                id=r["id"],
+                risk_ref=r["risk_ref"],
+                score=r["score"],
+                occurence=r["occurence"],
+                significance=r["significance"],
+                risk_description=r["risk_discription"],
+                status=r["status"],
+            )
+            for r in results
+        ]
+        return items
 
     async def get_response_risks(self, response_id: UUID, filters: RiskFilters):
 

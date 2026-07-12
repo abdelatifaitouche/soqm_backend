@@ -16,6 +16,7 @@ class DocumentProcessingStatus(StrEnum):
 
 
 class DocumentType(StrEnum):
+    MANUAL = "manual"
     POLICY = "policy"
     PROCEDURE = "procedure"
     TEMPLATE = "template"
