@@ -99,13 +99,18 @@ async def list_response_risks(
     return [ListRisk.model_validate(risk) for risk in risks]
 
 
-@router.get("/{objective_id}/list")
+@router.get("/objective/{objective_id}/risks")
 async def list_objective_risks(
     objective_id: UUID,
+    pagination: Pagination = Depends(),
+    filters: RiskFilters = Depends(),
+    order: OrderBy = Depends(
+        parse_ordering,
+    ),
     queries: RiskQueryService = Depends(get_queries),
 ):
-    risks = await queries.list_by_objective(objective_id)
-    return [ListRisk.model_validate(risk) for risk in risks]
+    risks = await queries.list_by_objective(objective_id, pagination, filters, order)
+    return PaginatedResponse.model_validate(risks)
 
 
 @router.patch("/{risk_id}/assess")
