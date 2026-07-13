@@ -41,9 +41,6 @@ class RiskQueryService:
         if filters.component_id:
             stmt = stmt.where(RiskDB.component_id == filters.component_id)
 
-        if filters.objective_id:
-            stmt = stmt.where(RiskDB.objective_id == filters.objective_id)
-
         return stmt
 
     async def list_options(self, filters: RiskFilters) -> list[RiskOption]:
@@ -219,7 +216,30 @@ class RiskQueryService:
 
         return risk_details
 
-    async def list_by_objective(self, objective_id: UUID):
+    async def list_by_objective(
+        self,
+        objective_id: UUID,
+        pagination: Pagination,
+        filters: RiskFilters,
+        order: OrderBy,
+    ) -> PaginatedResponse:
+
+        total_query = (
+            select(func.count())
+            .select_from(RiskObjectiveAssociation)
+            .where(RiskObjectiveAssociation.objective_id == objective_id)
+        )
+
+        total: int | None = await self.db.scalar(total_query)
+
+        if not total:
+            return PaginatedResponse(
+                total=0,
+                page=pagination.page,
+                size=pagination.limit,
+                items=[],
+            )
+
         stmt = (
             select(
                 RiskDB.id,
@@ -230,13 +250,28 @@ class RiskQueryService:
                 RiskDB.risk_discription,
                 RiskDB.status,
             )
-            .join(RiskObjectiveAssociation)
+            .select_from(RiskDB)
+            .join(
+                RiskObjectiveAssociation, RiskDB.id == RiskObjectiveAssociation.risk_id
+            )
             .where(
                 RiskObjectiveAssociation.objective_id == objective_id,
             )
         )
-        results = (await self.db.execute(stmt)).mappings().all()
+        stmt = self.apply_filters(stmt, filters)
+        column = resolve_order_column(
+            RiskDB,
+            order.column,
+            allowed_fields=RISK_ORDER_FIELDS,
+        )
+        stmt = apply_ordering(
+            stmt,
+            column,
+            direction=order.direction,
+        )
+        stmt = apply_pagination(stmt, pagination)
 
+        results = (await self.db.execute(stmt)).mappings().all()
         items: list[RiskList] = [
             RiskList(
                 id=r["id"],
@@ -249,7 +284,12 @@ class RiskQueryService:
             )
             for r in results
         ]
-        return items
+        return PaginatedResponse(
+            total=total,
+            page=pagination.page,
+            size=pagination.limit,
+            items=items,
+        )
 
     async def get_response_risks(self, response_id: UUID, filters: RiskFilters):
 
