@@ -178,6 +178,9 @@ class ResponseQueryService:
             .select_from(ResponseDB)
             .join(
                 RiskResponseAssociation,
+                RiskResponseAssociation.response_id == ResponseDB.id,
+            )
+            .where(
                 RiskResponseAssociation.risk_id == risk_id,
             )
             .join(ResponseDB.assigned_employee)
