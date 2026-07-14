@@ -9,3 +9,4 @@ class ResponseFilters(BaseModel):
     created_by: UUID | None = None
     execution_type: str | None = None
     frequency: str | None = None
+    component_id: UUID | None = None

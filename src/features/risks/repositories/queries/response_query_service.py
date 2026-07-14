@@ -6,6 +6,7 @@ from src.features.risks.models.risk_response import (
     RiskResponse as ResponseDB,
     RESPONSE_ORDER_FIELDS,
 )
+from src.features.risks.models.risk_response_association import RiskResponseAssociation
 from src.features.risks.filters.response_filters import ResponseFilters
 from src.core.pagination import Pagination
 from src.infra.db.pagination import apply_pagination
@@ -40,6 +41,9 @@ class ResponseQueryService:
 
         if filters.execution_type:
             stmt = stmt.where(ResponseDB.execution_type == filters.execution_type)
+
+        if filters.component_id:
+            stmt = stmt.where(ResponseDB.component_id == filters.component_id)
 
         return stmt
 
@@ -133,3 +137,82 @@ class ResponseQueryService:
         result = (await self.db.execute(stmt)).mappings().one()
 
         return result
+
+    async def get_risk_responses(
+        self,
+        risk_id: UUID,
+        pagination: Pagination,
+        filters: ResponseFilters,
+        order: OrderBy,
+    ) -> PaginatedResponse:
+
+        total_query = (
+            select(func.count())
+            .select_from(RiskResponseAssociation)
+            .where(
+                RiskResponseAssociation.risk_id == risk_id,
+            )
+        )
+        total: int | None = await self.db.scalar(total_query)
+
+        if not total:
+            return PaginatedResponse(
+                total=0,
+                page=0,
+                size=0,
+                items=[],
+            )
+
+        stmt = (
+            select(
+                ResponseDB.id,
+                ResponseDB.response_name,
+                ResponseDB.response_ref,
+                ResponseDB.status,
+                ResponseDB.response_type,
+                ResponseDB.frequency,
+                ResponseDB.execution_type,
+                EmployeeDB.first_name,
+                EmployeeDB.last_name,
+            )
+            .select_from(ResponseDB)
+            .join(
+                RiskResponseAssociation,
+                RiskResponseAssociation.risk_id == risk_id,
+            )
+            .join(ResponseDB.assigned_employee)
+        )
+        stmt = self.apply_filters(stmt, filters)
+        column = resolve_order_column(
+            ResponseDB,
+            order.column,
+            allowed_fields=RESPONSE_ORDER_FIELDS,
+        )
+
+        stmt = apply_ordering(stmt, column, order.direction)
+        stmt = apply_pagination(stmt, pagination)
+        results = (await self.db.execute(stmt)).mappings().all()
+
+        items: list[ResponseList] = [
+            ResponseList(
+                id=resp["id"],
+                response_name=resp["response_name"],
+                status=resp["status"],
+                response_ref=resp["response_ref"],
+                response_type=resp["response_type"],
+                frequency=resp["frequency"],
+                execution_type=resp["execution_type"],
+                owner=ResponseOwner(
+                    first_name=resp["first_name"],
+                    last_name=resp["last_name"],
+                ),
+            )
+            for resp in results
+        ]
+
+        return PaginatedResponse(
+            total=total,
+            page=pagination.page,
+            size=pagination.limit,
+            items=items,
+        )

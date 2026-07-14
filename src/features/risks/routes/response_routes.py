@@ -53,3 +53,15 @@ async def get_by_id(
 ):
     response = await queries.get_response_details(response_id)
     return response
+
+
+@router.get("/{risk_id}/responses")
+async def get_risk_responses(
+    risk_id: UUID,
+    pagination: Pagination = Depends(),
+    filters: ResponseFilters = Depends(),
+    order: OrderBy = Depends(parse_ordering),
+    queries: ResponseQueryService = Depends(get_queries),
+):
+    results = await queries.get_risk_responses(risk_id, pagination, filters, order)
+    return results
