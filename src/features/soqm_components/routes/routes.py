@@ -10,7 +10,7 @@ from src.features.soqm_components.schemas.component import (
     Component,
     ComponentOption,
 )
-from src.features.auth.security.dependencies import require_permissions
+from src.features.auth.security.dependencies import require_permissions, require_auth
 from src.features.soqm_components.permissions.components_permissions import (
     ComponentPermissions,
 )
@@ -28,7 +28,7 @@ router = APIRouter(prefix="/components")
 
 @router.get("/options", status_code=status.HTTP_200_OK)
 async def list_options(
-    queries: ComponentQueries = Depends(get_queries),
+    queries: ComponentQueries = Depends(get_queries), creds=Depends(require_auth)
 ):
     options = await queries.list_options()
     return [ComponentOption.model_validate(opt) for opt in options]
@@ -38,7 +38,7 @@ async def list_options(
 async def list(
     queries: ComponentQueries = Depends(get_queries),
     filters: ComponentFilters = Depends(),
-    creds=Depends(require_permissions(ComponentPermissions.READ)),
+    creds=Depends(require_auth),
 ):
     components = await queries.list(filters)
     return [BaseComponent.model_validate(cp) for cp in components]
@@ -59,9 +59,7 @@ async def get_component_details(
     component_id: UUID,
     queries: ComponentQueries = Depends(get_queries),
     creds=Depends(
-        require_permissions(
-            ComponentPermissions.READ,
-        ),
+        require_auth,
     ),
 ):
     component = await queries.get_component_details(component_id)
@@ -103,6 +101,7 @@ async def delete(
 async def activate_component(
     component_id: UUID,
     service: ComponentService = Depends(get_service),
+    creds=Depends(require_permissions(ComponentPermissions.ACTIVATE)),
 ):
     updated = await service.activate_component(component_id)
     return BaseComponent.model_validate(updated)
@@ -112,6 +111,7 @@ async def activate_component(
 async def deactivate_component(
     component_id: UUID,
     service: ComponentService = Depends(get_service),
+    creds=Depends(require_permissions(ComponentPermissions.DEACTIVATE)),
 ):
     deactivated = await service.deactivate_component(component_id)
     return BaseComponent.model_validate(deactivated)
