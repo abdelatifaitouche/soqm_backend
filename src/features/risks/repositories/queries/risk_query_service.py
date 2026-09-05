@@ -88,8 +88,8 @@ class RiskQueryService:
 
         stmt = self.apply_filters(stmt, filters)
 
-        column = resolve_order_column(RiskDB, order.column, RISK_ORDER_FIELDS)
-        stmt = apply_ordering(stmt, column, direction=order.direction)
+        columns = resolve_order_column(RiskDB, order.columns, RISK_ORDER_FIELDS)
+        stmt = apply_ordering(stmt, columns, direction=order.direction)
         stmt = apply_pagination(stmt, pagination)
 
         results = (await self.db.execute(stmt)).mappings().all()
@@ -201,7 +201,7 @@ class RiskQueryService:
         risk_details: Risk = Risk(
             id=risk.id,
             risk_ref=risk.risk_ref,
-            risk_discreption=risk.risk_discription,
+            risk_description=risk.risk_discription,
             score=risk.score,
             occurence=risk.occurence,
             significance=risk.significance,
@@ -261,7 +261,7 @@ class RiskQueryService:
         stmt = self.apply_filters(stmt, filters)
         column = resolve_order_column(
             RiskDB,
-            order.column,
+            order.columns,
             allowed_fields=RISK_ORDER_FIELDS,
         )
         stmt = apply_ordering(

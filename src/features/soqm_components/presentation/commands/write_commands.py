@@ -1,31 +1,7 @@
 from pydantic import BaseModel, field_validator
-from uuid import UUID
 
 
-class ComponentOption(BaseModel):
-    id: UUID
-    name: str
-
-    model_config = {"from_attributes": True}
-
-
-class BaseComponent(BaseModel):
-    id: UUID
-    name: str
-    isqm_reference: str
-    status: str
-    display_order: int
-    model_config = {"from_attributes": True}
-
-
-class Component(BaseComponent):
-    description: str
-    status: str
-
-    model_config = {"from_attributes": True}
-
-
-class CreateComponent(BaseModel):
+class CreateComponentRequest(BaseModel):
     name: str
     description: str
     isqm_reference: str
@@ -53,11 +29,7 @@ class CreateComponent(BaseModel):
         return value
 
 
-class ReadComponent(BaseModel):
-    pass
-
-
-class UpdateComponent(BaseModel):
+class UpdateComponentRequest(BaseModel):
     name: str | None = None
     description: str | None = None
     isqm_reference: str | None = None

@@ -7,7 +7,7 @@ from datetime import datetime, UTC
 from src.features.quality_objectives.repository.objective_repository import (
     ObjectiveRepository,
 )
-from src.features.soqm_components.repositories.components_repository import (
+from src.features.soqm_components.infra.repositories.component_repository import (
     ComponentRepository,
 )
 from src.core.exceptions import NotFoundError, ValidationError
@@ -37,16 +37,13 @@ class ObjectiveService:
         )
 
     async def create(self, data: CreateObjective) -> Objective:
-
-        component: SOQMComponent | None = await self.component_repo.get_by_id(
+        component: SOQMComponent | None = await self.component_repo.get(
             data.component_id
         )
-
         if not component:
             raise NotFoundError(
                 message=f"Component with {data.component_id} was not found",
             )
-
         if component.status in (
             ComponentState.ARCHIVED.value,
             ComponentState.IN_ACTIVE.value,
@@ -54,9 +51,7 @@ class ObjectiveService:
             raise ValidationError(
                 message=f"Cannot add objective to component with state : {component.status}",
             )
-
         next_seq: int = await self.seq_repo.get_next_val(component.id)
-
         seq: str = ObjectiveRefGenerator.generate_objective_ref(
             component.display_order, next_seq
         )
@@ -69,12 +64,6 @@ class ObjectiveService:
 
         return await self.repo.create(entity)
 
-    async def list_options(self, filters: ObjectiveFilters):
-        return await self.repo.list_options(filters)
-
-    async def list(self, pagination: Pagination) -> list[Objective]:
-        return await self.repo.list(pagination)
-
     async def get_by_id(self, entity_id: UUID):
         entity: Objective | None = await self.repo.get_by_id(entity_id)
 
@@ -86,45 +75,17 @@ class ObjectiveService:
         return entity
 
     async def update(self, entity_id: UUID, data: UpdateObjective):
-        """
-        For now we are handling the state transitions inside the self._transition()
-        update later to handle each transition inside its own methods/usecase once we define the whole workflow
-        """
         entity: Objective = await self.get_by_id(entity_id)
 
-        if data.component_id:
-            if entity.status != "draft":
-                raise ValidationError("")
-            component: SOQMComponent | None = await self.component_repo.get_by_id(
-                data.component_id
-            )
+        entity.update(
+            data.description,
+            data.review_date,
+            data.component_id,
+        )
 
-            if not component:
-                raise NotFoundError(
-                    message=f"Assigned SOQM component does not exists",
-                    details={"component_id": data.component_id},
-                )
-
-            entity.component_id = data.component_id
-
-        if data.description:
-            if entity.status != "draft":
-                raise ValidationError("Cannot update non draft")
-            entity.description = data.description
-
-        if data.review_date:
-            if data.review_date <= datetime.now():
-                raise ValidationError(
-                    "Invalid review date",
-                    details={
-                        "review_date": data.review_date,
-                    },
-                )
-            entity.review_date = data.review_date
         if data.status:
             entity = self._transition(entity, data.status)
 
-        entity.updated_at = datetime.now()
         return await self.repo.update(entity)
 
     def _transition(self, entity: Objective, next_state: str) -> Objective:
@@ -151,10 +112,3 @@ class ObjectiveService:
             )
 
         await self.repo.delete(entity_id)
-
-    async def list_objectives_by_component(
-        self, component_id: UUID, pagination: Pagination
-    ):
-        # first check for the existance of the component
-
-        return await self.repo.list_by_component(component_id, pagination)

@@ -32,4 +32,4 @@ from src.features.organizations.models.department import Department
 
 
 from src.features.quality_objectives.models.quality_objective import QualityObjective
-from src.features.soqm_components.models.soqm_component import SOQMComponent
+from src.features.soqm_components.infra.models.soqm_component import SOQMComponent

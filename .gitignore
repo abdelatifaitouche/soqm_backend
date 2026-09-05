@@ -21,3 +21,4 @@ uploaded/
 test.txt
 
 backend.log
+data_load.py

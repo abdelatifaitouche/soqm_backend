@@ -28,7 +28,7 @@ class RiskRepository:
             id=entity.id,
             component_id=entity.component_id,
             risk_ref=entity.risk_ref,
-            risk_discription=entity.risk_discription,
+            risk_discription=entity.risk_description,
             score=entity.score,
             occurence=entity.occurence,
             significance=entity.significance,
@@ -38,6 +38,8 @@ class RiskRepository:
             next_review_date=entity.next_review_date,
             residual_score=entity.residual_score,
             created_by=entity.created_by,
+            risk_rational=entity.risk_rational,
+            sequence_number=entity.sequence,
         )
 
         return orm
@@ -55,9 +57,13 @@ class RiskRepository:
             date_last_assessed=orm.date_last_assessed,
             next_review_date=orm.next_review_date,
             residual_score=orm.residual_score,
-            risk_discription=orm.risk_discription,
+            risk_description=orm.risk_discription,
             created_by=orm.created_by,
+            risk_rational=orm.risk_rational,
             component=orm.component if options else None,
+            updated_at=orm.updated_at,
+            created_at=orm.created_at,
+            sequence=orm.sequence_number,
         )
 
     async def create(self, entity: RiskEntity) -> RiskEntity:
@@ -88,128 +94,9 @@ class RiskRepository:
         if filters.component_id:
             stmt = stmt.where(self.model.component_id == filters.component_id)
 
-        if filters.objective_id:
-            stmt = stmt.where(self.model.objective_id == filters.objective_id)
-
         return stmt
 
-    async def list_options(self, filters: RiskFilters):
-        stmt = select(self.model.id, self.model.risk_ref, self.model.score)
-        stmt = self.apply_filters(stmt, filters)
-
-        results = (await self.db.execute(stmt)).mappings().all()
-
-        return [
-            {"id": res["id"], "risk_ref": res["risk_ref"], "score": res["score"]}
-            for res in results
-        ]
-
-    async def list(self, pagination: Pagination, filters: RiskFilters):
-        stmt = select(
-            self.model.id,
-            self.model.risk_ref,
-            self.model.score,
-            self.model.occurence,
-            self.model.significance,
-            self.model.objective_id,
-            self.model.risk_discription,
-        )
-
-        stmt = self.apply_filters(stmt, filters)
-        stmt = apply_pagination(stmt, pagination)
-
-        results = await self.db.execute(stmt)
-        rows = results.mappings().all()
-
-        return [
-            {
-                "id": r["id"],
-                "risk_ref": r["risk_ref"],
-                "score": r["score"],
-                "occurence": r["occurence"],
-                "significance": r["significance"],
-                "objective_id": r["objective_id"],
-                "risk_discription": r["risk_discription"],
-            }
-            for r in rows
-        ]
-
-    async def list_by_objective(self, objective_id: UUID):
-        """this should be updated to use a join to the association table"""
-
-        stmt = (
-            select(self.model)
-            .join(RiskObjectiveAssociation)
-            .where(
-                RiskObjectiveAssociation.objective_id == objective_id,
-            )
-        )
-
-        results = (await self.db.execute(stmt)).scalars().all()
-
-        return [self._to_domain(risk, options=False) for risk in results]
-
-    async def get_risk_details(self, entity_id: UUID):
-        """this is for projection"""
-        from src.features.quality_objectives.models.quality_objective import (
-            QualityObjective,
-        )
-        from src.features.risks.models.risk_objective_association import (
-            RiskObjectiveAssociation,
-        )
-        from sqlalchemy.orm import selectinload
-
-        risk = await self.db.get(
-            self.model,
-            entity_id,
-            options=[
-                selectinload(self.model.objective_association)
-                .selectinload(RiskObjectiveAssociation.objective)
-                .load_only(
-                    QualityObjective.id,
-                    QualityObjective.objective_reference,
-                    QualityObjective.status,
-                ),
-                selectinload(self.model.component),
-            ],
-        )
-        from typing import Any
-
-        if not risk:
-            return
-        risk_details: dict[str, Any] = {
-            "score": risk.score,
-            "id": risk.id,
-            "risk_discription": risk.risk_discription,
-            "date_last_assessed": risk.date_last_assessed,
-            "occurence": risk.occurence,
-            "next_review_date": risk.next_review_date,
-            "significance": risk.significance,
-            "created_by": risk.created_by,
-            "date_identified": risk.date_identified,
-            "status": risk.status,
-            "created_at": risk.created_at,
-            "updated_at": risk.updated_at,
-            "risk_ref": risk.risk_ref,
-            "residual_score": risk.residual_score,
-            "component": risk.component,
-        }
-
-        objectives: list[dict[str, Any]] = [
-            {
-                "objective_id": obj.objective.id,
-                "status": obj.objective.status,
-                "objective_reference": obj.objective.objective_reference,
-            }
-            for obj in risk.objective_association
-        ]
-
-        risk_details["objectives"] = objectives
-
-        return risk_details
-
     async def get_by_id(self, entity_id: UUID) -> RiskEntity | None:
-        """this returns the actual domain entity, use it for business rules"""
         stmt = (
             select(self.model)
             .where(self.model.id == entity_id)
@@ -222,7 +109,6 @@ class RiskRepository:
                 ),
             )
         )
-
         result = await self.db.execute(stmt)
 
         data = result.scalar_one_or_none()
@@ -238,7 +124,7 @@ class RiskRepository:
                     .values(
                         status=entity.status,
                         risk_ref=entity.risk_ref,
-                        risk_discription=entity.risk_discription,
+                        risk_discription=entity.risk_description,
                         occurence=entity.occurence,
                         significance=entity.significance,
                         score=entity.score,
@@ -246,6 +132,7 @@ class RiskRepository:
                         date_last_assessed=entity.date_last_assessed,
                         residual_score=entity.residual_score,
                         updated_at=datetime.now(),
+                        risk_rational=entity.risk_rational,
                     )
                     .returning(self.model)
                 )

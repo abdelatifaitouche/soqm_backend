@@ -23,13 +23,18 @@ class Risk:
     id: UUID
     component_id: UUID
     risk_ref: str
-    risk_discription: str
+    risk_description: str
     occurence: int  # 1 - 3
     significance: int  # 1 - 3
     date_identified: date
+    created_at: datetime
+    updated_at: datetime
     status: str = RiskStatus.IDENTIFIED.value
     score: int = 0
     residual_score: float | None = None
+    sequence: int | None = None
+
+    risk_rational: str | None = None
 
     objectives: list[UUID] | None = None
 
@@ -39,7 +44,6 @@ class Risk:
     component: SOQMComponent | None = None
 
     created_by: UUID | None = None
-
     _events: list[DomainEvent] = field(default_factory=list, init=False, repr=False)
 
     @classmethod
@@ -47,25 +51,28 @@ class Risk:
         cls,
         *,
         component_id,
-        risk_ref: str,
-        risk_discription: str,
+        sequence: int,
+        risk_description: str,
         occurence: int,
         significance: int,
         next_review_date: date,
         created_by: UUID,
         objectives: list[UUID],
+        component_idx: int,
     ):
         risk = cls(
             id=uuid.uuid4(),
             component_id=component_id,
-            risk_ref=risk_ref,
-            risk_discription=risk_discription,
+            risk_ref=cls.generate_risk_reference(sequence, component_idx),
+            risk_description=risk_description,
             occurence=occurence,
             significance=significance,
             next_review_date=next_review_date,
             created_by=created_by,
             objectives=objectives,
             date_identified=date.today(),
+            created_at=datetime.now(),
+            updated_at=datetime.now(),
         )
 
         risk.validate()
@@ -73,17 +80,22 @@ class Risk:
 
         return risk
 
+    @classmethod
+    def generate_risk_reference(cls, sequence: int, component_idx: int) -> str:
+        return f"{component_idx}.{sequence}"
+
     def update(
         self,
         *,
-        risk_discreption: str | None = None,
+        risk_description: str | None = None,
         occurence: int | None = None,
         significance: int | None = None,
         next_review_date: date | None = None,
+        risk_rational: str | None = None,
     ):
 
-        if risk_discreption is not None:
-            self.risk_discription = risk_discreption
+        if risk_description is not None:
+            self.risk_description = risk_description
 
         if occurence is not None:
             self.occurence = occurence
@@ -94,8 +106,12 @@ class Risk:
         if next_review_date is not None:
             self.next_review_date
 
+        if risk_rational:
+            self.risk_rational = risk_rational
+
         self.validate()
         self.calculate_score()
+        self.updated_at = datetime.now()
 
     def validate(self) -> None:
         if self.occurence <= 0 or self.occurence > 3:

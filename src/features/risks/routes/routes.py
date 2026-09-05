@@ -22,8 +22,6 @@ import logging
 
 
 logger = logging.getLogger(__name__)
-
-
 router = APIRouter(prefix="/risks")
 
 
@@ -42,10 +40,10 @@ async def list_risks(
 @router.get("/options")
 async def list_options(
     filters: RiskFilters = Depends(),
-    service: RiskService = Depends(get_service),
+    queries: RiskQueryService = Depends(get_queries),
     creds=Depends(require_auth),
 ):
-    risks = await service.list(filters=filters, options=True)
+    risks = await queries.list_options(filters=filters)
     return [RiskOption.model_validate(opt) for opt in risks]
 
 

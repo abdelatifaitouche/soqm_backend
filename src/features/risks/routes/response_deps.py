@@ -12,7 +12,7 @@ from src.features.risks.repositories.risk_response_repository import (
 from src.features.organizations.repositories.employee_repository import (
     EmployeeRepository,
 )
-from src.features.soqm_components.repositories.components_repository import (
+from src.features.soqm_components.infra.repositories.component_repository import (
     ComponentRepository,
 )
 

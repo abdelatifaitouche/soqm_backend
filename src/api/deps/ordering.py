@@ -5,6 +5,6 @@ from fastapi import Depends
 
 def parse_ordering(order: OrderBy = Depends()) -> OrderByEntity:
     return OrderByEntity(
-        column=order.column,
+        columns=order.columns,
         direction=order.direction,
     )

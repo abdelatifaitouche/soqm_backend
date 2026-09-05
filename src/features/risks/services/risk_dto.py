@@ -59,7 +59,7 @@ class ObjectiveSummary:
 class Risk:
     id: UUID
     risk_ref: str
-    risk_discreption: str
+    risk_description: str
     score: int
     occurence: int
     significance: int

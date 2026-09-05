@@ -61,9 +61,24 @@ class Risk(Base):
         nullable=True,
     )
 
+    risk_rational: Mapped[str] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
     created_by: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("users.id"),
+        nullable=True,
+    )
+
+    sequence_number: Mapped[int] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    component_order: Mapped[int] = mapped_column(
+        Integer,
         nullable=True,
     )
 
@@ -99,4 +114,6 @@ class Risk(Base):
 RISK_ORDER_FIELDS = {
     "score": Risk.score,
     "created_at": Risk.created_at,
+    "sequence_number": Risk.sequence_number,
+    "component_order": Risk.component_order,
 }
