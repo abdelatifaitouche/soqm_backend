@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
-from src.features.quality_objectives.domain.objective import Objective
-from src.features.soqm_components.enums.soqm_component import ComponentState
 from src.core.exceptions import ValidationError
+from src.features.soqm_engine.domain.enums.component_state import ComponentState
 
 
 @dataclass

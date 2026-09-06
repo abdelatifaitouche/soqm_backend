@@ -64,13 +64,4 @@ class ComponentQueryService:
 
         components = (await self.session.execute(stmt)).mappings().all()
 
-        return [
-            SOQMComponentList(
-                id=cp["id"],
-                name=cp["name"],
-                status=cp["status"],
-                isqm_reference=cp["isqm_reference"],
-                display_order=cp["display_order"],
-            )
-            for cp in components
-        ]
+        return [SOQMComponentList(**cp) for cp in components]

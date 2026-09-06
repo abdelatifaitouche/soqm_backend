@@ -1,3 +1,4 @@
+"""
 from src.features.documents.infrastructure.models.document_version import (
     DocumentVersion,
 )
@@ -32,4 +33,6 @@ from src.features.organizations.models.department import Department
 
 
 from src.features.quality_objectives.models.quality_objective import QualityObjective
-from src.features.soqm_components.infra.models.soqm_component import SOQMComponent
+"""
+
+from src.features.soqm_engine.infra.models import *

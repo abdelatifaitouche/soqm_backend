@@ -1,7 +1,7 @@
 from src.infra.db.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Boolean, Text, Integer, Enum
-from src.features.soqm_components.enums.soqm_component import ComponentState
+from src.features.soqm_components.domain.enums.state import ComponentState
 
 
 class SOQMComponent(Base):
