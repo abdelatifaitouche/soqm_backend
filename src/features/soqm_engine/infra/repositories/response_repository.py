@@ -1,12 +1,10 @@
 from uuid import UUID
 from src.features.soqm_engine.domain.entities.reponse import Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.soqm_engine.application.ports.iresponse_repo import (
-    IResponseRepository,
-)
+from src.features.soqm_engine.application.ports import IResponseRepository
 
 
-class ObjectiveRepository(IResponseRepository):
+class ResponseRepository(IResponseRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 

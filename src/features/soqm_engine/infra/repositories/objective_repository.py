@@ -1,9 +1,7 @@
 from uuid import UUID
 from src.features.soqm_engine.domain.entities.objective import Objective
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.soqm_engine.application.ports.iobjective_repo import (
-    IObjectiveRepository,
-)
+from src.features.soqm_engine.application.ports import IObjectiveRepository
 
 
 class ObjectiveRepository(IObjectiveRepository):

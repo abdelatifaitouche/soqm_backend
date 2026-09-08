@@ -42,6 +42,15 @@ class SOQMComponent:
         )
         return component
 
+    def ensure_can_add_objectives(self):
+        if self.status in (
+            ComponentState.ARCHIVED.value,
+            ComponentState.IN_ACTIVE.value,
+        ):
+            raise ValidationError(
+                message=f"Cannot add objective to component with state : {self.status}",
+            )
+
     def deactivate(self):
         if self.status == ComponentState.IN_ACTIVE.value:
             raise ValidationError("Component Already deactivated")

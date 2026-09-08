@@ -2,9 +2,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
-from src.features.soqm_engine.application.ports.icomponent_repo import (
-    IComponentRepository,
-)
+from src.features.soqm_engine.application.ports import IComponentRepository
 from src.features.soqm_engine.infra.models.component import SOQMComponent as ComponentDB
 from src.features.soqm_engine.domain.entities.component import (
     SOQMComponent as Component,
