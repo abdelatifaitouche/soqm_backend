@@ -1,0 +1,119 @@
+from src.infra.db.base import Base
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Text, UUID, ForeignKey, Integer, Date, Float
+import uuid
+from datetime import date
+from src.features.soqm_engine.domain.enums.risk_state import RiskStatus
+
+
+class Risk(Base):
+    __tablename__ = "risks"
+
+    objective_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("quality_objectives.id"),
+        nullable=True,
+    )
+    component_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("soqm_components.id"),
+        nullable=False,
+    )
+    risk_ref: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+    )
+    risk_discription: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+    )
+    occurence: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
+    significance: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
+    date_identified: Mapped[date] = mapped_column(
+        Date,
+        nullable=False,
+    )
+    status: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+        default=RiskStatus.IDENTIFIED.value,
+    )
+    residual_score: Mapped[float] = mapped_column(
+        Float,
+        nullable=True,
+    )
+    score: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
+    date_last_assessed: Mapped[date] = mapped_column(
+        Date,
+        nullable=True,
+    )
+    next_review_date: Mapped[date] = mapped_column(
+        Date,
+        nullable=True,
+    )
+
+    risk_rational: Mapped[str] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    created_by: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id"),
+        nullable=True,
+    )
+
+    sequence_number: Mapped[int] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    component_order: Mapped[int] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="risks",
+    )
+
+    component: Mapped["SOQMComponent"] = relationship(
+        "SOQMComponent",
+        back_populates="risks",
+    )
+    # this one is going to get dropped on the next version
+    objective: Mapped["QualityObjective"] = relationship(
+        "QualityObjective",
+        back_populates="risks",
+    )
+
+    risk_audit_logs: Mapped[list["RiskAuditLog"]] = relationship(
+        "RiskAuditLog",
+        back_populates="risk",
+    )
+
+    objective_association: Mapped[list["RiskObjectiveAssociation"]] = relationship(
+        back_populates="risk",
+    )
+
+    response_associations: Mapped[list["RiskResponseAssociation"]] = relationship(
+        back_populates="risk"
+    )
+
+
+RISK_ORDER_FIELDS = {
+    "score": Risk.score,
+    "created_at": Risk.created_at,
+    "sequence_number": Risk.sequence_number,
+    "component_order": Risk.component_order,
+}
