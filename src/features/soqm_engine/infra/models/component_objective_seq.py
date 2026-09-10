@@ -11,6 +11,7 @@ class ComponentObjectiveSeq(Base):
     component_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         nullable=False,
+        unique=True,
     )
     sequence: Mapped[int] = mapped_column(
         Integer,
@@ -24,6 +25,4 @@ class ComponentObjectiveSeq(Base):
         default=datetime.now(),
     )
 
-    __table_args__ = (
-        UniqueConstraint("component_id", "sequence", name="uq_component_seq"),
-    )
+    __table_args__ = (UniqueConstraint("component_id", name="uq_component_seq"),)

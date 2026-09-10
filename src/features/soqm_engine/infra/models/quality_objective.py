@@ -1,7 +1,7 @@
 from src.infra.db.base import Base
 import uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, UUID, String, DateTime
+from sqlalchemy import ForeignKey, UUID, String, DateTime, Integer
 from src.features.quality_objectives.enums.objective_states import ObjectiveState
 from datetime import datetime
 
@@ -31,3 +31,5 @@ class QualityObjective(Base):
     risk_association: Mapped[list["RiskObjectiveAssociation"]] = relationship(
         back_populates="objective",
     )
+
+    lock_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)

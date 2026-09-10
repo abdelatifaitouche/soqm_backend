@@ -16,8 +16,9 @@ class Objective:
     component_id: UUID
     status: str
     updated_at: datetime | None = None
-
+    created_at: datetime | None = None
     objective_reference: str | None = None
+    lock_version: int | None = None
 
     @classmethod
     def create(
@@ -51,6 +52,8 @@ class Objective:
             component_id=component_id,
             description=description,
             status=ObjectiveState.DRAFT,
+            updated_at=datetime.now(),
+            created_at=datetime.now(),
         )
 
         return objective

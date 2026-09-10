@@ -46,6 +46,7 @@ class ObjectiveUC:
             component: SOQMComponent | None = await self.component_repo.get(
                 data.component_id
             )
+
             if not component:
                 raise NotFoundError(
                     message=f"Component with {data.component_id} was not found",
@@ -63,3 +64,19 @@ class ObjectiveUC:
 
             await self.objective_repo.save(entity)
         return entity
+
+    async def approve(self, objective_id: UUID):
+        async with self.uow:
+            objective = await self.objective_repo.get(objective_id)
+
+            if not objective:
+                raise NotFoundError("Objective not found")
+
+            objective.approve()
+
+            result = await self.objective_repo.save(objective)
+
+            if not result:
+                raise Exception("Saving error some where need to check")
+
+        return result

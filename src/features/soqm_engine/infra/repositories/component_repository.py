@@ -59,7 +59,6 @@ class ComponentRepository(IComponentRepository):
 
         if not component:
             return None
-
         return self._to_domain(component)
 
     async def delete(self, component_id: UUID) -> None:
