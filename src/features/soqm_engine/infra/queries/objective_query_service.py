@@ -16,7 +16,7 @@ class ObjectiveQueryService:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def list(self, pagination, filtering) -> list[ObjectiveList]:
+    async def list(self) -> list[ObjectiveList]:
         stmt = select(
             ObjectiveDB.id,
             ObjectiveDB.objective_reference,

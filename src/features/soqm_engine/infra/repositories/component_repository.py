@@ -24,7 +24,6 @@ class ComponentRepository(IComponentRepository):
         )
 
     async def save(self, component: Component) -> None:
-        """UPSERT USING PG DIALECT"""
 
         component_data = {
             "id": component.id,
@@ -45,10 +44,14 @@ class ComponentRepository(IComponentRepository):
                 "status": stmt.excluded.status,
                 "description": stmt.excluded.description,
                 "display_order": stmt.excluded.display_order,
+                "lock_version": ComponentDB.lock_version + 1,
             },
+            where=(ComponentDB.lock_version == component.lock_version),
         )
 
-        await self.session.execute(upsert)
+        result = await self.session.execute(upsert)
+
+        return result.rowcount > 0
 
     async def get(self, component_id: UUID) -> Component | None:
         stmt = select(ComponentDB).where(ComponentDB.id == component_id)

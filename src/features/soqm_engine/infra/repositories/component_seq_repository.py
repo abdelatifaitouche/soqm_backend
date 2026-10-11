@@ -16,7 +16,6 @@ class SequenceRepository(ISeqRepository):
         self.session = session
 
     async def _inc_and_get(self, db_model, component_id: UUID):
-        """this is causing a bug, TO FIX ASAP"""
         insert_stmt = insert(db_model).values(
             component_id=component_id,
             sequence=1,

@@ -13,6 +13,8 @@ class SOQMComponent:
     display_order: int
     description: str | None = None
 
+    lock_version: int | None = None
+
     @classmethod
     def create(
         cls,

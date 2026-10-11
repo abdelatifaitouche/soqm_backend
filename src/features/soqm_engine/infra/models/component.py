@@ -35,3 +35,10 @@ class SOQMComponent(Base):
         cascade="all, delete",
         back_populates="component",
     )
+
+    lock_version: Mapped[int] = mapped_column(
+        Integer,
+        default=1,
+        server_default="1",
+        nullable=False,
+    )
