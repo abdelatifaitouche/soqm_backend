@@ -5,7 +5,22 @@ from src.features.findings.domain.enums.finding import (
     FindingStatus,
     FindingSource,
     DeficiencySeverity,
+    ProcessStatus,
 )
+
+
+@dataclass
+class RootCauseAnalysis:
+    cause_analysis_status: ProcessStatus = ProcessStatus.NOT_STARTED
+    analysis: str | None = None
+
+    # References to the root-cause reference data
+    category_id: UUID | None = None
+    indicator_id: UUID | None = None
+    potential_root_cause_id: UUID | None = None
+    soqm_component_id: UUID | None = None
+
+    analysis_completed_at: datetime | None = None
 
 
 @dataclass
@@ -18,6 +33,9 @@ class Finding:
     deficiency_severity: DeficiencySeverity
 
     status: FindingStatus
+
+    root_cause_analysis: RootCauseAnalysis
+
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
@@ -38,5 +56,18 @@ class Finding:
             department=department,
             deficiency_severity=deficiency_severity,
             status=FindingStatus.OPEN,
+            root_cause_analysis=RootCauseAnalysis(),
         )
         return finding
+
+    def start_root_cause_analysis(self, root_cause_analysis: RootCauseAnalysis):
+
+        if self.status != FindingStatus.OPEN:
+            raise ValueError(
+                f"Invalid finding state : {self.status} , state must be OPEN",
+            )
+
+        root_cause_analysis.cause_analysis_status = ProcessStatus.COMPLETED
+        root_cause_analysis.analysis_completed_at = datetime.now()
+        self.root_cause_analysis = root_cause_analysis
+        self.status = FindingStatus.UNDER_ASSESSMENT

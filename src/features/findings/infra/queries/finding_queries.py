@@ -6,6 +6,7 @@ from src.features.findings.application.dtos.finding_dtos import (
     FindingListItem,
     FindingDetails,
 )
+from src.features.findings.domain.entities.finding import RootCauseAnalysis
 
 
 class FindingQueryService:
@@ -32,6 +33,15 @@ class FindingQueryService:
 
         if not res:
             return None
+        root_cause_analysis = RootCauseAnalysis(
+            cause_analysis_status=res.cause_analysis_status,
+            analysis=res.analysis,
+            category_id=res.category_id,
+            indicator_id=res.indicator_id,
+            potential_root_cause_id=res.potential_root_cause_id,
+            soqm_component_id=res.soqm_component_id,
+            analysis_completed_at=res.analysis_completed_at,
+        )
 
         return FindingDetails(
             id=res.id,
@@ -41,6 +51,7 @@ class FindingQueryService:
             finding_source=res.finding_source,
             department=res.department,
             status=res.status,
+            root_cause_analysis=root_cause_analysis,
             created_at=res.created_at,
             updated_at=res.updated_at,
         )

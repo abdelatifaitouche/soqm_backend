@@ -25,3 +25,9 @@ class DeficiencySeverity(StrEnum):
     DEFICIENCY = "deficiency"
     SIGNIFICANT_DEFICIENCY = "significant_deficiency"
     MATERIAL_DEFICIENCY = "material_deficiency"
+
+
+class ProcessStatus(StrEnum):
+    NOT_STARTED = "not_started"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"

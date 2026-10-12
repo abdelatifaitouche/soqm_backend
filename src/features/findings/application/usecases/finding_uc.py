@@ -34,18 +34,14 @@ class FindingUC:
 
     async def identify_finding(self, finding_data: CreateFinding):
         async with self.uow:
-            print("are we here ????")
             dept = await self.dept_repo.get_by_id(finding_data.department)
 
             if not dept:
                 raise Exception("Invalid Department")
 
-            print("Dept checked ...")
             seq_num = await self.seq_repo.inc_get(finding_data.department)
 
             ref = self._generate_finding_ref(dept.name)
-
-            print(f"Ref generated {ref + str(seq_num)}")
 
             finding = Finding.create(
                 finding_ref=ref + str(seq_num),

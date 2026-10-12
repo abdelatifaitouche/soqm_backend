@@ -6,6 +6,7 @@ from src.features.findings.domain.enums.finding import (
     FindingStatus,
 )
 from datetime import datetime
+from src.features.findings.domain.entities.finding import RootCauseAnalysis
 
 
 @dataclass(frozen=True)
@@ -34,5 +35,6 @@ class FindingDetails:
     finding_source: FindingSource
     deficiency_severity: DeficiencySeverity
     status: FindingStatus
+    root_cause_analysis: RootCauseAnalysis
     created_at: datetime
     updated_at: datetime

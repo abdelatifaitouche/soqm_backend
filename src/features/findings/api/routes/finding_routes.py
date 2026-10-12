@@ -40,3 +40,8 @@ async def get_finding_details(
     queries: FindingQueryService = Depends(get_finding_queries),
 ):
     return await queries.get_finding_details(finding_id)
+
+
+@router.post("/{finding_id}/root_cause_analyses")
+async def start_root_cause_analyses():
+    return
