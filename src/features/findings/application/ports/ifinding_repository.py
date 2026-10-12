@@ -1,0 +1,14 @@
+from abc import ABC, abstractmethod
+from uuid import UUID
+from src.features.findings.domain.entities.finding import Finding
+
+
+class IFindingRepository(ABC):
+    async def save(self, finding: Finding) -> None:
+        pass
+
+    async def get(self, finding: UUID) -> Finding | None:
+        raise NotImplementedError()
+
+    async def delete(self):
+        pass

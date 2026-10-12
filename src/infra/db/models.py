@@ -39,4 +39,6 @@ from src.features.organizations.models.employee import Employee
 from src.features.auth.models.user import User
 from src.features.risks.models.risk_audit_log import RiskAuditLog
 
+
+from src.features.findings.infra.models import *
 from src.features.soqm_engine.infra.models import *
