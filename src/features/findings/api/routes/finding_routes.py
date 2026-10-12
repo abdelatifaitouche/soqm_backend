@@ -1,9 +1,13 @@
 from fastapi import APIRouter, Depends
 from uuid import UUID
-from src.features.findings.api.dependencies.finding_deps import get_finding_uc
+from src.features.findings.api.dependencies.finding_deps import (
+    get_finding_uc,
+    get_finding_queries,
+)
 from src.features.findings.api.commands.finding_write import CreateFindingRequest
 from src.features.findings.application.dtos.finding_dtos import CreateFinding
 from src.features.findings.application.usecases.finding_uc import FindingUC
+from src.features.findings.infra.queries.finding_queries import FindingQueryService
 
 router = APIRouter(prefix="/finding")
 
@@ -23,9 +27,14 @@ async def identify_finding(
     )
 
 
+@router.get("")
+async def list_findings(queries: FindingQueryService = Depends(get_finding_queries)):
+    return await queries.list()
+
+
 @router.get("/{finding_id}")
-async def get_finding(
+async def get_finding_details(
     finding_id: UUID,
-    uc: FindingUC = Depends(get_finding_uc),
+    queries: FindingQueryService = Depends(get_finding_queries),
 ):
-    return
+    return await queries.get_finding_details(finding_id)
