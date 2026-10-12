@@ -7,7 +7,7 @@ class IFindingRepository(ABC):
     async def save(self, finding: Finding) -> None:
         pass
 
-    async def get(self, finding: UUID) -> Finding | None:
+    async def get(self, finding_id: UUID) -> Finding | None:
         raise NotImplementedError()
 
     async def delete(self):
