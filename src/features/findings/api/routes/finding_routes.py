@@ -28,7 +28,9 @@ async def identify_finding(
 
 
 @router.get("")
-async def list_findings(queries: FindingQueryService = Depends(get_finding_queries)):
+async def list_findings(
+    queries: FindingQueryService = Depends(get_finding_queries),
+):
     return await queries.list()
 
 
