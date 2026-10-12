@@ -1,0 +1,40 @@
+from pydantic import BaseModel
+from uuid import UUID
+from datetime import datetime
+
+
+class ReadObjective(BaseModel):
+    id: UUID
+    objective_reference: str | None = None
+    description: str
+    review_date: datetime
+    component_id: UUID
+    status: str
+    updated_at: datetime | None = None
+    model_config = {"from_attributes": True}
+
+
+class ObjectiveList(BaseModel):
+    id: UUID
+    status: str
+    review_date: datetime
+    objective_reference: str
+    component_name: str
+    model_config = {
+        "from_attributes": True,
+    }
+
+
+class PaginatedResponse(BaseModel):
+    total: int = 0
+    page: int = 0
+    size: int = 0
+    items: list[ObjectiveList] | None
+
+    model_config = {"from_attributes": True}
+
+
+class ObjectiveOption(BaseModel):
+    id: UUID
+    objective_reference: str
+    model_config = {"from_attributes": True}

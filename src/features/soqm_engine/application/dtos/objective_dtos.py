@@ -27,7 +27,23 @@ class ObjectiveDetails(BaseObjective):
 
 
 @dataclass(frozen=True)
+class PaginatedResponse:
+    page: int
+    size: int
+    total: int
+
+    items: list[ObjectiveList] | None
+
+
+@dataclass(frozen=True)
 class CreateObjective:
     description: str
     review_date: datetime
     component_id: UUID
+
+
+@dataclass(frozen=True)
+class UpdateObjective:
+    description: str | None = None
+    review_date: datetime | None = None
+    component_id: UUID | None = None

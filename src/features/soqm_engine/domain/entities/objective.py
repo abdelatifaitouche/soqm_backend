@@ -64,7 +64,8 @@ class Objective:
         review_date: datetime | None,
         component_id: UUID | None,
     ):
-        if description:
+
+        if description and len(description) > 10:
             self.description = description
 
         if review_date and review_date > datetime.now():

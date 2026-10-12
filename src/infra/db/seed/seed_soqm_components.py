@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from src.features.soqm_components.models.soqm_component import SOQMComponent
 from sqlalchemy import select, delete
+from src.features.soqm_engine.infra.models import SOQMComponent
 
 
 async def check_db_state(session: AsyncSession) -> bool:

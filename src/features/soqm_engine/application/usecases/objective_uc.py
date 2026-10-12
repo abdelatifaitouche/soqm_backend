@@ -6,7 +6,10 @@ from src.features.soqm_engine.application.ports import (
     ISeqRepository,
 )
 from src.features.soqm_engine.domain.entities import Objective, SOQMComponent
-from src.features.soqm_engine.application.dtos.objective_dtos import CreateObjective
+from src.features.soqm_engine.application.dtos.objective_dtos import (
+    CreateObjective,
+    UpdateObjective,
+)
 from src.features.soqm_engine.domain.services.objective_ref_generator import (
     ObjectiveRefGenerator,
 )
@@ -64,6 +67,33 @@ class ObjectiveUC:
 
             await self.objective_repo.save(entity)
         return entity
+
+    async def update_objective(self, objective_id: UUID, data: UpdateObjective):
+        async with self.uow:
+            objective = await self.objective_repo.get(objective_id)
+
+            if not objective:
+                raise NotFoundError(
+                    f"Objective with ID {objective_id} not found",
+                )
+
+            if data.component_id:
+                component = await self.component_repo.get(data.component_id)
+
+                if not component:
+                    raise NotFoundError(
+                        f"Component with ID {data.component_id} not found",
+                    )
+
+            objective.update(
+                description=data.description,
+                review_date=data.review_date,
+                component_id=data.component_id,
+            )
+
+            await self.objective_repo.save(objective)
+
+        return objective
 
     async def approve(self, objective_id: UUID):
         async with self.uow:
