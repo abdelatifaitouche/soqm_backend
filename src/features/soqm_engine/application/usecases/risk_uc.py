@@ -9,7 +9,8 @@ from src.features.soqm_engine.domain.entities import SOQMComponent, Objective, R
 from src.features.soqm_engine.domain.enums.component_state import ComponentState
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 from src.core.exceptions import NotFoundError, ValidationError
-from src.features.soqm_engine.application.dtos.risk_dtos import CreateRisk
+from src.features.soqm_engine.application.dtos.risk_dtos import CreateRisk, RiskUpdate
+from dataclasses import asdict
 
 
 class RiskUC:
@@ -72,3 +73,53 @@ class RiskUC:
             await self.risk_repository.save(risk)
 
         return risk
+
+    async def update_risk(self, risk_id: UUID, data: RiskUpdate):
+
+        async with self.uow:
+            update_data = asdict(data)
+
+            risk = await self.risk_repository.get(risk_id)
+
+            if not risk:
+                raise NotFoundError(f"No Risk Found with id {risk_id}")
+
+            risk.update(**update_data)
+
+            await self.risk_repository.save(risk)
+
+        return risk
+
+    async def add_objective(self, risk_id: UUID, objective_id: UUID):
+        async with self.uow:
+            risk = await self.risk_repository.get(risk_id)
+
+            if not risk:
+                raise NotFoundError("Risk not found")
+
+            risk.add_objective(objective_id)
+
+            await self.risk_repository.save(risk)
+
+    async def remove_objective(self, risk_id: UUID, objective_id: UUID):
+        async with self.uow:
+            risk = await self.risk_repository.get(risk_id)
+
+            if not risk:
+                raise NotFoundError("Risk not found")
+
+            risk.remove_objective(objective_id)
+
+            await self.risk_repository.save(risk)
+
+    async def delete(self, risk_id):
+        """to be done later"""
+        async with self.uow:
+            risk = await self.risk_repository.get(risk_id)
+
+            if not risk:
+                raise NotFoundError("Risk Not Found")
+
+            await self.risk_repository.delete(risk_id)
+
+        return

@@ -1,3 +1,4 @@
+"""
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from src.infra.db.uow import get_db
@@ -82,3 +83,4 @@ async def update(
 ):
     obj = await service.update(objective_id, data)
     return ReadObjective.model_validate(obj)
+"""

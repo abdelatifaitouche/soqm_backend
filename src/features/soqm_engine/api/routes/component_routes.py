@@ -19,8 +19,27 @@ from src.features.soqm_engine.api.dependencies.component_deps import (
 from src.features.soqm_engine.infra.queries.component_query_service import (
     ComponentQueryService,
 )
+from src.core.pagination import Pagination
+from src.features.soqm_engine.application.filters.component_filters import (
+    ComponentFilters,
+)
+
 
 router = APIRouter(prefix="/components", tags=["Soqm Components"])
+
+
+@router.get("")
+async def list_components(
+    pagination: Pagination = Depends(),
+    filters: ComponentFilters = Depends(),
+    queries: ComponentQueryService = Depends(get_component_queries),
+):
+    return await queries.list(pagination, filters)
+
+
+@router.get("/options")
+async def list_options(queries: ComponentQueryService = Depends(get_component_queries)):
+    return await queries.list_options()
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

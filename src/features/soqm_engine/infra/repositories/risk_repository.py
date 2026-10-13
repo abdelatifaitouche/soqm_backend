@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.features.soqm_engine.application.ports import IRiskRepository
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy import delete, select
+from sqlalchemy.orm import selectinload
 from src.features.soqm_engine.infra.models import (
     Risk as RiskDB,
     RiskObjectiveAssociation,
@@ -70,7 +71,27 @@ class RiskRepository(IRiskRepository):
             await self.session.execute(association_insert)
 
     async def get(self, risk_id: UUID) -> Risk | None:
-        pass
+        stmt = select(RiskDB.__table__).where(RiskDB.id == risk_id)
+        res = (await self.session.execute(stmt)).mappings().one_or_none()
+
+        if not res:
+            return None
+
+        data = {
+            k: v
+            for k, v in dict(res).items()
+            if k not in {"objective_id", "component_order"}
+        }
+
+        objective = select(RiskObjectiveAssociation.objective_id).where(
+            RiskObjectiveAssociation.risk_id == risk_id
+        )
+
+        obj_res = (await self.session.execute(objective)).scalars().all()
+
+        data["objectives"] = list(obj_res)
+
+        return Risk(**data)
 
     async def delete(self, risk_id: UUID) -> None:
         pass

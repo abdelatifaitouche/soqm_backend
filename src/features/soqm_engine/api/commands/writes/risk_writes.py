@@ -18,3 +18,12 @@ class CreateRisk(BaseModel):
     status: str = RiskStatus.IDENTIFIED.value
 
     next_review_date: date
+
+
+class UpdateRiskRequest(BaseModel):
+    risk_description: str | None = None
+    risk_rational: str | None = None
+
+
+class UpdateRiskObjectiveRequest(BaseModel):
+    objective_id: UUID

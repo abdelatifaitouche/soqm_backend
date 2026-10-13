@@ -1,3 +1,4 @@
+"""
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 from .dependencies import get_uc, get_query_service
@@ -114,3 +115,4 @@ async def archive_component(
 ):
     archived = await uc.archive_component(component_id)
     return ReadComponentDetails.model_validate(archived)
+"""

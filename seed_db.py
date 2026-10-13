@@ -1,3 +1,10 @@
+import src.infra.db.models  # Register all ORM models
+
+from sqlalchemy.orm import configure_mappers
+
+configure_mappers()
+
+
 import asyncio
 from src.infra.db.seed.seed_roles import get_all_roles
 from src.infra.db.seed.seed_permissions import seed_permissions

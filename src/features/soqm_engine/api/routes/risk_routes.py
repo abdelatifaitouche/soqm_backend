@@ -1,11 +1,24 @@
 from fastapi import APIRouter, status, Depends
-from src.features.soqm_engine.api.commands.writes.risk_writes import CreateRisk
-from src.features.soqm_engine.api.dependencies.risk_dependenices import get_risk_uc
+from fastapi.exceptions import HTTPException
+from src.features.soqm_engine.api.commands.writes.risk_writes import (
+    CreateRisk,
+    UpdateRiskRequest,
+    UpdateRiskObjectiveRequest,
+)
+from src.features.soqm_engine.api.dependencies.risk_dependenices import (
+    get_risk_uc,
+    get_risk_queries,
+)
 from src.features.soqm_engine.application.usecases import RiskUC
 from src.features.soqm_engine.application.dtos.risk_dtos import (
     CreateRisk as CreateRiskDTO,
+    RiskUpdate as RiskUpdateDTO,
 )
-from uuid import uuid4
+from src.features.soqm_engine.infra.queries.risk_query_service import RiskQueryService
+from src.core.pagination import Pagination
+
+from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
+from uuid import UUID
 
 
 router = APIRouter(prefix="/risks", tags=["Quality Risks"])
@@ -17,6 +30,65 @@ async def create_risk(
     uc: RiskUC = Depends(get_risk_uc),
 ):
 
-    risk = await uc.create_risk(uuid4(), CreateRiskDTO(**data.model_dump()))
+    risk = await uc.create_risk(
+        UUID("a625037d-7538-483e-be4f-0a2a1032082f"), CreateRiskDTO(**data.model_dump())
+    )
 
     return risk
+
+
+@router.get("")
+async def list_risks(
+    pagination: Pagination = Depends(),
+    filters: RiskFilters = Depends(),
+    queries: RiskQueryService = Depends(get_risk_queries),
+):
+    return await queries.list(pagination, filters)
+
+
+@router.get("/{risk_id}")
+async def get_risk_details(
+    risk_id: UUID, queries: RiskQueryService = Depends(get_risk_queries)
+):
+    risk = await queries.get_risk_details(risk_id)
+
+    if not risk:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return risk
+
+
+@router.patch("/{risk_id}")
+async def update_risk(
+    risk_id: UUID,
+    data: UpdateRiskRequest,
+    uc: RiskUC = Depends(get_risk_uc),
+):
+    return await uc.update_risk(
+        risk_id,
+        RiskUpdateDTO(**dict(data)),
+    )
+
+
+@router.post("/{risk_id}/objectives")
+async def add_objective_to_risk(
+    risk_id: UUID,
+    objective: UpdateRiskObjectiveRequest,
+    uc: RiskUC = Depends(get_risk_uc),
+):
+    return await uc.add_objective(
+        risk_id,
+        objective.objective_id,
+    )
+
+
+@router.delete("/{risk_id}/objectives")
+async def remove_objective_to_risk(
+    risk_id: UUID,
+    objective: UpdateRiskObjectiveRequest,
+    uc: RiskUC = Depends(get_risk_uc),
+):
+    return await uc.remove_objective(
+        risk_id,
+        objective.objective_id,
+    )

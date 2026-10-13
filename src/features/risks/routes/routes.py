@@ -1,3 +1,4 @@
+"""
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 from src.features.risks.dependencies import get_service, get_queries
@@ -19,7 +20,6 @@ from src.features.risks.repositories.queries.risk_query_service import RiskQuery
 from src.core.ordering import OrderBy
 from src.api.deps.ordering import parse_ordering
 import logging
-
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/risks")
@@ -129,3 +129,4 @@ async def close_risk(
 ):
     updated_risk: RiskEntity = await service.close_risk(user.get("sub"), risk_id)
     return Risk.model_validate(updated_risk)
+"""

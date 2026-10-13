@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, date
 from uuid import UUID, uuid4
 from src.features.soqm_engine.domain.enums.risk_state import RiskStatus
@@ -25,7 +25,7 @@ class Risk:
     status: str = RiskStatus.IDENTIFIED.value
     risk_rational: str | None = None
 
-    objectives: list[UUID] | None = None
+    objectives: list[UUID] = field(default_factory=list)
 
     date_last_assessed: date | None = None
     next_review_date: date | None = None
@@ -76,6 +76,9 @@ class Risk:
         risk_rational: str | None = None,
     ):
 
+        if self.status != RiskStatus.IDENTIFIED.value:
+            raise Exception("Invalid State for risk update")
+
         if risk_description is not None:
             self.risk_description = risk_description
 
@@ -92,3 +95,14 @@ class Risk:
             self.risk_rational = risk_rational
 
         self.updated_at = datetime.now()
+
+    def add_objective(self, objective_id: UUID):
+        if objective_id not in self.objectives:
+            self.objectives.append(objective_id)
+
+    def remove_objective(self, objective_id: UUID):
+
+        if objective_id not in self.objectives:
+            raise ValueError("Invalid Objectives")
+
+        self.objectives.remove(objective_id)

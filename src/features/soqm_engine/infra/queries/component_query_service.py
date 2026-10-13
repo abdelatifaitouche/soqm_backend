@@ -7,10 +7,14 @@ from src.features.soqm_engine.infra.models.component import (
 from src.features.soqm_engine.application.dtos.component_dtos import (
     SOQMComponentDetails,
     SOQMComponentList,
+    SOQMComponentOption,
 )
 from src.features.soqm_engine.application.filters.component_filters import (
     ComponentFilters,
 )
+from src.core.pagination import Pagination
+from src.infra.db.pagination import apply_pagination
+
 from typing import Any
 
 
@@ -48,7 +52,7 @@ class ComponentQueryService:
         return stmt
 
     async def list(
-        self, pagination, filters: ComponentFilters, ordering
+        self, pagination: Pagination, filters: ComponentFilters
     ) -> list[SOQMComponentList]:
 
         stmt = select(
@@ -60,7 +64,14 @@ class ComponentQueryService:
         )
 
         stmt = self._apply_filters(stmt, filters)
-
+        stmt = apply_pagination(stmt, pagination)
         components = (await self.session.execute(stmt)).mappings().all()
 
         return [SOQMComponentList(**cp) for cp in components]
+
+    async def list_options(self):
+        stmt = select(SOQMComponentDB.id, SOQMComponentDB.name)
+
+        res = (await self.session.execute(stmt)).mappings().all()
+
+        return [SOQMComponentOption(**opt) for opt in res]
