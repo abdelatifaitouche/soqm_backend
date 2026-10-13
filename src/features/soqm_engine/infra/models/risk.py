@@ -23,7 +23,7 @@ class Risk(Base):
         String,
         nullable=False,
     )
-    risk_discription: Mapped[str] = mapped_column(
+    risk_description: Mapped[str] = mapped_column(
         String,
         nullable=False,
     )
@@ -72,7 +72,7 @@ class Risk(Base):
         nullable=True,
     )
 
-    sequence_number: Mapped[int] = mapped_column(
+    sequence: Mapped[int] = mapped_column(
         Integer,
         nullable=True,
     )
@@ -114,6 +114,6 @@ class Risk(Base):
 RISK_ORDER_FIELDS = {
     "score": Risk.score,
     "created_at": Risk.created_at,
-    "sequence_number": Risk.sequence_number,
+    "sequence_number": Risk.sequence,
     "component_order": Risk.component_order,
 }
