@@ -1,7 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.features.soqm_components.models.soqm_component import SOQMComponent
-from src.features.quality_objectives.models.quality_objective import QualityObjective
 from src.features.auth.models.role import Role as RoleDB
 from src.features.auth.models.permission import Permission
 from src.features.auth.models.role_permissions import RolePermissions
@@ -73,17 +71,19 @@ ROLES_PERMISSIONS = {
 
 
 async def fetch_data(session: AsyncSession, model):
-
+    print("inside fetch data ......")
     stmt = select(model)
 
     result = await session.execute(stmt)
+    print("fetch data ended ......")
 
     return result.scalars().all()
 
 
 async def seed_role_permissions(session: AsyncSession):
-
+    print("inside seed role permission function .........")
     all_roles = await fetch_data(session, RoleDB)
+    print("get all roles .........")
 
     if not all_roles:
         raise Exception("Please, run seed roles first")
@@ -91,6 +91,7 @@ async def seed_role_permissions(session: AsyncSession):
     roles_map = {r.name: r.id for r in all_roles}
 
     all_permissions = await fetch_data(session, Permission)
+    print("get all permissions function .........")
 
     if not all_permissions:
         raise Exception("Please, run seed permissions first")

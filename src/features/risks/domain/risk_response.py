@@ -64,3 +64,14 @@ class RiskResponse:
         )
 
         return response
+
+    def update(
+        self,
+        *,
+        response_name: str | None,
+        response_description: str | None,
+        response_type: str | None,
+        frequency,
+        execution_type,
+    ):
+        return

@@ -13,8 +13,8 @@ from src.features.risks.domain.response_ref_generator import ResponseRefGenerato
 from src.features.risks.repositories.component_response_seq_repository import (
     ComponentResponseSeqRepository,
 )
-from src.features.soqm_components.repositories.components_repository import (
-    ComponentRepository,
+from src.features.soqm_components.application.ports.component_repository import (
+    IComponentRepository,
 )
 from src.features.soqm_components.domain.component import SOQMComponent
 from src.features.organizations.repositories.employee_repository import (
@@ -28,7 +28,7 @@ class ResponseService:
         self,
         repo: RiskResponseRepository,
         risk_repo: RiskRepository,
-        component_repo: ComponentRepository,
+        component_repo: IComponentRepository,
         employee_repo: EmployeeRepository,
     ):
         self.repo: RiskResponseRepository = repo
@@ -36,7 +36,7 @@ class ResponseService:
         self.seq_repo: ComponentResponseSeqRepository = ComponentResponseSeqRepository(
             self.repo.db
         )
-        self.component_repo: ComponentRepository = component_repo
+        self.component_repo: IComponentRepository = component_repo
         self.employee_repo: EmployeeRepository = employee_repo
 
     async def _get_active_employee(self, employee_id: UUID) -> Employee:
@@ -58,9 +58,7 @@ class ResponseService:
         return owner
 
     async def _get_valid_component(self, component_id: UUID) -> SOQMComponent:
-        component: SOQMComponent | None = await self.component_repo.get_by_id(
-            component_id
-        )
+        component: SOQMComponent | None = await self.component_repo.get(component_id)
 
         if not component:
             raise NotFoundError(

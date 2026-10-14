@@ -1,3 +1,4 @@
+"""
 from fastapi import APIRouter, Depends, status
 from uuid import UUID
 from src.features.risks.dependencies import get_service, get_queries
@@ -20,10 +21,7 @@ from src.core.ordering import OrderBy
 from src.api.deps.ordering import parse_ordering
 import logging
 
-
 logger = logging.getLogger(__name__)
-
-
 router = APIRouter(prefix="/risks")
 
 
@@ -42,10 +40,10 @@ async def list_risks(
 @router.get("/options")
 async def list_options(
     filters: RiskFilters = Depends(),
-    service: RiskService = Depends(get_service),
+    queries: RiskQueryService = Depends(get_queries),
     creds=Depends(require_auth),
 ):
-    risks = await service.list(filters=filters, options=True)
+    risks = await queries.list_options(filters=filters)
     return [RiskOption.model_validate(opt) for opt in risks]
 
 
@@ -131,3 +129,4 @@ async def close_risk(
 ):
     updated_risk: RiskEntity = await service.close_risk(user.get("sub"), risk_id)
     return Risk.model_validate(updated_risk)
+"""

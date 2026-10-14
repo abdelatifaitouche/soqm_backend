@@ -5,7 +5,7 @@ from src.features.risks.repositories.risk_repository import RiskRepository
 from src.features.quality_objectives.repository.objective_repository import (
     ObjectiveRepository,
 )
-from src.features.soqm_components.repositories.components_repository import (
+from src.features.soqm_components.infra.repositories.component_repository import (
     ComponentRepository,
 )
 from src.features.risks.services.risk_service import RiskService

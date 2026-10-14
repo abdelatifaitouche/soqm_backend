@@ -59,6 +59,23 @@ class Objective:
 
         return objective
 
+    def update(
+        self,
+        description: str | None,
+        review_date: datetime | None,
+        component_id: UUID | None,
+    ):
+        if description:
+            self.description = description
+
+        if review_date and review_date > datetime.now():
+            self.review_date = review_date
+
+        if component_id:
+            self.component_id = component_id
+
+        self.updated_at = datetime.now()
+
     def approve(self):
         """TRANSITION FROM DRAFT TO APPROVED"""
         if self.status != "draft":
@@ -71,15 +88,11 @@ class Objective:
         return self
 
     def activate(self):
-        """TRANSITION FROM APPROVED TO ACTIVE"""
-
         if self.status != "approved":
             raise ValidationError(
                 message=f"Cannot activate objective in {self.status} state"
             )
-
         self.status = ObjectiveState.ACTIVE.value
-
         return self
 
     def suspend(self):

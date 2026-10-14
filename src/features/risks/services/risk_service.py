@@ -3,8 +3,8 @@ from src.features.risks.domain.risk import Risk
 from src.features.quality_objectives.repository.objective_repository import (
     ObjectiveRepository,
 )
-from src.features.soqm_components.repositories.components_repository import (
-    ComponentRepository,
+from src.features.soqm_components.application.ports.component_repository import (
+    IComponentRepository,
 )
 from src.features.risks.repositories.risk_repository import RiskRepository
 from src.features.quality_objectives.domain.objective import Objective
@@ -30,30 +30,17 @@ class RiskService:
         self,
         repo: RiskRepository,
         objective_repo: ObjectiveRepository,
-        component_repo: ComponentRepository,
+        component_repo: IComponentRepository,
     ):
         self.repo: RiskRepository = repo
         self.objective_repo: ObjectiveRepository = objective_repo
-        self.component_repo: ComponentRepository = component_repo
+        self.component_repo: IComponentRepository = component_repo
         self.sequence_repo: ComponentRiskSeqRepository = ComponentRiskSeqRepository(
             self.repo.db
         )
 
-    async def list(
-        self,
-        filters,
-        options: bool = False,
-        pagination: Pagination | None = None,
-    ):
-        if options:
-            return await self.repo.list_options(filters)
-
-        return await self.repo.list(pagination, filters)
-
     async def _ensure_component_valide(self, component_id: UUID) -> int:
-        component: SOQMComponent | None = await self.component_repo.get_by_id(
-            component_id
-        )
+        component: SOQMComponent | None = await self.component_repo.get(component_id)
 
         if not component:
             raise NotFoundError(
@@ -74,10 +61,6 @@ class RiskService:
                 message=f"No Objective with ID {objective_id} was found",
             )
 
-    def _generate_risk_reference(self, component_order: int, seq: int):
-        """this might change later, i wanted to keep it easy to change in one place"""
-        return f"{component_order}.{seq}"
-
     async def create_risk(self, user_id: UUID, data: CreateRisk) -> Risk:
         """A check that needs to be done, is to verify that this objective is part of the component selected"""
 
@@ -88,8 +71,9 @@ class RiskService:
         risk: Risk = Risk.create(
             objectives=data.objectives,
             component_id=data.component_id,
-            risk_ref=self._generate_risk_reference(component_order, sequence),
-            risk_discription=data.risk_discription,
+            sequence=sequence,
+            component_idx=component_order,
+            risk_description=data.risk_description,
             created_by=user_id,
             next_review_date=data.next_review_date,
             occurence=data.occurence,
@@ -106,25 +90,14 @@ class RiskService:
 
         return risk
 
-    async def get_risk_details(self, entity_id: UUID):
-        risk = await self.repo.get_risk_details(entity_id)
-        return risk
-
     async def assess_risk(self, user_id: UUID, entity_id: UUID):
-        """
-        SAME CODE IS DUPLICATED IN THREE DIFFERENT METHODS
-
-        We can refactor this later by introducing lambda fuunction on the get_by_d and save()
-        """
         risk: Risk = await self.get_risk_by_id(entity_id)
         risk.assess()
         return await self.repo.update(risk)
 
     async def plan_treatment(self, user_id: UUID, entity_id: UUID):
         risk: Risk = await self.get_risk_by_id(entity_id)
-
         risk.plan_treatment()
-
         return await self.repo.update(risk)
 
     async def close_risk(self, user_id: UUID, entity_id: UUID):
@@ -137,16 +110,11 @@ class RiskService:
         risk: Risk = await self.get_risk_by_id(entity_id)
 
         risk.update(
-            risk_discreption=data.risk_discription,
+            risk_description=data.risk_description,
             next_review_date=data.next_review_date,
             occurence=data.occurence,
             significance=data.significance,
+            risk_rational=data.risk_rational,
         )
 
         return await self.repo.update(risk)
-
-    async def list_risks_by_objective(self, objective_id: UUID):
-        return await self.repo.list_by_objective(objective_id)
-
-    async def delete(self):
-        return

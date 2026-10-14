@@ -55,51 +55,6 @@ class ObjectiveRepository:
 
         return stmt
 
-    async def list(self, pagination: Pagination) -> list[ObjectiveEntity]:
-        stmt = select(self.model)
-        stmt = apply_pagination(stmt, pagination)
-        stmt = apply_ordering(stmt, self.model, "created_at")
-
-        results = await self.db.execute(stmt)
-
-        data = results.scalars().all()
-        if not data:
-            return []
-
-        return [self._to_domain(d) for d in data]
-
-    async def list_options(self, filters: ObjectiveFilters):
-        stmt = select(
-            self.model.id,
-            self.model.objective_reference,
-        ).where(
-            self.model.status.not_in(
-                [ObjectiveState.DRAFT.value, ObjectiveState.SUSPENDED.value],
-            )
-        )
-        stmt = self.apply_filters(stmt, filters)
-        results = (await self.db.execute(stmt)).mappings().all()
-
-        for result in results:
-            print(f"{result.get('id')} ---- {result.get('objective_reference')}")
-
-        return [
-            {
-                "id": obj["id"],
-                "ref": obj["objective_reference"],
-            }
-            for obj in results
-        ]
-
-    async def list_by_component(self, component_id: UUID, pagination: Pagination):
-        stmt = select(self.model).where(self.model.component_id == component_id)
-
-        stmt = apply_pagination(stmt, pagination)
-
-        results = (await self.db.execute(stmt)).scalars().all()
-
-        return [self._to_domain(obj) for obj in results]
-
     async def create(self, entity: ObjectiveEntity) -> ObjectiveEntity:
         orm: ObjectiveDB = self._to_orm(entity)
 
