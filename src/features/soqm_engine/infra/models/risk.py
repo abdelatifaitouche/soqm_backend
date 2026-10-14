@@ -25,7 +25,7 @@ class Risk(Base):
     )
     risk_description: Mapped[str] = mapped_column(
         String,
-        nullable=False,
+        nullable=True,
     )
     occurence: Mapped[int] = mapped_column(
         Integer,
