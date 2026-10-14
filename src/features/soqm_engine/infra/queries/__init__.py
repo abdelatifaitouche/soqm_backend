@@ -1,3 +1,4 @@
+from .risk_matrix_query import RiskMatrixQuery
 from .risk_query_service import RiskQueryService
 from .response_query_service import ResponseQueryService
 from .component_query_service import ComponentQueryService

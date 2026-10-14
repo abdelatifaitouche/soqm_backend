@@ -9,7 +9,7 @@ from src.features.soqm_engine.infra.repositories import (
     SequenceRepository,
 )
 from src.features.soqm_engine.application.usecases import RiskUC
-from src.features.soqm_engine.infra.queries.risk_query_service import RiskQueryService
+from src.features.soqm_engine.infra.queries import RiskMatrixQuery, RiskQueryService
 
 
 def get_risk_uc(db: AsyncSession = Depends(get_db)) -> RiskUC:
@@ -29,3 +29,7 @@ def get_risk_uc(db: AsyncSession = Depends(get_db)) -> RiskUC:
 
 def get_risk_queries(db: AsyncSession = Depends(get_db)) -> RiskQueryService:
     return RiskQueryService(db)
+
+
+def get_risk_matrix_query(db: AsyncSession = Depends(get_db)):
+    return RiskMatrixQuery(db)

@@ -10,13 +10,14 @@ from src.features.soqm_engine.api.commands.writes.risk_writes import (
 from src.features.soqm_engine.api.dependencies.risk_dependenices import (
     get_risk_uc,
     get_risk_queries,
+    get_risk_matrix_query,
 )
 from src.features.soqm_engine.application.usecases import RiskUC
 from src.features.soqm_engine.application.dtos.risk_dtos import (
     CreateRisk as CreateRiskDTO,
     RiskUpdate as RiskUpdateDTO,
 )
-from src.features.soqm_engine.infra.queries.risk_query_service import RiskQueryService
+from src.features.soqm_engine.infra.queries import RiskQueryService, RiskMatrixQuery
 from src.core.pagination import Pagination
 
 from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
@@ -116,3 +117,12 @@ async def remove_risk_response(
     await uc.remove_response(risk_id, response_id.response_id)
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/matrix/summary", status_code=status.HTTP_200_OK)
+async def get_risk_matrix(
+    filters: RiskFilters = Depends(),
+    queries: RiskMatrixQuery = Depends(get_risk_matrix_query),
+):
+    matrix = await queries.query(filters)
+    return matrix
