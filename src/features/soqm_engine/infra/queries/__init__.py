@@ -1,2 +1,4 @@
+from .risk_query_service import RiskQueryService
+from .response_query_service import ResponseQueryService
 from .component_query_service import ComponentQueryService
 from .objective_query_service import ObjectiveQueryService

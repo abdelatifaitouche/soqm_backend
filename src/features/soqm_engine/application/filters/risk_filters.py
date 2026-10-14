@@ -17,6 +17,7 @@ class RiskFilters(BaseModel):
     score: int | None = None
     status: str | None = None
     component_id: UUID | None = None
+    response_id: UUID | None = None
 
 
 class RiskOrderFilter(BaseModel):

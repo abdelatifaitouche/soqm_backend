@@ -74,15 +74,20 @@ class RiskUC:
 
         return risk
 
+    async def get(self, risk_id: UUID):
+        risk = await self.risk_repository.get(risk_id)
+
+        if not risk:
+            raise NotFoundError(f"No Risk Found with id {risk_id}")
+
+        return risk
+
     async def update_risk(self, risk_id: UUID, data: RiskUpdate):
 
         async with self.uow:
             update_data = asdict(data)
 
-            risk = await self.risk_repository.get(risk_id)
-
-            if not risk:
-                raise NotFoundError(f"No Risk Found with id {risk_id}")
+            risk = await self.get(risk_id)
 
             risk.update(**update_data)
 
@@ -92,10 +97,7 @@ class RiskUC:
 
     async def add_objective(self, risk_id: UUID, objective_id: UUID):
         async with self.uow:
-            risk = await self.risk_repository.get(risk_id)
-
-            if not risk:
-                raise NotFoundError("Risk not found")
+            risk = await self.get(risk_id)
 
             risk.add_objective(objective_id)
 
@@ -103,12 +105,25 @@ class RiskUC:
 
     async def remove_objective(self, risk_id: UUID, objective_id: UUID):
         async with self.uow:
-            risk = await self.risk_repository.get(risk_id)
-
-            if not risk:
-                raise NotFoundError("Risk not found")
+            risk = await self.get(risk_id)
 
             risk.remove_objective(objective_id)
+
+            await self.risk_repository.save(risk)
+
+    async def add_response(self, risk_id: UUID, response_id: UUID):
+        async with self.uow:
+            risk = await self.get(risk_id)
+
+            risk.add_response(response_id)
+
+            await self.risk_repository.save(risk)
+
+    async def remove_response(self, risk_id: UUID, response_id: UUID):
+        async with self.uow:
+            risk = await self.get(risk_id)
+
+            risk.remove_response(response_id)
 
             await self.risk_repository.save(risk)
 

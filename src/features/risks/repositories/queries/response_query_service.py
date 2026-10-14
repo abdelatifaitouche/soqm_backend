@@ -77,7 +77,7 @@ class ResponseQueryService:
 
         column = resolve_order_column(
             ResponseDB,
-            order.column,
+            order.columns,
             RESPONSE_ORDER_FIELDS,
         )
 

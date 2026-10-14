@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 from src.features.soqm_engine.infra.models import (
     Risk as RiskDB,
     RiskObjectiveAssociation,
+    RiskResponseAssociation,
 )
 from dataclasses import asdict
 
@@ -21,7 +22,7 @@ class RiskRepository(IRiskRepository):
         values = asdict(risk)
 
         objectives = set(values.pop("objectives", []))
-
+        responses = set(values.pop("responses", []))
         immutable_fields = {
             "id",
             "created_by",
@@ -43,17 +44,17 @@ class RiskRepository(IRiskRepository):
 
         await self.session.execute(stmt)
 
-        delete_stmt = delete(RiskObjectiveAssociation).where(
+        delete_obj_stmt = delete(RiskObjectiveAssociation).where(
             RiskObjectiveAssociation.risk_id == risk.id,
             RiskObjectiveAssociation.objective_id.not_in(objectives),
         )
 
         if not objectives:
-            delete_stmt = delete(RiskObjectiveAssociation).where(
+            delete_obj_stmt = delete(RiskObjectiveAssociation).where(
                 RiskObjectiveAssociation.risk_id == risk.id
             )
 
-        await self.session.execute(delete_stmt)
+        await self.session.execute(delete_obj_stmt)
 
         if objectives:
             rows = [
@@ -69,6 +70,33 @@ class RiskRepository(IRiskRepository):
             )
 
             await self.session.execute(association_insert)
+
+        delete_resp_stmt = delete(RiskResponseAssociation).where(
+            RiskResponseAssociation.risk_id == risk.id,
+            RiskResponseAssociation.response_id.not_in(responses),
+        )
+
+        if not responses:
+            delete_resp_stmt = delete(RiskResponseAssociation).where(
+                RiskResponseAssociation.risk_id == risk.id
+            )
+
+        await self.session.execute(delete_resp_stmt)
+
+        if responses:
+            rows = [
+                {"risk_id": risk.id, "response_id": resp_id} for resp_id in responses
+            ]
+
+            resp_association_insert = (
+                insert(RiskResponseAssociation)
+                .values(rows)
+                .on_conflict_do_nothing(
+                    index_elements=["risk_id", "response_id"],
+                )
+            )
+
+            await self.session.execute(resp_association_insert)
 
     async def get(self, risk_id: UUID) -> Risk | None:
         stmt = select(RiskDB.__table__).where(RiskDB.id == risk_id)
@@ -89,8 +117,14 @@ class RiskRepository(IRiskRepository):
 
         obj_res = (await self.session.execute(objective)).scalars().all()
 
-        data["objectives"] = list(obj_res)
+        responses = select(RiskResponseAssociation.response_id).where(
+            RiskResponseAssociation.risk_id == risk_id
+        )
 
+        resp_data = (await self.session.execute(responses)).scalars().all()
+
+        data["objectives"] = list(obj_res)
+        data["responses"] = list(resp_data)
         return Risk(**data)
 
     async def delete(self, risk_id: UUID) -> None:

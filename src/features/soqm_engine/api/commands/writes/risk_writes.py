@@ -23,7 +23,12 @@ class CreateRisk(BaseModel):
 class UpdateRiskRequest(BaseModel):
     risk_description: str | None = None
     risk_rational: str | None = None
+    next_review_date: date | None = None
 
 
 class UpdateRiskObjectiveRequest(BaseModel):
     objective_id: UUID
+
+
+class UpdateRiskResponseRequest(BaseModel):
+    response_id: UUID

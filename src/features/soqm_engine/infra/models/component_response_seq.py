@@ -11,6 +11,7 @@ class ComponentResponseSeq(Base):
     component_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         nullable=False,
+        unique=True,
     )
     sequence: Mapped[int] = mapped_column(
         Integer,
@@ -22,6 +23,4 @@ class ComponentResponseSeq(Base):
         DateTime, default=datetime.now()
     )
 
-    __table_args__ = (
-        UniqueConstraint("component_id", "sequence", name="component_response_uq"),
-    )
+    __table_args__ = (UniqueConstraint("component_id", name="component_response_uq"),)

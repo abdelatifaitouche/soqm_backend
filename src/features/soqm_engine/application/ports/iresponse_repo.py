@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
-from src.features.soqm_engine.domain.entities.reponse import Response
+from src.features.soqm_engine.domain.entities.response import RiskResponse as Response
 
 
 class IResponseRepository(ABC):

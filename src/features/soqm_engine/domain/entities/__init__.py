@@ -1,4 +1,4 @@
 from .component import SOQMComponent
 from .objective import Objective
-from .reponse import Response
+from .response import RiskResponse
 from .risk import Risk

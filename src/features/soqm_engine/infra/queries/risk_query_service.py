@@ -1,6 +1,12 @@
-from src.features.soqm_engine.infra.models import Risk as RiskDB
+from src.features.soqm_engine.infra.models import (
+    Risk as RiskDB,
+    RiskResponseAssociation,
+    QualityObjective,
+    RiskObjectiveAssociation,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, Select, func
+from sqlalchemy.orm import selectinload
 from src.core.pagination import Pagination
 from src.infra.db.pagination import apply_pagination
 from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
@@ -8,6 +14,8 @@ from src.features.soqm_engine.application.dtos.risk_dtos import (
     RiskList,
     PaginatedResponse,
     Risk as RiskDetails,
+    ObjectiveSummary,
+    ComponentSummary,
 )
 from typing import Any
 from uuid import UUID
@@ -23,7 +31,15 @@ class RiskQueryService:
 
         if filters.component_id:
             stmt = stmt.where(RiskDB.component_id == filters.component_id)
-
+        if filters.response_id:
+            stmt = stmt.where(
+                select(RiskResponseAssociation.risk_id)
+                .where(
+                    RiskResponseAssociation.risk_id == RiskDB.id,
+                    RiskResponseAssociation.response_id == filters.response_id,
+                )
+                .exists()
+            )
         return stmt
 
     async def list(
@@ -64,26 +80,55 @@ class RiskQueryService:
             items=[RiskList(**r) for r in res],
         )
 
-    async def get_risk_details(self, risk_id: UUID):
+    async def get_risk_details(self, entity_id: UUID) -> RiskDetails | None:
 
-        stmt = select(
-            RiskDB.id,
-            RiskDB.status,
-            RiskDB.risk_ref,
-            RiskDB.risk_description,
-            RiskDB.score,
-            RiskDB.occurence,
-            RiskDB.significance,
-            RiskDB.date_last_assessed,
-            RiskDB.next_review_date,
-            RiskDB.date_identified,
-            RiskDB.residual_score,
-            RiskDB.risk_rational,
-        ).where(RiskDB.id == risk_id)
+        risk = await self.session.get(
+            RiskDB,
+            entity_id,
+            options=[
+                selectinload(RiskDB.objective_association)
+                .selectinload(RiskObjectiveAssociation.objective)
+                .load_only(
+                    QualityObjective.id,
+                    QualityObjective.objective_reference,
+                    QualityObjective.status,
+                ),
+                selectinload(RiskDB.component),
+            ],
+        )
 
-        res = (await self.session.execute(stmt)).mappings().one_or_none()
-
-        if not res:
+        if not risk:
             return None
+        objectives: list[ObjectiveSummary] = [
+            ObjectiveSummary(
+                id=obj.objective.id,
+                status=obj.objective.status,
+                objective_reference=obj.objective.objective_reference,
+            )
+            for obj in risk.objective_association
+        ]
 
-        return RiskDetails(**res)
+        component: ComponentSummary = ComponentSummary(
+            id=risk.component.id,
+            name=risk.component.name,
+            description=risk.component.description,
+        )
+
+        risk_details = RiskDetails(
+            id=risk.id,
+            risk_ref=risk.risk_ref,
+            risk_description=risk.risk_description,
+            score=risk.score,
+            occurence=risk.occurence,
+            significance=risk.significance,
+            status=risk.status,
+            date_identified=risk.date_identified,
+            next_review_date=risk.next_review_date,
+            residual_score=risk.residual_score,
+            date_last_assessed=risk.date_last_assessed,
+            objectives=objectives,
+            component=component,
+            risk_rational=risk.risk_rational,
+        )
+
+        return risk_details

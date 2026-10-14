@@ -26,7 +26,7 @@ class Risk:
     risk_rational: str | None = None
 
     objectives: list[UUID] = field(default_factory=list)
-
+    responses: list[UUID] = field(default_factory=list)
     date_last_assessed: date | None = None
     next_review_date: date | None = None
     created_by: UUID | None = None
@@ -101,8 +101,15 @@ class Risk:
             self.objectives.append(objective_id)
 
     def remove_objective(self, objective_id: UUID):
-
         if objective_id not in self.objectives:
             raise ValueError("Invalid Objectives")
 
         self.objectives.remove(objective_id)
+
+    def add_response(self, response_id: UUID):
+        if response_id not in self.responses:
+            self.responses.append(response_id)
+
+    def remove_response(self, response_id: UUID):
+        if response_id in self.responses:
+            self.responses.remove(response_id)

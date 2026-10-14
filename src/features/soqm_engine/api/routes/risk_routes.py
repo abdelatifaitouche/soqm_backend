@@ -1,9 +1,11 @@
 from fastapi import APIRouter, status, Depends
+from fastapi.responses import Response
 from fastapi.exceptions import HTTPException
 from src.features.soqm_engine.api.commands.writes.risk_writes import (
     CreateRisk,
     UpdateRiskRequest,
     UpdateRiskObjectiveRequest,
+    UpdateRiskResponseRequest,
 )
 from src.features.soqm_engine.api.dependencies.risk_dependenices import (
     get_risk_uc,
@@ -24,7 +26,7 @@ from uuid import UUID
 router = APIRouter(prefix="/risks", tags=["Quality Risks"])
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_risk(
     data: CreateRisk,
     uc: RiskUC = Depends(get_risk_uc),
@@ -70,7 +72,7 @@ async def update_risk(
     )
 
 
-@router.post("/{risk_id}/objectives")
+@router.post("/{risk_id}/objectives", status_code=status.HTTP_200_OK)
 async def add_objective_to_risk(
     risk_id: UUID,
     objective: UpdateRiskObjectiveRequest,
@@ -82,13 +84,35 @@ async def add_objective_to_risk(
     )
 
 
-@router.delete("/{risk_id}/objectives")
+@router.delete("/{risk_id}/objectives", status_code=204)
 async def remove_objective_to_risk(
     risk_id: UUID,
     objective: UpdateRiskObjectiveRequest,
     uc: RiskUC = Depends(get_risk_uc),
 ):
-    return await uc.remove_objective(
+    await uc.remove_objective(
         risk_id,
         objective.objective_id,
     )
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{risk_id}/responses", status_code=status.HTTP_200_OK)
+async def add_risk_response(
+    risk_id: UUID,
+    response_id: UpdateRiskResponseRequest,
+    uc: RiskUC = Depends(get_risk_uc),
+):
+    return await uc.add_response(risk_id, response_id.response_id)
+
+
+@router.delete("/{risk_id}/responses", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_risk_response(
+    risk_id: UUID,
+    response_id: UpdateRiskResponseRequest,
+    uc: RiskUC = Depends(get_risk_uc),
+):
+    await uc.remove_response(risk_id, response_id.response_id)
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
