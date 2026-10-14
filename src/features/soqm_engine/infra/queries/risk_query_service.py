@@ -40,6 +40,17 @@ class RiskQueryService:
                 )
                 .exists()
             )
+
+        if filters.objective_id:
+            stmt = stmt.where(
+                select(RiskObjectiveAssociation.risk_id)
+                .where(
+                    RiskObjectiveAssociation.risk_id == RiskDB.id,
+                    RiskObjectiveAssociation.objective_id == filters.objective_id,
+                )
+                .exists(),
+            )
+
         return stmt
 
     async def list(

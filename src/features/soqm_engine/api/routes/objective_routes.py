@@ -25,6 +25,8 @@ from src.features.soqm_engine.api.commands.reads.objective_reads import (
     PaginatedResponse,
     ObjectiveOption,
 )
+from src.features.auth.security.dependencies import require_auth
+
 
 router = APIRouter(prefix="/objectives", tags=["Quality Objectives"])
 
@@ -33,6 +35,7 @@ router = APIRouter(prefix="/objectives", tags=["Quality Objectives"])
 async def list_options(
     filters: ObjectiveFilters = Depends(),
     queries: ObjectiveQueryService = Depends(get_queries),
+    user=Depends(require_auth),
 ):
     options = await queries.list_options()
     return [ObjectiveOption.model_validate(opt) for opt in options]
@@ -43,6 +46,7 @@ async def list_objectives(
     pagination: Pagination = Depends(),
     filters: ObjectiveFilters = Depends(),
     queries: ObjectiveQueryService = Depends(get_queries),
+    user=Depends(require_auth),
 ):
     objectives = await queries.list_objectives(pagination, filters)
 
@@ -51,7 +55,9 @@ async def list_objectives(
 
 @router.get("/{objective_id}")
 async def get_objective_details(
-    objective_id: UUID, queries: ObjectiveQueryService = Depends(get_queries)
+    objective_id: UUID,
+    queries: ObjectiveQueryService = Depends(get_queries),
+    user=Depends(require_auth),
 ):
     objective = await queries.get_objective_details(objective_id)
     if not objective:
@@ -67,6 +73,7 @@ async def get_objective_details(
 async def create_new_objective(
     data: CreateObjectiveRequest,
     uc: ObjectiveUC = Depends(get_objective_uc),
+    user=Depends(require_auth),
 ):
     return await uc.create(
         CreateObjective(
@@ -84,6 +91,7 @@ async def update_objective(
     uc: ObjectiveUC = Depends(
         get_objective_uc,
     ),
+    user=Depends(require_auth),
 ):
     return await uc.update_objective(
         objective_id,
@@ -99,6 +107,7 @@ async def update_objective(
 async def approve_objective(
     objective_id: UUID,
     uc: ObjectiveUC = Depends(get_objective_uc),
+    user=Depends(require_auth),
 ):
     return await uc.approve(
         objective_id,

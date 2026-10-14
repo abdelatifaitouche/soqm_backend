@@ -23,6 +23,8 @@ from src.api.deps.ordering import parse_ordering
 from src.core.ordering import OrderBy
 
 from uuid import UUID
+from src.features.auth.security.dependencies import require_auth
+
 
 router = APIRouter(prefix="/responses", tags=["Risk Responses"])
 
@@ -31,9 +33,10 @@ router = APIRouter(prefix="/responses", tags=["Risk Responses"])
 async def create_response(
     response: CreateRiskResponseRequest,
     uc: ResponseUC = Depends(get_response_uc),
+    user=Depends(require_auth),
 ):
     return await uc.create_response(
-        UUID("a625037d-7538-483e-be4f-0a2a1032082f"),
+        user.get("sub"),
         CreateRiskResponse(**dict(response)),
     )
 
@@ -44,13 +47,16 @@ async def list_responses(
     filters: ResponseFilters = Depends(),
     ordering: OrderBy = Depends(parse_ordering),
     queries: ResponseQueryService = Depends(get_response_queries),
+    user=Depends(require_auth),
 ):
     return await queries.list(pagination, filters, ordering)
 
 
 @router.get("/{response_id}")
 async def get_response_details(
-    response_id: UUID, queries: ResponseQueryService = Depends(get_response_queries)
+    response_id: UUID,
+    queries: ResponseQueryService = Depends(get_response_queries),
+    user=Depends(require_auth),
 ):
     response = await queries.get_response_details(response_id)
 
@@ -65,6 +71,7 @@ async def update_response(
     response_id: UUID,
     data: UpdateResponseRequest,
     uc: ResponseUC = Depends(get_response_uc),
+    user=Depends(require_auth),
 ):
     return await uc.update_response(
         response_id,
@@ -79,6 +86,7 @@ async def add_risk_response(
     response_id: UUID,
     risk: UpdateResponsesRisksRequest,
     uc: ResponseUC = Depends(get_response_uc),
+    user=Depends(require_auth),
 ):
     return await uc.add_risk(
         response_id,
@@ -91,6 +99,7 @@ async def remove_risk_response(
     response_id: UUID,
     risk: UpdateResponsesRisksRequest,
     uc: ResponseUC = Depends(get_response_uc),
+    user=Depends(require_auth),
 ):
     return await uc.remove_risk(
         response_id,

@@ -23,13 +23,14 @@ from src.core.pagination import Pagination
 from src.features.soqm_engine.application.filters.component_filters import (
     ComponentFilters,
 )
-
+from src.features.auth.security.dependencies import require_auth
 
 router = APIRouter(prefix="/components", tags=["Soqm Components"])
 
 
 @router.get("")
 async def list_components(
+    user=Depends(require_auth),
     pagination: Pagination = Depends(),
     filters: ComponentFilters = Depends(),
     queries: ComponentQueryService = Depends(get_component_queries),
@@ -38,13 +39,17 @@ async def list_components(
 
 
 @router.get("/options")
-async def list_options(queries: ComponentQueryService = Depends(get_component_queries)):
+async def list_options(
+    user=Depends(require_auth),
+    queries: ComponentQueryService = Depends(get_component_queries),
+):
     return await queries.list_options()
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_component(
     data: CreateComponentRequest,
+    user=Depends(require_auth),
     uc: ComponentUC = Depends(get_component_uc),
 ):
     return await uc.create(
@@ -61,6 +66,7 @@ async def create_component(
 async def get_component_details(
     component_id: UUID,
     query_service: ComponentQueryService = Depends(get_component_queries),
+    user=Depends(require_auth),
 ):
     component = await query_service.get_component_details(
         component_id,
@@ -74,6 +80,7 @@ async def update(
     component_id: UUID,
     data: UpdateComponentRequest,
     uc: ComponentUC = Depends(get_component_uc),
+    user=Depends(require_auth),
 ):
     component = await uc.update(
         component_id,
@@ -91,6 +98,7 @@ async def update(
 async def delete(
     component_id: UUID,
     service: ComponentUC = Depends(get_component_uc),
+    user=Depends(require_auth),
 ):
     await service.delete(component_id)
 
@@ -99,6 +107,7 @@ async def delete(
 async def activate_component(
     component_id: UUID,
     uc: ComponentUC = Depends(get_component_uc),
+    user=Depends(require_auth),
 ):
     updated = await uc.activate_component(component_id)
     return ReadComponentDetails.model_validate(updated)
@@ -108,6 +117,7 @@ async def activate_component(
 async def deactivate_component(
     component_id: UUID,
     uc: ComponentUC = Depends(get_component_uc),
+    user=Depends(require_auth),
 ):
     deactivated = await uc.deactivate_component(component_id)
     return ReadComponentDetails.model_validate(deactivated)
@@ -117,6 +127,7 @@ async def deactivate_component(
 async def archive_component(
     component_id: UUID,
     uc: ComponentUC = Depends(get_component_uc),
+    user=Depends(require_auth),
 ):
     archived = await uc.archive_component(component_id)
     return ReadComponentDetails.model_validate(archived)

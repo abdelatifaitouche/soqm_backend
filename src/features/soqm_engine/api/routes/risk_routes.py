@@ -22,7 +22,7 @@ from src.core.pagination import Pagination
 
 from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
 from uuid import UUID
-
+from src.features.auth.security.dependencies import require_auth
 
 router = APIRouter(prefix="/risks", tags=["Quality Risks"])
 
@@ -31,11 +31,10 @@ router = APIRouter(prefix="/risks", tags=["Quality Risks"])
 async def create_risk(
     data: CreateRisk,
     uc: RiskUC = Depends(get_risk_uc),
+    user=Depends(require_auth),
 ):
 
-    risk = await uc.create_risk(
-        UUID("a625037d-7538-483e-be4f-0a2a1032082f"), CreateRiskDTO(**data.model_dump())
-    )
+    risk = await uc.create_risk(user.get("sub"), CreateRiskDTO(**data.model_dump()))
 
     return risk
 
@@ -45,13 +44,16 @@ async def list_risks(
     pagination: Pagination = Depends(),
     filters: RiskFilters = Depends(),
     queries: RiskQueryService = Depends(get_risk_queries),
+    user=Depends(require_auth),
 ):
     return await queries.list(pagination, filters)
 
 
 @router.get("/{risk_id}")
 async def get_risk_details(
-    risk_id: UUID, queries: RiskQueryService = Depends(get_risk_queries)
+    risk_id: UUID,
+    queries: RiskQueryService = Depends(get_risk_queries),
+    user=Depends(require_auth),
 ):
     risk = await queries.get_risk_details(risk_id)
 
@@ -66,6 +68,7 @@ async def update_risk(
     risk_id: UUID,
     data: UpdateRiskRequest,
     uc: RiskUC = Depends(get_risk_uc),
+    user=Depends(require_auth),
 ):
     return await uc.update_risk(
         risk_id,
@@ -78,6 +81,7 @@ async def add_objective_to_risk(
     risk_id: UUID,
     objective: UpdateRiskObjectiveRequest,
     uc: RiskUC = Depends(get_risk_uc),
+    user=Depends(require_auth),
 ):
     return await uc.add_objective(
         risk_id,
@@ -90,6 +94,7 @@ async def remove_objective_to_risk(
     risk_id: UUID,
     objective: UpdateRiskObjectiveRequest,
     uc: RiskUC = Depends(get_risk_uc),
+    user=Depends(require_auth),
 ):
     await uc.remove_objective(
         risk_id,
@@ -104,6 +109,7 @@ async def add_risk_response(
     risk_id: UUID,
     response_id: UpdateRiskResponseRequest,
     uc: RiskUC = Depends(get_risk_uc),
+    user=Depends(require_auth),
 ):
     return await uc.add_response(risk_id, response_id.response_id)
 
@@ -113,6 +119,7 @@ async def remove_risk_response(
     risk_id: UUID,
     response_id: UpdateRiskResponseRequest,
     uc: RiskUC = Depends(get_risk_uc),
+    user=Depends(require_auth),
 ):
     await uc.remove_response(risk_id, response_id.response_id)
 
@@ -123,6 +130,7 @@ async def remove_risk_response(
 async def get_risk_matrix(
     filters: RiskFilters = Depends(),
     queries: RiskMatrixQuery = Depends(get_risk_matrix_query),
+    user=Depends(require_auth),
 ):
     matrix = await queries.query(filters)
     return matrix
