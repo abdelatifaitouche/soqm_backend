@@ -109,11 +109,14 @@ class ObjectiveQueryService:
 
         return ObjectiveDetails(**objective)
 
-    async def list_options(self) -> list[BaseObjective]:
+    async def list_options(self, filters: ObjectiveFilters) -> list[BaseObjective]:
         stmt = select(
             ObjectiveDB.id,
             ObjectiveDB.objective_reference,
         )
+
+        if filters.component_id:
+            stmt = stmt.where(ObjectiveDB.component_id == filters.component_id)
 
         results = (await self.session.execute(stmt)).mappings().all()
 

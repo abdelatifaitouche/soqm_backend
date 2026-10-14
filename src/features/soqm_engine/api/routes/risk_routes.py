@@ -23,6 +23,8 @@ from src.core.pagination import Pagination
 from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
 from uuid import UUID
 from src.features.auth.security.dependencies import require_auth
+from src.core.ordering import OrderBy
+from src.api.deps.ordering import parse_ordering
 
 router = APIRouter(prefix="/risks", tags=["Quality Risks"])
 
@@ -43,10 +45,11 @@ async def create_risk(
 async def list_risks(
     pagination: Pagination = Depends(),
     filters: RiskFilters = Depends(),
+    order: OrderBy = Depends(parse_ordering),
     queries: RiskQueryService = Depends(get_risk_queries),
     user=Depends(require_auth),
 ):
-    return await queries.list(pagination, filters)
+    return await queries.list(pagination, filters, order)
 
 
 @router.get("/{risk_id}")

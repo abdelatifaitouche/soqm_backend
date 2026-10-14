@@ -1,6 +1,6 @@
 from src.infra.db.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Text, UUID, ForeignKey, Integer, Date, Float
+from sqlalchemy import String, Text, UUID, ForeignKey, Integer, Date, Float, Boolean
 import uuid
 from datetime import date
 from src.features.soqm_engine.domain.enums.risk_state import RiskStatus

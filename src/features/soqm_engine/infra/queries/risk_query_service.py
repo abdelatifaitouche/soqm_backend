@@ -4,6 +4,9 @@ from src.features.soqm_engine.infra.models import (
     QualityObjective,
     RiskObjectiveAssociation,
 )
+from src.features.soqm_engine.infra.models.risk import RISK_ORDER_FIELDS
+from src.core.ordering import apply_ordering, resolve_order_column, OrderBy
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, Select, func
 from sqlalchemy.orm import selectinload
@@ -54,7 +57,7 @@ class RiskQueryService:
         return stmt
 
     async def list(
-        self, pagination: Pagination, filters: RiskFilters
+        self, pagination: Pagination, filters: RiskFilters, order: OrderBy
     ) -> PaginatedResponse:
         total_count = select(func.count()).select_from(RiskDB)
         total_count = self._apply_filters(total_count, filters)
@@ -76,9 +79,14 @@ class RiskQueryService:
             RiskDB.score,
             RiskDB.status,
             RiskDB.risk_description,
+            RiskDB.date_identified,
         )
 
         stmt = self._apply_filters(stmt, filters)
+
+        columns = resolve_order_column(RiskDB, order.columns, RISK_ORDER_FIELDS)
+
+        stmt = apply_ordering(stmt, columns, direction=order.direction)
 
         stmt = apply_pagination(stmt, pagination)
 

@@ -12,6 +12,7 @@ class RiskList:
     significance: int
     status: str
     risk_description: str
+    date_identified: date
 
 
 @dataclass(frozen=True)

@@ -37,7 +37,7 @@ async def list_options(
     queries: ObjectiveQueryService = Depends(get_queries),
     user=Depends(require_auth),
 ):
-    options = await queries.list_options()
+    options = await queries.list_options(filters)
     return [ObjectiveOption.model_validate(opt) for opt in options]
 
 
