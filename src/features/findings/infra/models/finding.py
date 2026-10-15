@@ -16,11 +16,11 @@ class Finding(Base):
 
     finding_ref: Mapped[str] = mapped_column(
         String(100),
-        nullable=False,
+        nullable=True,
     )
     description: Mapped[str] = mapped_column(
         Text,
-        nullable=False,
+        nullable=True,
     )
     finding_source: Mapped[FindingSource] = mapped_column(
         Enum(
@@ -28,11 +28,11 @@ class Finding(Base):
             name="finding_source",
             native_enum=True,
         ),
-        nullable=False,
+        nullable=True,
     )
     department: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        nullable=False,
+        nullable=True,
     )
     deficiency_severity: Mapped[DeficiencySeverity] = mapped_column(
         Enum(
@@ -41,6 +41,7 @@ class Finding(Base):
             native_enum=True,
         ),
         nullable=False,
+        default=DeficiencySeverity.SIGNIFICANT_DEFICIENCY,
     )
 
     status: Mapped[FindingStatus] = mapped_column(

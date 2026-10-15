@@ -27,6 +27,14 @@ class FindingListItem:
 
 
 @dataclass(frozen=True)
+class PaginatedResponse:
+    total: int
+    page: int
+    size: int
+    items: list[FindingListItem] | None
+
+
+@dataclass(frozen=True)
 class FindingDetails:
     id: UUID
     finding_ref: str
