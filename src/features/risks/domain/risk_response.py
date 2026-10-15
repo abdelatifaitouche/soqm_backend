@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from uuid import UUID, uuid4
 from datetime import date
+from uuid import UUID, uuid4
+
 from src.features.risks.enums.risk_response import ResponseState, ResponseType
 
 

@@ -1,9 +1,13 @@
 from uuid import UUID
+
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
+
 from src.features.organizations.domain.department import (
     Department as Entity,
+)
+from src.features.organizations.domain.department import (
     DeptCompact,
 )
 from src.features.organizations.models.department import Department as DepartmentDB

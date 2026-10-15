@@ -1,16 +1,17 @@
-from uuid import UUID
-from src.features.soqm_engine.application.ports import (
-    IRiskRepository,
-    IComponentRepository,
-    ISeqRepository,
-    IObjectiveRepository,
-)
-from src.features.soqm_engine.domain.entities import SOQMComponent, Objective, Risk
-from src.features.soqm_engine.domain.enums.component_state import ComponentState
-from src.core.shared.interfaces.unit_of_work import IUnitOfWork
-from src.core.exceptions import NotFoundError, ValidationError
-from src.features.soqm_engine.application.dtos.risk_dtos import CreateRisk, RiskUpdate
 from dataclasses import asdict
+from uuid import UUID
+
+from src.core.exceptions import NotFoundError, ValidationError
+from src.core.shared.interfaces.unit_of_work import IUnitOfWork
+from src.features.soqm_engine.application.dtos.risk_dtos import CreateRisk, RiskUpdate
+from src.features.soqm_engine.application.ports import (
+    IComponentRepository,
+    IObjectiveRepository,
+    IRiskRepository,
+    ISeqRepository,
+)
+from src.features.soqm_engine.domain.entities import Objective, Risk, SOQMComponent
+from src.features.soqm_engine.domain.enums.component_state import ComponentState
 
 
 class RiskUC:

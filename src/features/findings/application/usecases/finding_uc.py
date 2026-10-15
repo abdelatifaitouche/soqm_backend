@@ -1,14 +1,15 @@
+from uuid import UUID
+
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 from src.features.findings.application.dtos.finding_dtos import CreateFinding
-from src.features.findings.domain.entities.finding import Finding
 from src.features.findings.application.ports import (
     IFindingDeptSeqRepository,
     IFindingRepository,
 )
+from src.features.findings.domain.entities.finding import Finding
 from src.features.organizations.repositories.department_repository import (
     DepartmentRepository,
 )
-from uuid import UUID
 
 
 class FindingUC:

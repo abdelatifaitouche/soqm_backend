@@ -1,8 +1,9 @@
 from uuid import UUID
+
+from src.features.organizations.domain.department import Department as Entity
 from src.features.organizations.repositories.department_repository import (
     DepartmentRepository,
 )
-from src.features.organizations.domain.department import Department as Entity
 
 
 class DepartmentService:

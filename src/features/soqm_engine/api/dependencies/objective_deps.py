@@ -1,15 +1,14 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.api.deps.db_session import get_db
 
+from src.api.deps.db_session import get_db
 from src.features.soqm_engine.application.usecases.objective_uc import ObjectiveUC
+from src.features.soqm_engine.infra.queries import ObjectiveQueryService
 from src.features.soqm_engine.infra.repositories import (
-    ObjectiveRepository,
     ComponentRepository,
+    ObjectiveRepository,
     SequenceRepository,
 )
-from src.features.soqm_engine.infra.queries import ObjectiveQueryService
-
 from src.infra.db.unit_of_work import UnitOfWork
 
 

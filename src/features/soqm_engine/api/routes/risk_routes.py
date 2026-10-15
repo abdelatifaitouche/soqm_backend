@@ -1,30 +1,33 @@
-from fastapi import APIRouter, status, Depends
-from fastapi.responses import Response
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
+from fastapi.responses import Response
+
+from src.api.deps.ordering import parse_ordering
+from src.core.ordering import OrderBy
+from src.core.pagination import Pagination
+from src.features.auth.security.dependencies import require_auth
 from src.features.soqm_engine.api.commands.writes.risk_writes import (
     CreateRisk,
-    UpdateRiskRequest,
     UpdateRiskObjectiveRequest,
+    UpdateRiskRequest,
     UpdateRiskResponseRequest,
 )
 from src.features.soqm_engine.api.dependencies.risk_dependenices import (
-    get_risk_uc,
-    get_risk_queries,
     get_risk_matrix_query,
+    get_risk_queries,
+    get_risk_uc,
 )
-from src.features.soqm_engine.application.usecases import RiskUC
 from src.features.soqm_engine.application.dtos.risk_dtos import (
     CreateRisk as CreateRiskDTO,
+)
+from src.features.soqm_engine.application.dtos.risk_dtos import (
     RiskUpdate as RiskUpdateDTO,
 )
-from src.features.soqm_engine.infra.queries import RiskQueryService, RiskMatrixQuery
-from src.core.pagination import Pagination
-
 from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
-from uuid import UUID
-from src.features.auth.security.dependencies import require_auth
-from src.core.ordering import OrderBy
-from src.api.deps.ordering import parse_ordering
+from src.features.soqm_engine.application.usecases import RiskUC
+from src.features.soqm_engine.infra.queries import RiskMatrixQuery, RiskQueryService
 
 router = APIRouter(prefix="/risks", tags=["Quality Risks"])
 

@@ -1,15 +1,16 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.api.deps.db_session import get_db
-from src.infra.db.unit_of_work import UnitOfWork
-from src.features.soqm_engine.infra.repositories import (
-    RiskRepository,
-    ComponentRepository,
-    ObjectiveRepository,
-    SequenceRepository,
-)
 from src.features.soqm_engine.application.usecases import RiskUC
 from src.features.soqm_engine.infra.queries import RiskMatrixQuery, RiskQueryService
+from src.features.soqm_engine.infra.repositories import (
+    ComponentRepository,
+    ObjectiveRepository,
+    RiskRepository,
+    SequenceRepository,
+)
+from src.infra.db.unit_of_work import UnitOfWork
 
 
 def get_risk_uc(db: AsyncSession = Depends(get_db)) -> RiskUC:

@@ -1,7 +1,9 @@
-from src.core.permissions import Permissions
 import inspect
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.permissions import Permissions
 from src.features.auth.models.permission import Permission
 
 

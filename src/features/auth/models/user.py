@@ -1,6 +1,7 @@
-from src.infra.db.base import Base
+from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Boolean
+
+from src.infra.db.base import Base
 
 
 class User(Base):

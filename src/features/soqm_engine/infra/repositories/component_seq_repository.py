@@ -1,14 +1,16 @@
+from datetime import datetime
+from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.soqm_engine.application.ports import ISeqRepository
 from src.features.soqm_engine.infra.models import (
     ComponentObjectiveSeq,
-    ComponentRiskSequence,
     ComponentResponseSeq,
+    ComponentRiskSequence,
 )
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert
-from uuid import UUID
-from datetime import datetime
 
 
 class SequenceRepository(ISeqRepository):

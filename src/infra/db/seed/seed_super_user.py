@@ -3,17 +3,19 @@
 # get the user_roles associoation , associtate this user_id with the super_admin_role_id
 # commit everything
 
+import uuid
+from uuid import UUID
+
+from sqlalchemy import select, text
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.config import settings
+from src.core.roles import Role as ROLE_ENUM
 from src.features.auth.models.role import Role as RoleDB
 from src.features.auth.models.user import User as UserDB
 from src.features.auth.models.user_roles import UserRoles as UserRolesDB
-from sqlalchemy.dialects.postgresql import insert as pg_insert
-from sqlalchemy import select, text
-from src.core.roles import Role as ROLE_ENUM
-from src.core.config import settings
 from src.features.auth.security.password import hash_password
-import uuid
-from uuid import UUID
 
 
 async def check_super_user(session: AsyncSession):

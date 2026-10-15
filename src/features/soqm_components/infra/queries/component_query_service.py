@@ -1,18 +1,20 @@
+from typing import Any
 from uuid import UUID
-from sqlalchemy import select, Select
+
+from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.soqm_components.application.dtos.component_dto import (
     SOQMComponentDetails,
     SOQMComponentList,
 )
+from src.features.soqm_components.application.dtos.filters import ComponentFilters
 from src.features.soqm_components.application.ports.component_query_service import (
     IComponentQueryService,
 )
 from src.features.soqm_components.infra.models.soqm_component import (
     SOQMComponent as SOQMComponentDB,
 )
-from src.features.soqm_components.application.dtos.filters import ComponentFilters
-from typing import Any
 
 
 class ComponentQueryService:

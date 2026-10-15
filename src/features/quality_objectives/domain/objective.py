@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from uuid import UUID, uuid4
 from datetime import datetime
-from src.features.quality_objectives.enums.objective_states import ObjectiveState
+from uuid import UUID, uuid4
+
 from src.core.exceptions import ValidationError
+from src.features.quality_objectives.enums.objective_states import ObjectiveState
 
 
 @dataclass

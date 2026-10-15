@@ -1,14 +1,16 @@
-from fastapi import APIRouter, Depends
 from uuid import UUID
-from src.infra.db.uow import get_db
+
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.features.organizations.domain.department import Department as Entity
+from src.features.organizations.mappers.DepartmentMapper import DepartmentMapper
 from src.features.organizations.repositories.department_repository import (
     DepartmentRepository,
 )
+from src.features.organizations.schemas.department import CreateDepartment, Department
 from src.features.organizations.services.department_service import DepartmentService
-from src.features.organizations.schemas.department import Department, CreateDepartment
-from src.features.organizations.mappers.DepartmentMapper import DepartmentMapper
-from src.features.organizations.domain.department import Department as Entity
+from src.infra.db.uow import get_db
 
 router = APIRouter(prefix="/organization")
 

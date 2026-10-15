@@ -1,9 +1,11 @@
-from pydantic import BaseModel
 from uuid import UUID
+
+from pydantic import BaseModel
+
 from src.features.findings.domain.enums.finding import (
+    DeficiencySeverity,
     FindingSource,
     FindingStatus,
-    DeficiencySeverity,
 )
 
 

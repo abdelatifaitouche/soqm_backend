@@ -1,30 +1,30 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
+
+from src.api.deps.ordering import parse_ordering
+from src.core.ordering import OrderBy
+from src.core.pagination import Pagination
+from src.features.auth.security.dependencies import require_auth
 from src.features.soqm_engine.api.commands.writes.response_writes import (
     CreateRiskResponseRequest,
     UpdateResponseRequest,
     UpdateResponsesRisksRequest,
 )
 from src.features.soqm_engine.api.dependencies.response_deps import (
-    get_response_uc,
     get_response_queries,
+    get_response_uc,
 )
-from src.features.soqm_engine.application.usecases import ResponseUC
 from src.features.soqm_engine.application.dtos.response_dtos import (
     CreateRiskResponse,
     UpdateRiskResponse,
 )
-from src.features.soqm_engine.infra.queries import ResponseQueryService
-from src.core.pagination import Pagination
 from src.features.soqm_engine.application.filters.response_filters import (
     ResponseFilters,
 )
-from src.api.deps.ordering import parse_ordering
-from src.core.ordering import OrderBy
-
-from uuid import UUID
-from src.features.auth.security.dependencies import require_auth
-
+from src.features.soqm_engine.application.usecases import ResponseUC
+from src.features.soqm_engine.infra.queries import ResponseQueryService
 
 router = APIRouter(prefix="/responses", tags=["Risk Responses"])
 

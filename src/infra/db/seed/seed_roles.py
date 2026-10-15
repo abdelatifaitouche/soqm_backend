@@ -1,7 +1,8 @@
-from src.core.roles import Role as RoleEnums
-from src.features.auth.models.role import Role
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.roles import Role as RoleEnums
+from src.features.auth.models.role import Role
 
 
 async def get_all_roles(session: AsyncSession):

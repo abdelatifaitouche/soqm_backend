@@ -1,19 +1,20 @@
 from uuid import UUID
+
+from src.core.exceptions import NotFoundError
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
+from src.features.soqm_engine.application.dtos.objective_dtos import (
+    CreateObjective,
+    UpdateObjective,
+)
 from src.features.soqm_engine.application.ports import (
     IComponentRepository,
     IObjectiveRepository,
     ISeqRepository,
 )
 from src.features.soqm_engine.domain.entities import Objective, SOQMComponent
-from src.features.soqm_engine.application.dtos.objective_dtos import (
-    CreateObjective,
-    UpdateObjective,
-)
 from src.features.soqm_engine.domain.services.objective_ref_generator import (
     ObjectiveRefGenerator,
 )
-from src.core.exceptions import NotFoundError
 
 
 class ObjectiveUC:

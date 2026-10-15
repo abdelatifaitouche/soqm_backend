@@ -1,14 +1,16 @@
-import jwt
-from src.core.config import settings
 import uuid
 from datetime import datetime, timedelta, timezone
+
+import jwt
 from jwt.exceptions import (
     ExpiredSignatureError,
     InvalidAlgorithmError,
     InvalidTokenError,
 )
-from src.features.auth.enums.tokens import TokenType
+
+from src.core.config import settings
 from src.core.exceptions import TokenExpiredError, TokenInvalidError
+from src.features.auth.enums.tokens import TokenType
 
 
 def _now() -> datetime:

@@ -1,17 +1,18 @@
-from src.features.documents.infrastructure.storage.file_storage_interface import (
-    FileStorage,
-)
+from typing import BinaryIO
+from uuid import UUID
+
+from src.features.documents.application.dto.create_cmd import CreateDocument
+from src.features.documents.domain.document import Document
+from src.features.documents.domain.document_version import DocumentVersion
 from src.features.documents.infrastructure.repositories.document_repository import (
     DocumentRepository,
 )
-from src.features.documents.domain.document import Document
-from src.features.documents.domain.document_version import DocumentVersion
-from typing import BinaryIO
-from src.features.documents.application.dto.create_cmd import CreateDocument
 from src.features.documents.infrastructure.repositories.document_version_repository import (
     DocumentVersionRepository,
 )
-from uuid import UUID
+from src.features.documents.infrastructure.storage.file_storage_interface import (
+    FileStorage,
+)
 
 
 class DocumentService:

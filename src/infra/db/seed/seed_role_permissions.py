@@ -1,16 +1,16 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from src.features.auth.models.role import Role as RoleDB
-from src.features.auth.models.permission import Permission
-from src.features.auth.models.role_permissions import RolePermissions
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.core.roles import Role
+from src.features.auth.models.permission import Permission
+from src.features.auth.models.role import Role as RoleDB
+from src.features.auth.models.role_permissions import RolePermissions
 from src.features.auth.permissions.auth_permissions import AuthPermissions
+from src.features.risks.permissions.risk_permissions import RiskPermissions
 from src.features.soqm_components.permissions.components_permissions import (
     ComponentPermissions,
 )
-from src.features.risks.permissions.risk_permissions import RiskPermissions
 
 ROLES_PERMISSIONS = {
     Role.SUPER_ADMIN: [

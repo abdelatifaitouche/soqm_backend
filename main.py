@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.api.router import router as api
-from src.infra.db import models
+
 from src.api.exceptions_handlers import register_exception_handlers
-from src.core.logging import setup_logging
 from src.api.middlewares.logging import request_logging_middleware
+from src.api.router import router as api
+from src.core.logging import setup_logging
+from src.infra.db import models
 
 
 def create_app() -> FastAPI:

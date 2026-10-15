@@ -1,11 +1,12 @@
-from uuid import UUID, uuid4
-from datetime import datetime
 from dataclasses import dataclass
+from datetime import datetime
+from uuid import UUID, uuid4
+
+from src.features.soqm_engine.domain.enums.objective_state import ObjectiveState
 from src.features.soqm_engine.domain.exceptions.objective_exceptions import (
     InvalidObjectiveException,
     InvalidObjectiveStateException,
 )
-from src.features.soqm_engine.domain.enums.objective_state import ObjectiveState
 
 
 @dataclass

@@ -1,7 +1,8 @@
-from pydantic import BaseModel
 from datetime import datetime
-from uuid import UUID
 from typing import Any
+from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class ObjectiveList(BaseModel):

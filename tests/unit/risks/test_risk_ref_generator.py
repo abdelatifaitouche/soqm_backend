@@ -1,4 +1,5 @@
 import pytest
+
 from src.features.risks.domain.response_ref_generator import ResponseRefGenerator
 
 

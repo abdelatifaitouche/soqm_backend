@@ -1,8 +1,10 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import UUID, Integer, DateTime, ForeignKey, UniqueConstraint
 import uuid
 from datetime import datetime
+
+from sqlalchemy import UUID, DateTime, ForeignKey, Integer, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.infra.db.base import Base
 
 
 class ComponentObjectiveSeq(Base):

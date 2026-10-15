@@ -1,7 +1,9 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, ForeignKey, UUID
 import uuid
+
+from sqlalchemy import UUID, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.infra.db.base import Base
 
 
 class PotentialRootCause(Base):

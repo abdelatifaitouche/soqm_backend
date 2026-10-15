@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 from uuid import UUID
+
+from pydantic import BaseModel
+
 from src.features.quality_objectives.enums.objective_states import ObjectiveState
 
 

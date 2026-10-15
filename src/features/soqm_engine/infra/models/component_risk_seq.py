@@ -1,8 +1,10 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import UUID, Integer, DateTime, UniqueConstraint
-from datetime import datetime
 import uuid
+from datetime import datetime
+
+from sqlalchemy import UUID, DateTime, Integer, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
+
+from src.infra.db.base import Base
 
 
 class ComponentRiskSequence(Base):

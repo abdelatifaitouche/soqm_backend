@@ -1,6 +1,8 @@
-from src.core.pagination import Pagination
-from sqlalchemy import Select
 from typing import Any
+
+from sqlalchemy import Select
+
+from src.core.pagination import Pagination
 
 
 def apply_pagination(stmt: Select[Any], pagination: Pagination) -> Select[Any]:

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
+
 from src.features.findings.domain.entities.finding import Finding
 
 

@@ -1,11 +1,12 @@
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.soqm_engine.application.dtos.risk_matrix_dto import (
-    RiskMatrixCell,
     RiskMatrix,
+    RiskMatrixCell,
 )
-from src.features.soqm_engine.infra.models import Risk as RiskDB
 from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
-from sqlalchemy import select, func
+from src.features.soqm_engine.infra.models import Risk as RiskDB
 
 
 class RiskMatrixQuery:

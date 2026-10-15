@@ -1,9 +1,11 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Text, UUID, ForeignKey, Integer, Date, Float, Boolean
 import uuid
 from datetime import date
+
+from sqlalchemy import UUID, Boolean, Date, Float, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.features.soqm_engine.domain.enums.risk_state import RiskStatus
+from src.infra.db.base import Base
 
 
 class Risk(Base):

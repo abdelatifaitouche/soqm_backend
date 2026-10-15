@@ -1,7 +1,9 @@
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.findings.application.ports.ifinding_repository import (
     IFindingRepository,
 )

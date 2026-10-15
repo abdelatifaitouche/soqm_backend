@@ -1,16 +1,17 @@
+from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc, func
-from src.features.documents.infrastructure.models.document import Document
+
+from src.core.pagination import Pagination
+from src.features.documents.application.dto.document_filters import DocumentFilters
 from src.features.documents.application.dto.read_cmd import (
     DocumentRead,
     PaginatedResponse,
 )
+from src.features.documents.infrastructure.models.document import Document
 from src.features.documents.infrastructure.models.document_version import (
     DocumentVersion,
 )
-from src.core.pagination import Pagination
 from src.infra.db.pagination import apply_pagination
-from src.features.documents.application.dto.document_filters import DocumentFilters
 
 
 class DocumentQueryService:

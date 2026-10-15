@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field
-from uuid import UUID
 from datetime import date
+from uuid import UUID
+
+from pydantic import BaseModel, Field
+
 from src.features.soqm_engine.domain.enums.risk_state import RiskStatus
 
 

@@ -1,12 +1,12 @@
 from sqlalchemy.exc import (
-    IntegrityError,
     DataError,
+    IntegrityError,
     InterfaceError,
-    ProgrammingError,
     OperationalError,
+    ProgrammingError,
 )
 
-from src.core.exceptions import ValidationError, DatabaseError
+from src.core.exceptions import DatabaseError, ValidationError
 
 
 def translate_db_errors(e: Exception) -> Exception:

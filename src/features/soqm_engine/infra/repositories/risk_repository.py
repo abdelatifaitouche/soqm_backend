@@ -1,16 +1,20 @@
+from dataclasses import asdict
 from uuid import UUID
-from src.features.soqm_engine.domain.entities.risk import Risk
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.soqm_engine.application.ports import IRiskRepository
-from sqlalchemy.dialects.postgresql import insert
+
 from sqlalchemy import delete, select
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+
+from src.features.soqm_engine.application.ports import IRiskRepository
+from src.features.soqm_engine.domain.entities.risk import Risk
 from src.features.soqm_engine.infra.models import (
     Risk as RiskDB,
+)
+from src.features.soqm_engine.infra.models import (
     RiskObjectiveAssociation,
     RiskResponseAssociation,
 )
-from dataclasses import asdict
 
 
 class RiskRepository(IRiskRepository):

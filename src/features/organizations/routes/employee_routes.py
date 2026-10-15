@@ -1,16 +1,17 @@
 from fastapi import APIRouter, Depends
+
+from src.core.pagination import Pagination
+from src.features.auth.security.dependencies import require_auth
 from src.features.organizations.employee_dependencies import get_service
-from src.features.organizations.schemas.employee import CreateEmployee
-from src.features.organizations.services.employee_service import EmployeeService
+from src.features.organizations.filters.employee_filters import EmployeeFilters
 from src.features.organizations.schemas.employee import (
+    CreateEmployee,
     Employee,
     EmployeeList,
     EmployeeOption,
     EmployeeProfile,
 )
-from src.features.auth.security.dependencies import require_auth
-from src.features.organizations.filters.employee_filters import EmployeeFilters
-from src.core.pagination import Pagination
+from src.features.organizations.services.employee_service import EmployeeService
 
 router = APIRouter(prefix="/employee")
 

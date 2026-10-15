@@ -17,6 +17,10 @@ dependencies = [
     "pyjwt>=2.13.0",
     "pytest>=9.0.3",
     "python-multipart>=0.0.32",
+    "ruff>=0.17.1",
     "sqlalchemy>=2.0.50",
     "uvicorn>=0.48.0",
 ]
+
+[tool.ruff.lint]
+ignore = ["B008"]

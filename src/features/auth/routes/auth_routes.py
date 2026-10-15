@@ -1,33 +1,34 @@
-from fastapi import APIRouter, Depends, Response, status
 from uuid import UUID
-from src.core.pagination import Pagination
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.auth.schemas.user import (
-    UserLogin,
-    CreateUser,
-    UserRead,
-    AssignRoleRequest,
-    UserOption,
-)
-from src.features.auth.schemas.role import Role as RoleRead
-from src.features.auth.domain.user import User
-from src.infra.db.uow import get_db
-from src.features.auth.services.auth_service import AuthService
-from src.features.auth.repositories.user_repository import UserRepository
-from src.features.auth.mappers.user_mapper import UserMapper
-from src.features.auth.security.dependencies import require_auth
+
+from fastapi import APIRouter, Depends, Response, status
 from fastapi.requests import Request
-from src.features.auth.security.jwt import decode_refresh_token, generate_access_token
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.config import settings
 from src.core.exceptions import (
-    UserNotFoundError,
+    AccessDenied,
+    RefreshTokenMissingError,
     TokenExpiredError,
     TokenInvalidError,
-    RefreshTokenMissingError,
-    AccessDenied,
+    UserNotFoundError,
 )
-from src.features.auth.security.dependencies import require_permissions
+from src.core.pagination import Pagination
+from src.features.auth.domain.user import User
+from src.features.auth.mappers.user_mapper import UserMapper
 from src.features.auth.permissions.auth_permissions import AuthPermissions
-from src.core.config import settings
+from src.features.auth.repositories.user_repository import UserRepository
+from src.features.auth.schemas.role import Role as RoleRead
+from src.features.auth.schemas.user import (
+    AssignRoleRequest,
+    CreateUser,
+    UserLogin,
+    UserOption,
+    UserRead,
+)
+from src.features.auth.security.dependencies import require_auth, require_permissions
+from src.features.auth.security.jwt import decode_refresh_token, generate_access_token
+from src.features.auth.services.auth_service import AuthService
+from src.infra.db.uow import get_db
 
 router = APIRouter(prefix="/auth")
 

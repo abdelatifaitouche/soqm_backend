@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
+
 from src.core.exceptions import ValidationError
 from src.features.soqm_engine.domain.enums.component_state import ComponentState
 

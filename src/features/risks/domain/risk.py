@@ -1,13 +1,14 @@
+import uuid
 from dataclasses import dataclass, field
-from uuid import UUID
 from datetime import date, datetime
-from src.features.risks.enums.risk_states import RiskStatus
+from uuid import UUID
+
+from src.core.events import DomainEvent
 from src.core.exceptions import ValidationError
-from src.features.soqm_components.domain.component import SOQMComponent
 from src.features.quality_objectives.domain.objective import ObjectiveSummary
 from src.features.risks.domain.events.risk_events import RiskCreatedEvent
-from src.core.events import DomainEvent
-import uuid
+from src.features.risks.enums.risk_states import RiskStatus
+from src.features.soqm_components.domain.component import SOQMComponent
 
 
 @dataclass

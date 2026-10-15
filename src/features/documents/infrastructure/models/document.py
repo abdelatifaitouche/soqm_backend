@@ -1,8 +1,10 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, Text, UUID
-from src.features.documents.domain.enums import DocumentStatus, DocumentType
 import uuid
+
+from sqlalchemy import UUID, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.features.documents.domain.enums import DocumentStatus, DocumentType
+from src.infra.db.base import Base
 
 
 class Document(Base):

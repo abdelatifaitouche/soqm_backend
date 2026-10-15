@@ -1,14 +1,16 @@
-from src.infra.db.base import Base
+import uuid
+from datetime import date
+
+from sqlalchemy import UUID, Date, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import UUID, ForeignKey, String, Date
+
 from src.features.soqm_engine.domain.enums.response_state import (
-    ResponseState,
-    ResponseType,
     ExecutionType,
     Frequency,
+    ResponseState,
+    ResponseType,
 )
-from datetime import date
-import uuid
+from src.infra.db.base import Base
 
 
 class RiskResponse(Base):

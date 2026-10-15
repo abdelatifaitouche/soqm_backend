@@ -1,17 +1,19 @@
+from typing import Any
 from uuid import UUID
+
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.findings.infra.models import Finding as FindingDB
-from sqlalchemy import select, Select, func
+
+from src.core.pagination import Pagination
 from src.features.findings.application.dtos.finding_dtos import (
-    FindingListItem,
     FindingDetails,
+    FindingListItem,
     PaginatedResponse,
 )
-from src.features.findings.domain.entities.finding import RootCauseAnalysis
-from src.core.pagination import Pagination
-from src.infra.db.pagination import apply_pagination
 from src.features.findings.application.filters.finding_filters import FindingFilters
-from typing import Any
+from src.features.findings.domain.entities.finding import RootCauseAnalysis
+from src.features.findings.infra.models import Finding as FindingDB
+from src.infra.db.pagination import apply_pagination
 
 
 class FindingQueryService:

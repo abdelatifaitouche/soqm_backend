@@ -1,8 +1,10 @@
-from src.features.auth.schemas.user import UserLogin, CreateUser
 from src.features.auth.domain.user import (
-    UserLogin as UserLoginEntity,
     UserCreate as UserCreateEntity,
 )
+from src.features.auth.domain.user import (
+    UserLogin as UserLoginEntity,
+)
+from src.features.auth.schemas.user import CreateUser, UserLogin
 
 
 class UserMapper:

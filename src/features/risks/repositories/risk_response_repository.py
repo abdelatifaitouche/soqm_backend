@@ -1,15 +1,17 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.risks.models.risk_response import RiskResponse as ResponseDB
-from src.features.risks.domain.risk_response import RiskResponse as ResponseEntity
-from src.infra.db.exception_utils import translate_db_errors
-from sqlalchemy import select, Select
-from sqlalchemy.orm import joinedload
-from src.core.pagination import Pagination
-from src.infra.db.pagination import apply_pagination
-from uuid import UUID
-from src.features.risks.filters.response_filters import ResponseFilters
 from typing import Any
+from uuid import UUID
+
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+
+from src.core.pagination import Pagination
+from src.features.risks.domain.risk_response import RiskResponse as ResponseEntity
+from src.features.risks.filters.response_filters import ResponseFilters
+from src.features.risks.models.risk_response import RiskResponse as ResponseDB
 from src.features.risks.models.risk_response_association import RiskResponseAssociation
+from src.infra.db.exception_utils import translate_db_errors
+from src.infra.db.pagination import apply_pagination
 
 
 class RiskResponseRepository:

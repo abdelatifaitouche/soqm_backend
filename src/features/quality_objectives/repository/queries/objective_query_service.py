@@ -1,20 +1,22 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Select, func
 from typing import Any
+from uuid import UUID
+
+from sqlalchemy import Select, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.pagination import Pagination
+from src.features.quality_objectives.enums.objective_states import ObjectiveState
 from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from src.features.quality_objectives.models.quality_objective import (
     QualityObjective as ObjectiveDB,
 )
-from uuid import UUID
-from src.features.quality_objectives.enums.objective_states import ObjectiveState
 from src.features.quality_objectives.services.dto import (
     BaseObjective,
-    ObjectiveList,
     ObjectiveDetails,
+    ObjectiveList,
     PaginatedResponse,
 )
 from src.infra.db.pagination import apply_pagination
-from src.core.pagination import Pagination
 
 
 class ObjectiveQueries:
@@ -68,8 +70,9 @@ class ObjectiveQueries:
                 page=pagination.page,
                 size=pagination.limit,
             )
-        from src.features.soqm_components.models.soqm_component import SOQMComponent
         from sqlalchemy.orm import joinedload, selectinload
+
+        from src.features.soqm_components.models.soqm_component import SOQMComponent
 
         stmt = (
             select(

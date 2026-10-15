@@ -1,6 +1,6 @@
 from src.core.shared.domain.exceptions import (
-    DomainValidationException,
     BusinessRuleViolationException,
+    DomainValidationException,
 )
 
 

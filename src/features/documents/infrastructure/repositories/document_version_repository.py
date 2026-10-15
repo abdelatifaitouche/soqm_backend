@@ -1,10 +1,12 @@
+from uuid import UUID
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.documents.domain.document_version import DocumentVersion
 from src.features.documents.infrastructure.models.document_version import (
     DocumentVersion as DocumentVersionDB,
 )
-from uuid import UUID
-from sqlalchemy import select
 
 
 class DocumentVersionRepository:

@@ -1,16 +1,17 @@
-from src.features.organizations.repositories.employee_repository import (
-    EmployeeRepository,
-)
-from src.features.organizations.repositories.department_repository import (
-    DepartmentRepository,
-)
+from typing import Any
+from uuid import UUID
+
+from src.core.exceptions import NotFoundError, UserNotFoundError, ValidationError
 from src.features.auth.domain.user import User
 from src.features.auth.repositories.user_repository import UserRepository
 from src.features.organizations.domain.employee import Employee as EmployeeEntity
+from src.features.organizations.repositories.department_repository import (
+    DepartmentRepository,
+)
+from src.features.organizations.repositories.employee_repository import (
+    EmployeeRepository,
+)
 from src.features.organizations.schemas.employee import CreateEmployee
-from src.core.exceptions import UserNotFoundError, NotFoundError, ValidationError
-from typing import Any
-from uuid import UUID
 
 
 class EmployeeService:

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
+
 from src.features.soqm_engine.domain.entities.objective import Objective
 
 
