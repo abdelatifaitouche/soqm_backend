@@ -1,6 +1,6 @@
 from src.infra.db.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, UUID
 import uuid
 
 
@@ -11,6 +11,12 @@ class PotentialRootCause(Base):
 
     root_cause_indicator_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("root_cause_indicator.id"),
+        nullable=False,
+    )
+
+    component_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("soqm_components.id"),
         nullable=False,
     )
 

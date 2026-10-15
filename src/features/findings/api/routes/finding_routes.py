@@ -8,6 +8,8 @@ from src.features.findings.api.commands.finding_write import CreateFindingReques
 from src.features.findings.application.dtos.finding_dtos import CreateFinding
 from src.features.findings.application.usecases.finding_uc import FindingUC
 from src.features.findings.infra.queries.finding_queries import FindingQueryService
+from src.features.findings.application.filters.finding_filters import FindingFilters
+from src.core.pagination import Pagination
 
 router = APIRouter(prefix="/finding")
 
@@ -29,9 +31,11 @@ async def identify_finding(
 
 @router.get("")
 async def list_findings(
+    pagination: Pagination = Depends(),
+    filters: FindingFilters = Depends(),
     queries: FindingQueryService = Depends(get_finding_queries),
 ):
-    return await queries.list()
+    return await queries.list(pagination, filters)
 
 
 @router.get("/{finding_id}")
