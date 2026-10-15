@@ -1,17 +1,12 @@
-import uuid
-from datetime import UTC, datetime
 from uuid import UUID
 
 from src.core.exceptions import NotFoundError, ValidationError
-from src.core.pagination import Pagination
 from src.features.quality_objectives.domain.objective import (
     Objective,
 )
 from src.features.quality_objectives.domain.objective_ref_generator import (
     ObjectiveRefGenerator,
 )
-from src.features.quality_objectives.enums.objective_states import ObjectiveState
-from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from src.features.quality_objectives.repository.component_objective_seq_repository import (
     ComponentObjectiveSeqRepository,
 )

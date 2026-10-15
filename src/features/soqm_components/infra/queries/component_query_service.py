@@ -9,9 +9,6 @@ from src.features.soqm_components.application.dtos.component_dto import (
     SOQMComponentList,
 )
 from src.features.soqm_components.application.dtos.filters import ComponentFilters
-from src.features.soqm_components.application.ports.component_query_service import (
-    IComponentQueryService,
-)
 from src.features.soqm_components.infra.models.soqm_component import (
     SOQMComponent as SOQMComponentDB,
 )

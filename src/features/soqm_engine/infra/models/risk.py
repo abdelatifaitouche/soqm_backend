@@ -1,7 +1,7 @@
 import uuid
 from datetime import date
 
-from sqlalchemy import UUID, Boolean, Date, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import UUID, Date, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.features.soqm_engine.domain.enums.risk_state import RiskStatus

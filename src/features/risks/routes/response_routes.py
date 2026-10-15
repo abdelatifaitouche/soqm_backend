@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from src.api.deps.ordering import parse_ordering
 from src.core.ordering import OrderBy
 from src.core.pagination import Pagination
-from src.features.auth.security.dependencies import require_auth, require_permissions
+from src.features.auth.security.dependencies import require_auth
 from src.features.risks.filters.response_filters import ResponseFilters
 from src.features.risks.repositories.queries.response_query_service import (
     ResponseQueryService,
@@ -14,12 +14,9 @@ from src.features.risks.routes.response_deps import get_queries, get_service
 from src.features.risks.schemas.risk_response import (
     CreateRiskResponse,
     PaginatedResponse,
-    Response,
     RiskResponse,
-    RiskSummary,
 )
 from src.features.risks.services.response_service import ResponseService
-from src.infra.db.uow import get_db
 
 router = APIRouter(prefix="/responses")
 

@@ -1,7 +1,5 @@
 from sqlalchemy.orm import configure_mappers
 
-import src.infra.db.models  # Register all ORM models
-
 configure_mappers()
 
 

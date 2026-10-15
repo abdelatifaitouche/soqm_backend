@@ -1,7 +1,5 @@
 import logging
 
-import pytest
-
 from src.features.soqm_engine.domain.services.objective_ref_generator import (
     ObjectiveRefGenerator,
 )

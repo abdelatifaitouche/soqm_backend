@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import UUID, DateTime, Integer, UniqueConstraint
+from sqlalchemy import UUID, DateTime, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.infra.db.base import Base

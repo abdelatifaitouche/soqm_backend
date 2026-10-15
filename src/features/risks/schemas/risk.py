@@ -3,8 +3,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from src.core.exceptions import ValidationError
-from src.features.quality_objectives.schemas.objective import ObjectiveSummary
 from src.features.risks.enums.risk_states import RiskStatus
 from src.features.soqm_components.schemas.component import BaseComponent
 

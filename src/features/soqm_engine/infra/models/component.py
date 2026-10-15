@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Enum, Integer, String, Text
+from sqlalchemy import Boolean, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.features.soqm_engine.domain.enums.component_state import ComponentState

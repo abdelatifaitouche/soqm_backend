@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, File, UploadFile
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse
 
 from src.core.pagination import Pagination
 from src.features.documents.api.deps import get_queries, get_service
@@ -7,7 +7,6 @@ from src.features.documents.api.schemas import (
     CreateDocument,
     DocumentFilters,
     PaginatedResponse,
-    ReadDocument,
 )
 from src.features.documents.application.document_service import DocumentService
 from src.features.documents.application.dto.create_cmd import (

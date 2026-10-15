@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import Integer, String, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-from src.core.ordering import OrderBy, OrderDirection, apply_ordering
+from src.core.ordering import OrderBy, apply_ordering
 
 logger = logging.getLogger(__name__)
 

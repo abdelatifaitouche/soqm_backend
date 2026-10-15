@@ -1,14 +1,11 @@
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import Select, func, select, text
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
 from src.core.pagination import Pagination
-from src.features.quality_objectives.models.quality_objective import (
-    QualityObjective,
-)
 from src.features.risks.filters.risk_filters import (
     RiskFilters,
 )

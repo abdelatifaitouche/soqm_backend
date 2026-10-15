@@ -10,7 +10,6 @@ from src.core.pagination import Pagination
 from src.features.organizations.models.employee import Employee as EmployeeDB
 from src.features.soqm_engine.application.dtos.response_dtos import (
     PaginatedResponse,
-    ResponseDetails,
     ResponseList,
     ResponseOwner,
 )

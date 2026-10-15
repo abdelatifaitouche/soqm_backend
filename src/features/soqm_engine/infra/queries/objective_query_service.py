@@ -3,7 +3,6 @@ from uuid import UUID
 
 from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Load, joinedload, selectinload
 
 from src.core.pagination import Pagination
 from src.features.soqm_engine.application.dtos.objective_dtos import (
@@ -19,10 +18,7 @@ from src.features.soqm_engine.infra.models import (
     QualityObjective as ObjectiveDB,
 )
 from src.features.soqm_engine.infra.models import SOQMComponent
-from src.features.soqm_engine.infra.models import (
-    SOQMComponent as ComponentDB,
-)
-from src.infra.db.pagination import apply_ordering, apply_pagination
+from src.infra.db.pagination import apply_pagination
 
 
 class ObjectiveQueryService:

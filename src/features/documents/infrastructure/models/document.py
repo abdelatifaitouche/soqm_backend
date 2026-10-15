@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import UUID, Integer, String, Text
+from sqlalchemy import UUID, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.features.documents.domain.enums import DocumentStatus, DocumentType

@@ -4,7 +4,6 @@ from uuid import UUID
 from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from src.features.soqm_engine.application.ports import IRiskRepository
 from src.features.soqm_engine.domain.entities.risk import Risk

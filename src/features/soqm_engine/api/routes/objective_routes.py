@@ -6,7 +6,6 @@ from fastapi.exceptions import HTTPException
 from src.core.pagination import Pagination
 from src.features.auth.security.dependencies import require_auth
 from src.features.soqm_engine.api.commands.reads.objective_reads import (
-    ObjectiveList,
     ObjectiveOption,
     PaginatedResponse,
     ReadObjective,

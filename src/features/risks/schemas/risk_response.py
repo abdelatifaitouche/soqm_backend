@@ -8,7 +8,6 @@ from src.features.risks.enums.risk_response import (
     Frequency,
     ResponseType,
 )
-from src.features.risks.schemas.risk import RiskSummary
 
 
 class Owner(BaseModel):

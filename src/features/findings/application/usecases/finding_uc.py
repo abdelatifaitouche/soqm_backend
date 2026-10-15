@@ -1,4 +1,3 @@
-from uuid import UUID
 
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 from src.features.findings.application.dtos.finding_dtos import CreateFinding

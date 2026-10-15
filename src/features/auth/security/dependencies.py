@@ -1,5 +1,4 @@
-from fastapi import Depends, status
-from fastapi.exceptions import HTTPException
+from fastapi import Depends
 from fastapi.requests import Request
 from fastapi.security import HTTPBearer
 

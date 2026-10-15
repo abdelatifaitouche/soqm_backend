@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from uuid import UUID
 
 from src.core.exceptions import NotFoundError, ValidationError
@@ -49,7 +48,7 @@ class ResponseUC:
             "TERMINATED",
         ):
             raise ValidationError(
-                message=f"Employee choosen is not active",
+                message="Employee choosen is not active",
                 details={"status": owner.status},
             )
         return owner

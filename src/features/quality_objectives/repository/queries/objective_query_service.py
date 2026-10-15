@@ -70,7 +70,6 @@ class ObjectiveQueries:
                 page=pagination.page,
                 size=pagination.limit,
             )
-        from sqlalchemy.orm import joinedload, selectinload
 
         from src.features.soqm_components.models.soqm_component import SOQMComponent
 

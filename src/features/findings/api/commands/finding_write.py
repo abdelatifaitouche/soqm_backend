@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from src.features.findings.domain.enums.finding import (
     DeficiencySeverity,
     FindingSource,
-    FindingStatus,
 )
 
 

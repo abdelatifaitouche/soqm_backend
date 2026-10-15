@@ -1,15 +1,12 @@
 from uuid import UUID
 
 from src.core.exceptions import NotFoundError, ValidationError
-from src.core.pagination import Pagination
 from src.features.organizations.domain.employee import Employee
 from src.features.organizations.repositories.employee_repository import (
     EmployeeRepository,
 )
 from src.features.risks.domain.response_ref_generator import ResponseRefGenerator
 from src.features.risks.domain.risk_response import RiskResponse as ResponseEntity
-from src.features.risks.enums.risk_states import RiskStatus
-from src.features.risks.filters.response_filters import ResponseFilters
 from src.features.risks.repositories.component_response_seq_repository import (
     ComponentResponseSeqRepository,
 )
@@ -17,7 +14,7 @@ from src.features.risks.repositories.risk_repository import RiskRepository
 from src.features.risks.repositories.risk_response_repository import (
     RiskResponseRepository,
 )
-from src.features.risks.schemas.risk_response import CreateRiskResponse, RiskResponse
+from src.features.risks.schemas.risk_response import CreateRiskResponse
 from src.features.soqm_components.application.ports.component_repository import (
     IComponentRepository,
 )
@@ -53,7 +50,7 @@ class ResponseService:
             "TERMINATED",
         ):
             raise ValidationError(
-                message=f"Employee choosen is not active",
+                message="Employee choosen is not active",
                 details={"status": owner.status},
             )
         return owner

@@ -1,4 +1,3 @@
-from typing import BinaryIO
 from uuid import UUID
 
 from src.features.documents.application.dto.create_cmd import CreateDocument

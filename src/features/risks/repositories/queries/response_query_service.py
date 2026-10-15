@@ -18,7 +18,6 @@ from src.features.risks.models.risk_response import (
 from src.features.risks.models.risk_response_association import RiskResponseAssociation
 from src.features.risks.services.response_dto import (
     PaginatedResponse,
-    ResponseDetails,
     ResponseList,
     ResponseOwner,
 )

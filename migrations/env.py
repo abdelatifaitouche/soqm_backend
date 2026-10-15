@@ -6,7 +6,6 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.core.config import settings
-from src.infra.db import models  # IMPORTANT: loads all models
 from src.infra.db.base import Base
 
 config = context.config

@@ -22,5 +22,13 @@ dependencies = [
     "uvicorn>=0.48.0",
 ]
 
+
+[tool.ruff]
+line-length = 88
+
 [tool.ruff.lint]
+select = ["E", "F", "I"]
 ignore = ["B008"]
+
+[tool.ruff.format]
+quote-style = "double"

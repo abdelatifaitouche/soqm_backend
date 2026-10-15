@@ -4,7 +4,6 @@ from datetime import datetime, timedelta, timezone
 import jwt
 from jwt.exceptions import (
     ExpiredSignatureError,
-    InvalidAlgorithmError,
     InvalidTokenError,
 )
 
@@ -78,9 +77,9 @@ def _decode(token: str, token_type: TokenType):
                 settings.JWT_ALGO,
             ],
         )
-    except ExpiredSignatureError as exp:
+    except ExpiredSignatureError:
         raise TokenExpiredError(message="Token Expired")
-    except InvalidTokenError as inv:
+    except InvalidTokenError:
         raise TokenInvalidError(message="Invalid Token")
 
     if decoded.get("type") != token_type.value:

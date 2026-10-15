@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import settings
 from src.core.exceptions import (
-    AccessDenied,
     RefreshTokenMissingError,
     TokenExpiredError,
     TokenInvalidError,
@@ -26,7 +25,6 @@ from src.features.auth.schemas.user import (
     UserRead,
 )
 from src.features.auth.security.dependencies import require_auth, require_permissions
-from src.features.auth.security.jwt import decode_refresh_token, generate_access_token
 from src.features.auth.services.auth_service import AuthService
 from src.infra.db.uow import get_db
 
