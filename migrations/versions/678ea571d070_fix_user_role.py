@@ -5,11 +5,12 @@ Revises: ca5615ee8485
 Create Date: 2026-06-03 00:32:39.658270
 
 """
+
 from typing import Sequence, Union
 
 # revision identifiers, used by Alembic.
-revision: str = '678ea571d070'
-down_revision: Union[str, Sequence[str], None] = 'ca5615ee8485'
+revision: str = "678ea571d070"
+down_revision: Union[str, Sequence[str], None] = "ca5615ee8485"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
