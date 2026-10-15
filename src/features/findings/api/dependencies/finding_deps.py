@@ -10,10 +10,8 @@ from src.features.findings.infra.repositories.finding_dept_seq import (
 from src.features.findings.infra.repositories.finding_repository import (
     FindingRepository,
 )
-from src.features.organizations.repositories.department_repository import (
-    DepartmentRepository,
-)
 from src.infra.db.unit_of_work import UnitOfWork
+from src.features.organizations.infra.repositories import DepartmentRepository
 
 
 def get_finding_queries(db: AsyncSession = Depends(get_db)) -> FindingQueryService:

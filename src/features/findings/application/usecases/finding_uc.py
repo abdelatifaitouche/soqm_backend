@@ -5,9 +5,7 @@ from src.features.findings.application.ports import (
     IFindingRepository,
 )
 from src.features.findings.domain.entities.finding import Finding
-from src.features.organizations.repositories.department_repository import (
-    DepartmentRepository,
-)
+from src.features.organizations.application.ports import IDepartmentRepository
 
 
 class FindingUC:
@@ -16,7 +14,7 @@ class FindingUC:
         uow: IUnitOfWork,
         repo: IFindingRepository,
         seq_repo: IFindingDeptSeqRepository,
-        dept_repo: DepartmentRepository,
+        dept_repo: IDepartmentRepository,
     ):
         self.uow = uow
         self.finding_repo = repo
@@ -33,7 +31,7 @@ class FindingUC:
 
     async def identify_finding(self, finding_data: CreateFinding):
         async with self.uow:
-            dept = await self.dept_repo.get_by_id(finding_data.department)
+            dept = await self.dept_repo.get(finding_data.department)
 
             if not dept:
                 raise Exception("Invalid Department")

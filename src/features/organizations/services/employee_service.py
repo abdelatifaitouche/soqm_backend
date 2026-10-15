@@ -5,13 +5,11 @@ from src.core.exceptions import NotFoundError, UserNotFoundError, ValidationErro
 from src.features.auth.domain.user import User
 from src.features.auth.repositories.user_repository import UserRepository
 from src.features.organizations.domain.employee import Employee as EmployeeEntity
-from src.features.organizations.repositories.department_repository import (
-    DepartmentRepository,
-)
 from src.features.organizations.repositories.employee_repository import (
     EmployeeRepository,
 )
 from src.features.organizations.schemas.employee import CreateEmployee
+from src.features.organizations.application.ports import IDepartmentRepository
 
 
 class EmployeeService:
@@ -19,11 +17,11 @@ class EmployeeService:
         self,
         repo: EmployeeRepository,
         user_repo: UserRepository,
-        dept_repo: DepartmentRepository,
+        dept_repo: IDepartmentRepository,
     ):
         self.repo: EmployeeRepository = repo
         self.user_repo: UserRepository = user_repo
-        self.department_repo: DepartmentRepository = dept_repo
+        self.department_repo = dept_repo
 
     async def create_employee(self, data: CreateEmployee) -> EmployeeEntity:
 
@@ -41,7 +39,7 @@ class EmployeeService:
                     "User selected is not active in the platform",
                 )
 
-        department = await self.department_repo.get_by_id(data.department_id)
+        department = await self.department_repo.get(data.department_id)
 
         if not department:
             raise NotFoundError(

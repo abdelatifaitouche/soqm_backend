@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload
 
 from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
 from src.core.pagination import Pagination
-from src.features.organizations.models.employee import Employee as EmployeeDB
+from src.features.organizations.infra.models import Employee as EmployeeDB
 from src.features.soqm_engine.application.dtos.response_dtos import (
     PaginatedResponse,
     ResponseList,

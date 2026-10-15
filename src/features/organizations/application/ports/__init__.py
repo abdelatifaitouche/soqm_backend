@@ -1,0 +1,1 @@
+from .idepartment_repo import IDepartmentRepository
