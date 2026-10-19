@@ -34,11 +34,15 @@ class DepartmentRepository(IDepartmentRepository):
 
     async def get(self, department_id: UUID) -> Department | None:
         stmt = select(DepartmentDB).where(DepartmentDB.id == department_id)
-        res = (await self.session.execute(stmt)).mappings().one_or_none()
+        res = (await self.session.execute(stmt)).scalar_one_or_none()
 
         if not res:
             return None
 
         return Department(
-            **res,
+            id=res.id,
+            name=res.name,
+            parent_id=res.parent_id,
+            created_at=res.created_at,
+            updated_at=res.updated_at,
         )

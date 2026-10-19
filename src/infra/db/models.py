@@ -27,6 +27,7 @@ from src.features.risks.models.risk import Risk
 from src.features.quality_objectives.models.quality_objective import QualityObjective
 """
 
+from src.features.risks.models.risk_audit_log import RiskAuditLog
 from src.features.findings.infra.models import *
 from src.features.organizations.infra.models import *
 from src.features.soqm_engine.infra.models import *
