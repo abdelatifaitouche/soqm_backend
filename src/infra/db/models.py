@@ -28,14 +28,9 @@ from src.features.quality_objectives.models.quality_objective import QualityObje
 """
 
 from src.features.findings.infra.models import *
-from src.features.soqm_engine.infra.models import *
 from src.features.organizations.infra.models import *
+from src.features.soqm_engine.infra.models import *
 from src.infra.db.base import Base
-from src.features.auth.models.user import User
-from src.features.auth.models.role import Role
-from src.features.auth.models.role_permissions import RolePermissions
-from src.features.auth.models.user_roles import UserRoles
-from src.features.risks.models.risk_audit_log import RiskAuditLog
 
 print("Risk registered:", "Risk" in Base.registry._class_registry)
 print("Registered models:", list(Base.registry._class_registry.keys()))

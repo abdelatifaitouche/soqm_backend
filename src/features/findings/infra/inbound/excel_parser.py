@@ -1,5 +1,7 @@
-import pandas as pd
 from io import BytesIO
+
+import pandas as pd
+
 from src.features.findings.domain.entities.rca import RootCauseCategory
 from src.features.soqm_engine.application.ports import IComponentRepository
 

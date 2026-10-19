@@ -2,9 +2,8 @@ from fastapi import APIRouter
 
 from src.features.auth.routes.auth_routes import router as auth_router
 from src.features.findings.api import finding_router, rca_router
-from src.features.organizations.routes.employee_routes import router as emp_router
-from src.features.soqm_engine.api import soqm_engine_router
 from src.features.organizations.api import router as org_router
+from src.features.soqm_engine.api import soqm_engine_router
 
 router = APIRouter(prefix="/api/v1")
 

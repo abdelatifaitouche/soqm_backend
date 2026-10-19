@@ -1,2 +1,2 @@
 from .finding import Finding, RootCauseAnalysis
-from .rca import RootCauseCategory, RootCauseIndicator, PotentialCauses
+from .rca import PotentialCauses, RootCauseCategory, RootCauseIndicator

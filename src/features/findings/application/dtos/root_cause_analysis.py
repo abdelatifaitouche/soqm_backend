@@ -10,3 +10,4 @@ class CreateRootCauseAnalysis:
     category_id: UUID
     indicator_id: UUID
     potential_root_cause_id: UUID
+    component_id: UUID

@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, status
-from src.features.organizations.api.commands.writes import CreateDepartmentRequest
-from src.features.organizations.api.commands.reads import Department
-from src.features.organizations.api.dependencies import get_dept_uc, get_dept_queries
-from src.features.organizations.application.usecases import DepartmentUC
-from src.features.organizations.application.dtos import CreateDepartment
-from src.features.organizations.infra.queries import DepartmentQueryService
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, status
+
+from src.features.organizations.api.commands.writes import CreateDepartmentRequest
+from src.features.organizations.api.dependencies import get_dept_queries, get_dept_uc
+from src.features.organizations.application.dtos import CreateDepartment
+from src.features.organizations.application.usecases import DepartmentUC
+from src.features.organizations.infra.queries import DepartmentQueryService
 
 router = APIRouter(prefix="/departments")
 

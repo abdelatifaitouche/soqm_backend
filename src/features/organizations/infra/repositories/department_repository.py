@@ -1,11 +1,13 @@
+from dataclasses import asdict
+from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.organizations.application.ports import IDepartmentRepository
 from src.features.organizations.domain.entities import Department
 from src.features.organizations.infra.models import Department as DepartmentDB
-from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy import select
-from dataclasses import asdict
 
 
 class DepartmentRepository(IDepartmentRepository):

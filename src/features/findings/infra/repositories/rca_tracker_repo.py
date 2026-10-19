@@ -1,12 +1,17 @@
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.features.findings.application.ports import IRcaTrackerRepository
+from src.features.findings.domain.entities import RootCauseCategory
 from src.features.findings.infra.models import (
-    RootCauseCategory as RootCauseCategoryDB,
-    RootCauseIndicator as RootCauseIndicatorDB,
     PotentialRootCause as PotentialRootCauseDB,
 )
-from src.features.findings.domain.entities import RootCauseCategory
-from sqlalchemy.dialects.postgresql import insert
-from src.features.findings.application.ports import IRcaTrackerRepository
+from src.features.findings.infra.models import (
+    RootCauseCategory as RootCauseCategoryDB,
+)
+from src.features.findings.infra.models import (
+    RootCauseIndicator as RootCauseIndicatorDB,
+)
 
 
 class RcaTrackerRepository(IRcaTrackerRepository):

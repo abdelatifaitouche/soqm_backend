@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from src.features.organizations.domain.entities import Department
 from uuid import UUID
+
+from src.features.organizations.domain.entities import Department
 
 
 class IDepartmentRepository(ABC):

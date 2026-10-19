@@ -1,14 +1,14 @@
-from fastapi import APIRouter, UploadFile, File, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.api.deps.db_session import get_db
+from src.features.findings.application.usecases import RcaTrackerUC
 from src.features.findings.infra.inbound.excel_parser import RcaTrackerExcelParser
+from src.features.findings.infra.repositories import RcaTrackerRepository
 from src.features.soqm_engine.infra.repositories.component_repository import (
     ComponentRepository,
 )
-from src.api.deps.db_session import get_db
-from src.features.findings.application.usecases import RcaTrackerUC
 from src.infra.db.unit_of_work import UnitOfWork
-from src.features.findings.infra.repositories import RcaTrackerRepository
-from sqlalchemy.ext.asyncio import AsyncSession
-import filetype
 
 router = APIRouter(prefix="/rca_tracker")
 
@@ -62,3 +62,17 @@ async def seed_db(
         }
     finally:
         await file.close()
+
+
+from src.features.findings.infra.queries import RcaTrackerQueryService
+
+
+async def get_rca_query_service(db: AsyncSession = Depends(get_db)):
+    return RcaTrackerQueryService(db)
+
+
+@router.get("")
+async def list_categories(
+    queries: RcaTrackerQueryService = Depends(get_rca_query_service),
+):
+    return await queries.list()

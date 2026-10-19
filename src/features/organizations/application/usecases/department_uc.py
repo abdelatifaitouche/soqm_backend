@@ -1,8 +1,9 @@
-from src.features.organizations.application.ports import IDepartmentRepository
-from src.core.shared.interfaces.unit_of_work import IUnitOfWork
-from src.features.organizations.domain.entities import Department
-from src.features.organizations.application.dtos import CreateDepartment
 from uuid import UUID
+
+from src.core.shared.interfaces.unit_of_work import IUnitOfWork
+from src.features.organizations.application.dtos import CreateDepartment
+from src.features.organizations.application.ports import IDepartmentRepository
+from src.features.organizations.domain.entities import Department
 
 
 class DepartmentUC:

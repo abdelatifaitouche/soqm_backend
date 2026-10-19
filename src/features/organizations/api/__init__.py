@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from .routes.department_routes import router as dept_router
 
+from .routes.department_routes import router as dept_router
 
 router = APIRouter(prefix="/org")
 

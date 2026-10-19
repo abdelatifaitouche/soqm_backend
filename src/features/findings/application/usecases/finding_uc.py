@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 from src.features.findings.application.dtos import (
     CreateFinding,
@@ -74,10 +75,9 @@ class FindingUC:
                 category_id=root_cause_analysis.category_id,
                 indicator_id=root_cause_analysis.indicator_id,
                 potential_root_cause_id=root_cause_analysis.potential_root_cause_id,
+                soqm_component_id=root_cause_analysis.component_id,
             )
 
             finding.start_root_cause_analysis(root_cause)
 
             await self.finding_repo.save(finding)
-
-        return

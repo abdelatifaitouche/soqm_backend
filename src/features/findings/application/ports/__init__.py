@@ -1,3 +1,3 @@
-from .irca_tracker_repository import IRcaTrackerRepository
 from .ifinding_dept_seq_repo import IFindingDeptSeqRepository
 from .ifinding_repository import IFindingRepository
+from .irca_tracker_repository import IRcaTrackerRepository

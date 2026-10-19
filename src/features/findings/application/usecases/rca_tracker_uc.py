@@ -1,6 +1,6 @@
+from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 from src.features.findings.application.ports import IRcaTrackerRepository
 from src.features.findings.domain.entities import RootCauseCategory
-from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 
 
 class RcaTrackerUC:

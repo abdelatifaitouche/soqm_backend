@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from src.features.findings.domain.entities import RootCauseCategory
 
 

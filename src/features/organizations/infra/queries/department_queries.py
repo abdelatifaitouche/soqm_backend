@@ -1,9 +1,11 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.organizations.infra.models import Department
-from src.features.organizations.application.dtos import Department as DepartmentDTO
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from src.features.organizations.application.dtos import Department as DepartmentDTO
+from src.features.organizations.infra.models import Department
 
 
 class DepartmentQueryService:
