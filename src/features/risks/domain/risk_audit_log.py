@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 import uuid
+from dataclasses import dataclass
+
 from src.core.exceptions import ValidationError
 
 

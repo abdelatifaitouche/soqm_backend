@@ -1,8 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from uuid import UUID
-from src.features.risks.models.component_risk_seq import ComponentRiskSequence
-from sqlalchemy import select
 from datetime import datetime
+from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.features.risks.models.component_risk_seq import ComponentRiskSequence
 
 
 class ComponentRiskSeqRepository:

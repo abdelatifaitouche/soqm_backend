@@ -1,25 +1,24 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Select, func
-from sqlalchemy.orm import Load, joinedload
+from typing import Any
 from uuid import UUID
-from src.features.soqm_engine.infra.models import (
-    QualityObjective as ObjectiveDB,
-    SOQMComponent as ComponentDB,
-)
+
+from sqlalchemy import Select, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.pagination import Pagination
 from src.features.soqm_engine.application.dtos.objective_dtos import (
+    BaseObjective,
     ObjectiveDetails,
     ObjectiveList,
     PaginatedResponse,
-    BaseObjective,
 )
-from src.infra.db.pagination import apply_pagination, apply_ordering
-from src.core.pagination import Pagination
 from src.features.soqm_engine.application.filters.objective_filters import (
     ObjectiveFilters,
 )
-from typing import Any
+from src.features.soqm_engine.infra.models import (
+    QualityObjective as ObjectiveDB,
+)
 from src.features.soqm_engine.infra.models import SOQMComponent
-from sqlalchemy.orm import joinedload, selectinload
+from src.infra.db.pagination import apply_pagination
 
 
 class ObjectiveQueryService:

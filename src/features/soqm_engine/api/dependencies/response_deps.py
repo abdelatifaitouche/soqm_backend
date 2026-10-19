@@ -1,17 +1,18 @@
 from fastapi import Depends
-from src.api.deps.db_session import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.soqm_engine.application.usecases import ResponseUC
-from src.infra.db.unit_of_work import UnitOfWork
-from src.features.soqm_engine.infra.repositories import (
-    SequenceRepository,
-    ComponentRepository,
-    ResponseRepository,
-)
+
+from src.api.deps.db_session import get_db
 from src.features.organizations.repositories.employee_repository import (
     EmployeeRepository,
 )
+from src.features.soqm_engine.application.usecases import ResponseUC
 from src.features.soqm_engine.infra.queries import ResponseQueryService
+from src.features.soqm_engine.infra.repositories import (
+    ComponentRepository,
+    ResponseRepository,
+    SequenceRepository,
+)
+from src.infra.db.unit_of_work import UnitOfWork
 
 
 def get_response_uc(db: AsyncSession = Depends(get_db)) -> ResponseUC:

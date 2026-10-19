@@ -1,10 +1,12 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime
+from uuid import UUID
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.quality_objectives.models.component_objective_seq import (
     ComponentObjectiveSeq,
 )
-from uuid import UUID
-from datetime import datetime
 
 
 class ComponentObjectiveSeqRepository:

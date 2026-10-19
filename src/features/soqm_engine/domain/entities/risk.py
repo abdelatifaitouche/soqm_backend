@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
-from datetime import datetime, date
+from datetime import date, datetime
 from uuid import UUID, uuid4
+
 from src.features.soqm_engine.domain.enums.risk_state import RiskStatus
 
 

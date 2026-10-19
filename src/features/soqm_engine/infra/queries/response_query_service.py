@@ -1,28 +1,29 @@
+from typing import Any
+from uuid import UUID
+
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.core.pagination import Pagination
-from sqlalchemy import select, Select, func
 from sqlalchemy.orm import joinedload
-from src.features.soqm_engine.infra.models import SOQMComponent, RiskResponseAssociation
-from src.features.soqm_engine.infra.models.response import (
-    RiskResponse as ResponseDB,
-    RESPONSE_ORDER_FIELDS,
-)
 
-
+from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
+from src.core.pagination import Pagination
+from src.features.organizations.infra.models import Employee as EmployeeDB
 from src.features.soqm_engine.application.dtos.response_dtos import (
     PaginatedResponse,
     ResponseList,
-    ResponseDetails,
     ResponseOwner,
 )
 from src.features.soqm_engine.application.filters.response_filters import (
     ResponseFilters,
 )
-from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
+from src.features.soqm_engine.infra.models import RiskResponseAssociation, SOQMComponent
+from src.features.soqm_engine.infra.models.response import (
+    RESPONSE_ORDER_FIELDS,
+)
+from src.features.soqm_engine.infra.models.response import (
+    RiskResponse as ResponseDB,
+)
 from src.infra.db.pagination import apply_pagination
-from src.features.organizations.models.employee import Employee as EmployeeDB
-from typing import Any
-from uuid import UUID
 
 
 class ResponseQueryService:

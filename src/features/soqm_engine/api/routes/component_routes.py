@@ -1,29 +1,31 @@
 from uuid import UUID
-from fastapi import APIRouter, status, Depends
-from src.features.soqm_engine.application.dtos.component_dtos import (
-    CreateComponentDTO,
-    UpdateComponentDTO,
+
+from fastapi import APIRouter, Depends, status
+
+from src.core.pagination import Pagination
+from src.features.auth.security.dependencies import require_auth
+from src.features.soqm_engine.api.commands.reads.component_reads import (
+    ReadComponentDetails,
 )
 from src.features.soqm_engine.api.commands.writes.component_writes import (
     CreateComponentRequest,
     UpdateComponentRequest,
 )
-from src.features.soqm_engine.api.commands.reads.component_reads import (
-    ReadComponentDetails,
-)
-from src.features.soqm_engine.application.usecases.component_uc import ComponentUC
 from src.features.soqm_engine.api.dependencies.component_deps import (
-    get_component_uc,
     get_component_queries,
+    get_component_uc,
 )
-from src.features.soqm_engine.infra.queries.component_query_service import (
-    ComponentQueryService,
+from src.features.soqm_engine.application.dtos.component_dtos import (
+    CreateComponentDTO,
+    UpdateComponentDTO,
 )
-from src.core.pagination import Pagination
 from src.features.soqm_engine.application.filters.component_filters import (
     ComponentFilters,
 )
-from src.features.auth.security.dependencies import require_auth
+from src.features.soqm_engine.application.usecases.component_uc import ComponentUC
+from src.features.soqm_engine.infra.queries.component_query_service import (
+    ComponentQueryService,
+)
 
 router = APIRouter(prefix="/components", tags=["Soqm Components"])
 

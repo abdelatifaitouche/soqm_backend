@@ -1,14 +1,15 @@
-import jwt
-from src.core.config import settings
 import uuid
 from datetime import datetime, timedelta, timezone
+
+import jwt
 from jwt.exceptions import (
     ExpiredSignatureError,
-    InvalidAlgorithmError,
     InvalidTokenError,
 )
-from src.features.auth.enums.tokens import TokenType
+
+from src.core.config import settings
 from src.core.exceptions import TokenExpiredError, TokenInvalidError
+from src.features.auth.enums.tokens import TokenType
 
 
 def _now() -> datetime:
@@ -76,9 +77,9 @@ def _decode(token: str, token_type: TokenType):
                 settings.JWT_ALGO,
             ],
         )
-    except ExpiredSignatureError as exp:
+    except ExpiredSignatureError:
         raise TokenExpiredError(message="Token Expired")
-    except InvalidTokenError as inv:
+    except InvalidTokenError:
         raise TokenInvalidError(message="Invalid Token")
 
     if decoded.get("type") != token_type.value:

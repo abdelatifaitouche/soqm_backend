@@ -1,10 +1,12 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.dialects.postgresql import insert
 from uuid import UUID
-from src.features.findings.infra.models import FindingDeptSeq
+
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.findings.application.ports.ifinding_dept_seq_repo import (
     IFindingDeptSeqRepository,
 )
+from src.features.findings.infra.models import FindingDeptSeq
 
 
 class FindingDeptSequenceRepository(IFindingDeptSeqRepository):

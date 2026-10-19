@@ -1,27 +1,32 @@
-from src.features.soqm_engine.infra.models import (
-    Risk as RiskDB,
-    RiskResponseAssociation,
-    QualityObjective,
-    RiskObjectiveAssociation,
-)
-from src.features.soqm_engine.infra.models.risk import RISK_ORDER_FIELDS
-from src.core.ordering import apply_ordering, resolve_order_column, OrderBy
-
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Select, func
-from sqlalchemy.orm import selectinload
-from src.core.pagination import Pagination
-from src.infra.db.pagination import apply_pagination
-from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
-from src.features.soqm_engine.application.dtos.risk_dtos import (
-    RiskList,
-    PaginatedResponse,
-    Risk as RiskDetails,
-    ObjectiveSummary,
-    ComponentSummary,
-)
 from typing import Any
 from uuid import UUID
+
+from sqlalchemy import Select, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
+from src.core.pagination import Pagination
+from src.features.soqm_engine.application.dtos.risk_dtos import (
+    ComponentSummary,
+    ObjectiveSummary,
+    PaginatedResponse,
+    RiskList,
+)
+from src.features.soqm_engine.application.dtos.risk_dtos import (
+    Risk as RiskDetails,
+)
+from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
+from src.features.soqm_engine.infra.models import (
+    QualityObjective,
+    RiskObjectiveAssociation,
+    RiskResponseAssociation,
+)
+from src.features.soqm_engine.infra.models import (
+    Risk as RiskDB,
+)
+from src.features.soqm_engine.infra.models.risk import RISK_ORDER_FIELDS
+from src.infra.db.pagination import apply_pagination
 
 
 class RiskQueryService:

@@ -1,12 +1,12 @@
-from fastapi.security import HTTPBearer
+from fastapi import Depends
 from fastapi.requests import Request
-from fastapi.exceptions import HTTPException
-from fastapi import status, Depends
-from src.features.auth.security.jwt import decode_access_token
-from src.core.exceptions import WrongCredentialsError, AccessDenied
+from fastapi.security import HTTPBearer
+
+from src.core.exceptions import AccessDenied, WrongCredentialsError
 from src.features.auth.repositories.role_permission_repository import (
     RolePermissionRepository,
 )
+from src.features.auth.security.jwt import decode_access_token
 from src.infra.db.uow import get_db
 
 

@@ -1,9 +1,13 @@
-from pydantic import BaseModel, Field
-from uuid import UUID
 from datetime import date
-from src.features.risks.enums.risk_response import ResponseType
-from src.features.risks.schemas.risk import RiskSummary
-from src.features.risks.enums.risk_response import ExecutionType, Frequency
+from uuid import UUID
+
+from pydantic import BaseModel, Field
+
+from src.features.risks.enums.risk_response import (
+    ExecutionType,
+    Frequency,
+    ResponseType,
+)
 
 
 class Owner(BaseModel):

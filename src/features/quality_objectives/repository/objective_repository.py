@@ -1,20 +1,18 @@
+from typing import Any
+from uuid import UUID
+
+from sqlalchemy import Select, delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, update, Select
-from src.infra.db.exception_utils import translate_db_errors
+
+from src.core.exceptions import NotFoundError
 from src.features.quality_objectives.domain.objective import (
     Objective as ObjectiveEntity,
-    UpdateObjective as UpdateDTO,
 )
+from src.features.quality_objectives.filters.filters import ObjectiveFilters
 from src.features.quality_objectives.models.quality_objective import (
     QualityObjective as ObjectiveDB,
 )
-from src.infra.db.pagination import apply_pagination, apply_ordering
-from src.core.pagination import Pagination
-from uuid import UUID
-from src.core.exceptions import NotFoundError
-from src.features.quality_objectives.enums.objective_states import ObjectiveState
-from src.features.quality_objectives.filters.filters import ObjectiveFilters
-from typing import Any
+from src.infra.db.exception_utils import translate_db_errors
 
 
 class ObjectiveRepository:

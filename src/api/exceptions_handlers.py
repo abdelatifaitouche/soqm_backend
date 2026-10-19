@@ -1,11 +1,13 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
-from src.core.exceptions import AppException
+
 from src.core.config import settings
+from src.core.exceptions import AppException
 from src.core.request_context import get_request_id
-import logging
 
 logger = logging.getLogger(__name__)
 

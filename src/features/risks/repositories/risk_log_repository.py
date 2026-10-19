@@ -1,10 +1,12 @@
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
-from src.infra.db.exception_utils import translate_db_errors
-from src.features.risks.models.risk_audit_log import RiskAuditLog as LogDB
-from src.features.risks.domain.risk_audit_log import RiskAuditLog as LogEntity
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.core.pagination import Pagination
+from src.features.risks.domain.risk_audit_log import RiskAuditLog as LogEntity
+from src.features.risks.models.risk_audit_log import RiskAuditLog as LogDB
+from src.infra.db.exception_utils import translate_db_errors
 from src.infra.db.pagination import apply_pagination
 
 

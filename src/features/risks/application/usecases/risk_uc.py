@@ -1,6 +1,6 @@
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
-from src.features.risks.application.ports.irisk_repo import IRiskRepository
 from src.features.risks.application.dtos.risk_dtos import CreateRisk as CreateRiskDTO
+from src.features.risks.application.ports.irisk_repo import IRiskRepository
 from src.features.risks.domain.entities.risk import Risk
 
 

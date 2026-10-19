@@ -1,33 +1,33 @@
+from typing import Any
+from uuid import UUID
+
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Select, func, text
-from src.features.risks.models.risk import Risk as RiskDB, RISK_ORDER_FIELDS
+
+from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
+from src.core.pagination import Pagination
 from src.features.risks.filters.risk_filters import (
     RiskFilters,
 )
-from typing import Any
-from src.core.pagination import Pagination
-from src.core.ordering import apply_ordering, resolve_order_column, OrderBy
-from src.infra.db.pagination import apply_pagination
+from src.features.risks.models.risk import RISK_ORDER_FIELDS
+from src.features.risks.models.risk import Risk as RiskDB
+from src.features.risks.models.risk_objective_association import (
+    RiskObjectiveAssociation,
+)
+from src.features.risks.models.risk_response_association import (
+    RiskResponseAssociation,
+)
 from src.features.risks.services.risk_dto import (
+    ComponentSummary,
+    ObjectiveSummary,
     PaginatedResponse,
+    Risk,
     RiskList,
     RiskMatrix,
     RiskMatrixCell,
     RiskOption,
-    Risk,
-    ComponentSummary,
-    ObjectiveSummary,
 )
-from src.features.quality_objectives.models.quality_objective import (
-    QualityObjective,
-)
-from src.features.risks.models.risk_objective_association import (
-    RiskObjectiveAssociation,
-)
-from uuid import UUID
-from src.features.risks.models.risk_response_association import (
-    RiskResponseAssociation,
-)
+from src.infra.db.pagination import apply_pagination
 
 
 class RiskQueryService:
@@ -158,13 +158,14 @@ class RiskQueryService:
         )
 
     async def get_risk_details(self, entity_id: UUID) -> Risk | None:
+        from sqlalchemy.orm import selectinload
+
         from src.features.quality_objectives.models.quality_objective import (
             QualityObjective,
         )
         from src.features.risks.models.risk_objective_association import (
             RiskObjectiveAssociation,
         )
-        from sqlalchemy.orm import selectinload
 
         risk = await self.db.get(
             RiskDB,

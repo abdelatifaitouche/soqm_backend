@@ -1,18 +1,17 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.api.deps.db_session import get_db
 from src.features.findings.application.usecases.finding_uc import FindingUC
-from src.infra.db.unit_of_work import UnitOfWork
-from src.features.findings.infra.repositories.finding_repository import (
-    FindingRepository,
-)
 from src.features.findings.infra.queries.finding_queries import FindingQueryService
-from src.features.organizations.repositories.department_repository import (
-    DepartmentRepository,
-)
 from src.features.findings.infra.repositories.finding_dept_seq import (
     FindingDeptSequenceRepository,
 )
+from src.features.findings.infra.repositories.finding_repository import (
+    FindingRepository,
+)
+from src.features.organizations.infra.repositories import DepartmentRepository
+from src.infra.db.unit_of_work import UnitOfWork
 
 
 def get_finding_queries(db: AsyncSession = Depends(get_db)) -> FindingQueryService:

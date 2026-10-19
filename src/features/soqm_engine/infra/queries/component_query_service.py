@@ -1,9 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Select
+from typing import Any
 from uuid import UUID
-from src.features.soqm_engine.infra.models.component import (
-    SOQMComponent as SOQMComponentDB,
-)
+
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.pagination import Pagination
 from src.features.soqm_engine.application.dtos.component_dtos import (
     SOQMComponentDetails,
     SOQMComponentList,
@@ -12,10 +13,10 @@ from src.features.soqm_engine.application.dtos.component_dtos import (
 from src.features.soqm_engine.application.filters.component_filters import (
     ComponentFilters,
 )
-from src.core.pagination import Pagination
+from src.features.soqm_engine.infra.models.component import (
+    SOQMComponent as SOQMComponentDB,
+)
 from src.infra.db.pagination import apply_pagination
-
-from typing import Any
 
 
 class ComponentQueryService:

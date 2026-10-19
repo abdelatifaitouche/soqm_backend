@@ -1,13 +1,15 @@
-from src.features.organizations.models.employee import Employee as EmployeeDB
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.organizations.domain.employee import Employee as EmployeeEntity
-from src.infra.db.exception_utils import translate_db_errors
-from uuid import UUID
-from sqlalchemy import select, Select
-from sqlalchemy.orm import selectinload
-from src.core.pagination import Pagination
-from src.features.organizations.filters.employee_filters import EmployeeFilters
 from typing import Any
+from uuid import UUID
+
+from sqlalchemy import Select, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from src.core.pagination import Pagination
+from src.features.organizations.domain.employee import Employee as EmployeeEntity
+from src.features.organizations.filters.employee_filters import EmployeeFilters
+from src.features.organizations.infra.models import Employee as EmployeeDB
+from src.infra.db.exception_utils import translate_db_errors
 
 
 class EmployeeRepository:

@@ -1,0 +1,1 @@
+from .department_writes import CreateDepartmentRequest

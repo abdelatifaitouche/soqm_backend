@@ -1,7 +1,9 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, UUID, ForeignKey
 import uuid
+
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.infra.db.base import Base
 
 
 class Department(Base):

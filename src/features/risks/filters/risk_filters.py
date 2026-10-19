@@ -1,6 +1,7 @@
-from pydantic import BaseModel
-from uuid import UUID
 from enum import StrEnum
+from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class OrderByEnum(StrEnum):

@@ -1,12 +1,15 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.core.pagination import Pagination
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from sqlalchemy.orm import selectinload, contains_eager
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import contains_eager, selectinload
+
+from src.core.pagination import Pagination
+from src.features.auth.domain.user import User as UserEntity
+from src.features.auth.domain.user import UserCreate
 from src.features.auth.models.user import User as UserDB
 from src.features.auth.models.user_roles import UserRoles as UserRolesDB
-from src.features.auth.domain.user import User as UserEntity, UserCreate
-from uuid import UUID
 
 
 class UserRepository:

@@ -1,5 +1,7 @@
-from pydantic import BaseModel
 from uuid import UUID
+
+from pydantic import BaseModel
+
 from src.features.soqm_engine.domain.enums.objective_state import ObjectiveState
 
 

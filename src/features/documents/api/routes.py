@@ -1,22 +1,22 @@
-from fastapi import APIRouter, File, UploadFile, Depends
-from fastapi.responses import StreamingResponse, FileResponse
-from src.features.documents.application.document_service import DocumentService
-from src.features.documents.api.deps import get_service, get_queries
-from src.features.documents.domain.document import Document
+from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi.responses import FileResponse
+
+from src.core.pagination import Pagination
+from src.features.documents.api.deps import get_queries, get_service
 from src.features.documents.api.schemas import (
     CreateDocument,
-    ReadDocument,
-    PaginatedResponse,
     DocumentFilters,
+    PaginatedResponse,
 )
+from src.features.documents.application.document_service import DocumentService
 from src.features.documents.application.dto.create_cmd import (
     CreateDocument as CreateDocumentDTO,
 )
-from src.features.documents.application.query_service import DocumentQueryService
-from src.core.pagination import Pagination
 from src.features.documents.application.dto.document_filters import (
     DocumentFilters as FiltersDTO,
 )
+from src.features.documents.application.query_service import DocumentQueryService
+from src.features.documents.domain.document import Document
 
 router = APIRouter(prefix="/documents")
 from uuid import UUID

@@ -1,8 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from uuid import UUID
-from src.features.risks.models.component_response_seq import ComponentResponseSeq
 from datetime import datetime
+from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.features.risks.models.component_response_seq import ComponentResponseSeq
 
 
 class ComponentResponseSeqRepository:

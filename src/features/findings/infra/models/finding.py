@@ -1,14 +1,16 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Text, UUID, Enum, DateTime
-from src.features.findings.domain.enums.finding import (
-    FindingSource,
-    FindingStatus,
-    DeficiencySeverity,
-    ProcessStatus,
-)
 import uuid
 from datetime import datetime
+
+from sqlalchemy import UUID, DateTime, Enum, String, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
+from src.features.findings.domain.enums.finding import (
+    DeficiencySeverity,
+    FindingSource,
+    FindingStatus,
+    ProcessStatus,
+)
+from src.infra.db.base import Base
 
 
 class Finding(Base):

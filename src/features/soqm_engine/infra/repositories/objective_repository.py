@@ -1,10 +1,12 @@
 from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.features.soqm_engine.application.ports import IObjectiveRepository
 from src.features.soqm_engine.domain.entities.objective import Objective
 from src.features.soqm_engine.infra.models import QualityObjective as ObjectiveDB
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy import select
-from src.features.soqm_engine.application.ports import IObjectiveRepository
 
 
 class ObjectiveRepository(IObjectiveRepository):

@@ -1,8 +1,10 @@
-import pytest
-from src.core.ordering import apply_ordering, OrderDirection, OrderBy
-from sqlalchemy import select, String, Integer
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 import logging
+
+import pytest
+from sqlalchemy import Integer, String, select
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+from src.core.ordering import OrderBy, apply_ordering
 
 logger = logging.getLogger(__name__)
 

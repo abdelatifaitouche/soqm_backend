@@ -1,12 +1,14 @@
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.features.soqm_engine.application.ports import IComponentRepository
-from src.features.soqm_engine.infra.models.component import SOQMComponent as ComponentDB
 from src.features.soqm_engine.domain.entities.component import (
     SOQMComponent as Component,
 )
+from src.features.soqm_engine.infra.models.component import SOQMComponent as ComponentDB
 
 
 class ComponentRepository(IComponentRepository):
@@ -39,11 +41,11 @@ class ComponentRepository(IComponentRepository):
         upsert = stmt.on_conflict_do_update(
             index_elements=["id"],
             set_={
-                "name": stmt.excluded.name,
-                "isqm_reference": stmt.excluded.isqm_reference,
-                "status": stmt.excluded.status,
-                "description": stmt.excluded.description,
-                "display_order": stmt.excluded.display_order,
+                "name": component.name,
+                "isqm_reference": component.isqm_reference,
+                "status": component.status,
+                "description": component.description,
+                "display_order": component.display_order,
                 "lock_version": ComponentDB.lock_version + 1,
             },
             where=(ComponentDB.lock_version == component.lock_version),
@@ -63,6 +65,15 @@ class ComponentRepository(IComponentRepository):
         if not component:
             return None
         return self._to_domain(component)
+
+    async def list_isqm_refs(self) -> dict[str, str]:
+        stmt = select(ComponentDB.id, ComponentDB.name)
+
+        res = (await self.session.execute(stmt)).mappings().all()
+
+        refs = {cp.name: cp.id for cp in res}
+
+        return refs
 
     async def delete(self, component_id: UUID) -> None:
         pass

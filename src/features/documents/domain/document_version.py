@@ -1,5 +1,6 @@
-from uuid import UUID, uuid4
 from dataclasses import dataclass
+from uuid import UUID, uuid4
+
 from src.features.documents.domain.enums import DocumentProcessingStatus
 
 

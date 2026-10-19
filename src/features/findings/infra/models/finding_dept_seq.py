@@ -1,7 +1,9 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, UUID
 import uuid
+
+from sqlalchemy import UUID, Integer
+from sqlalchemy.orm import Mapped, mapped_column
+
+from src.infra.db.base import Base
 
 
 class FindingDeptSeq(Base):

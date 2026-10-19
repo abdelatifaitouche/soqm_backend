@@ -1,4 +1,5 @@
 import logging
+
 from sqlalchemy import event
 
 logger = logging.getLogger("app.sql")

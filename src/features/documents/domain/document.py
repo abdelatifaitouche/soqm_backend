@@ -1,11 +1,8 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
-from src.features.documents.domain.exceptions import (
-    FileNameErrorException,
-    FileSizeErrorException,
-)
+
 from src.features.documents.domain.document_version import DocumentVersion
-from src.features.documents.domain.enums import DocumentStatus, DocumentType
+from src.features.documents.domain.enums import DocumentStatus
 
 
 @dataclass

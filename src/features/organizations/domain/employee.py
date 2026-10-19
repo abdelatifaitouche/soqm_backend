@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
-from src.features.organizations.enums.employee import EmployeeState, EmployeeLevel
+
 from src.core.exceptions import ValidationError
-from src.features.organizations.domain.department import DeptCompact
+from src.features.organizations.enums.employee import EmployeeLevel, EmployeeState
 
 
 @dataclass

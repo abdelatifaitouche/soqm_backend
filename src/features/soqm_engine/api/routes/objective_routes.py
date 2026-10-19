@@ -1,32 +1,32 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
-from uuid import UUID
-from src.features.soqm_engine.application.usecases.objective_uc import ObjectiveUC
-from src.features.soqm_engine.api.dependencies.objective_deps import (
-    get_objective_uc,
-    get_queries,
+
+from src.core.pagination import Pagination
+from src.features.auth.security.dependencies import require_auth
+from src.features.soqm_engine.api.commands.reads.objective_reads import (
+    ObjectiveOption,
+    PaginatedResponse,
+    ReadObjective,
 )
 from src.features.soqm_engine.api.commands.writes.objective_writes import (
     CreateObjectiveRequest,
     UpdateObjectiveRequest,
 )
+from src.features.soqm_engine.api.dependencies.objective_deps import (
+    get_objective_uc,
+    get_queries,
+)
 from src.features.soqm_engine.application.dtos.objective_dtos import (
     CreateObjective,
     UpdateObjective,
 )
-from src.features.soqm_engine.infra.queries import ObjectiveQueryService
 from src.features.soqm_engine.application.filters.objective_filters import (
     ObjectiveFilters,
 )
-from src.core.pagination import Pagination
-from src.features.soqm_engine.api.commands.reads.objective_reads import (
-    ReadObjective,
-    ObjectiveList,
-    PaginatedResponse,
-    ObjectiveOption,
-)
-from src.features.auth.security.dependencies import require_auth
-
+from src.features.soqm_engine.application.usecases.objective_uc import ObjectiveUC
+from src.features.soqm_engine.infra.queries import ObjectiveQueryService
 
 router = APIRouter(prefix="/objectives", tags=["Quality Objectives"])
 

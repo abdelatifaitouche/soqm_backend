@@ -1,13 +1,12 @@
-import pytest
 import uuid
 
+import pytest
+
 from src.features.auth.security.jwt import (
+    decode_access_token,
     generate_access_token,
     generate_refresh_token,
-    decode_access_token,
-    decode_refresh_token,
 )
-from datetime import datetime, timezone
 
 
 @pytest.fixture

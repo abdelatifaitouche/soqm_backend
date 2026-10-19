@@ -1,9 +1,11 @@
-from src.infra.db.base import Base
 import uuid
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, UUID, String, DateTime, Integer
-from src.features.quality_objectives.enums.objective_states import ObjectiveState
 from datetime import datetime
+
+from sqlalchemy import UUID, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.features.quality_objectives.enums.objective_states import ObjectiveState
+from src.infra.db.base import Base
 
 
 class QualityObjective(Base):

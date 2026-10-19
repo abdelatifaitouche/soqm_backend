@@ -1,7 +1,9 @@
-import uuid
-import time
 import logging
+import time
+import uuid
+
 from fastapi import Request
+
 from src.core.request_context import set_request_id
 
 logger = logging.getLogger("app.request")

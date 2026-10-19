@@ -1,17 +1,17 @@
-import src.infra.db.models  # Register all ORM models
-
 from sqlalchemy.orm import configure_mappers
 
 configure_mappers()
 
 
 import asyncio
-from src.infra.db.seed.seed_roles import get_all_roles
-from src.infra.db.seed.seed_permissions import seed_permissions
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.infra.db.session import SessionLocal
+
+from src.infra.db.seed.seed_permissions import seed_permissions
 from src.infra.db.seed.seed_role_permissions import seed_role_permissions
+from src.infra.db.seed.seed_roles import get_all_roles
 from src.infra.db.seed.seed_super_user import seed_super_user
+from src.infra.db.session import SessionLocal
 
 
 async def run(session: AsyncSession):

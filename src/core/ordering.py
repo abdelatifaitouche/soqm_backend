@@ -1,7 +1,8 @@
-from sqlalchemy import Select, asc, desc
-from typing import Any
-from enum import StrEnum
 from dataclasses import dataclass, field
+from enum import StrEnum
+from typing import Any
+
+from sqlalchemy import Select, asc, desc
 
 
 class OrderDirection(StrEnum):

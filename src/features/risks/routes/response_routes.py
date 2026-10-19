@@ -1,23 +1,22 @@
-from fastapi import APIRouter, Depends
-from src.infra.db.uow import get_db
-from src.features.auth.security.dependencies import require_auth, require_permissions
 from uuid import UUID
-from src.features.risks.services.response_service import ResponseService
+
+from fastapi import APIRouter, Depends
+
+from src.api.deps.ordering import parse_ordering
+from src.core.ordering import OrderBy
 from src.core.pagination import Pagination
-from src.features.risks.schemas.risk_response import (
-    RiskSummary,
-    Response,
-    RiskResponse,
-    CreateRiskResponse,
-    PaginatedResponse,
-)
+from src.features.auth.security.dependencies import require_auth
 from src.features.risks.filters.response_filters import ResponseFilters
-from src.features.risks.routes.response_deps import get_service, get_queries
 from src.features.risks.repositories.queries.response_query_service import (
     ResponseQueryService,
 )
-from src.api.deps.ordering import parse_ordering
-from src.core.ordering import OrderBy
+from src.features.risks.routes.response_deps import get_queries, get_service
+from src.features.risks.schemas.risk_response import (
+    CreateRiskResponse,
+    PaginatedResponse,
+    RiskResponse,
+)
+from src.features.risks.services.response_service import ResponseService
 
 router = APIRouter(prefix="/responses")
 

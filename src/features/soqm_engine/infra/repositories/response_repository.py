@@ -1,14 +1,18 @@
+from dataclasses import asdict
 from uuid import UUID
+
+from sqlalchemy import delete, select
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.features.soqm_engine.application.ports import IResponseRepository
 from src.features.soqm_engine.domain.entities.response import RiskResponse as Response
 from src.features.soqm_engine.infra.models import (
     RiskResponse as ResponseDB,
+)
+from src.features.soqm_engine.infra.models import (
     RiskResponseAssociation,
 )
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.features.soqm_engine.application.ports import IResponseRepository
-from sqlalchemy import select, delete
-from sqlalchemy.dialects.postgresql import insert
-from dataclasses import asdict
 
 
 class ResponseRepository(IResponseRepository):

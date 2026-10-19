@@ -1,12 +1,13 @@
 from dataclasses import dataclass
+from datetime import datetime
 from uuid import UUID
+
+from src.features.findings.domain.entities.finding import RootCauseAnalysis
 from src.features.findings.domain.enums.finding import (
-    FindingSource,
     DeficiencySeverity,
+    FindingSource,
     FindingStatus,
 )
-from datetime import datetime
-from src.features.findings.domain.entities.finding import RootCauseAnalysis
 
 
 @dataclass(frozen=True)

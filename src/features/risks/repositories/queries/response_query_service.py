@@ -1,24 +1,27 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, Select, func
-from sqlalchemy.orm import joinedload
 from typing import Any
+from uuid import UUID
+
+from sqlalchemy import Select, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+
+from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
+from src.core.pagination import Pagination
+from src.features.organizations.models.employee import Employee as EmployeeDB
+from src.features.risks.filters.response_filters import ResponseFilters
 from src.features.risks.models.risk_response import (
-    RiskResponse as ResponseDB,
     RESPONSE_ORDER_FIELDS,
 )
+from src.features.risks.models.risk_response import (
+    RiskResponse as ResponseDB,
+)
 from src.features.risks.models.risk_response_association import RiskResponseAssociation
-from src.features.risks.filters.response_filters import ResponseFilters
-from src.core.pagination import Pagination
-from src.infra.db.pagination import apply_pagination
-from src.core.ordering import OrderBy, apply_ordering, resolve_order_column
-from src.features.organizations.models.employee import Employee as EmployeeDB
 from src.features.risks.services.response_dto import (
+    PaginatedResponse,
     ResponseList,
     ResponseOwner,
-    PaginatedResponse,
-    ResponseDetails,
 )
-from uuid import UUID
+from src.infra.db.pagination import apply_pagination
 
 
 class ResponseQueryService:
@@ -112,8 +115,8 @@ class ResponseQueryService:
         )
 
     async def get_response_details(self, response_id: UUID):
-        from src.features.soqm_components.models.soqm_component import SOQMComponent
         from src.features.organizations.models.employee import Employee
+        from src.features.soqm_components.models.soqm_component import SOQMComponent
 
         stmt = (
             select(

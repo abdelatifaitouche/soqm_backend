@@ -1,12 +1,12 @@
 from dataclasses import dataclass
+from datetime import date, datetime
 from uuid import UUID
-from datetime import date
+
 from src.features.soqm_engine.domain.enums.response_state import (
-    ResponseType,
     ExecutionType,
     Frequency,
+    ResponseType,
 )
-from datetime import datetime
 
 
 @dataclass(frozen=True)

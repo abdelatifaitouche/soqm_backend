@@ -1,8 +1,10 @@
-from src.infra.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import UUID, Integer, String, String, ForeignKey
 import uuid
+
+from sqlalchemy import UUID, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.features.documents.domain.enums import DocumentProcessingStatus
+from src.infra.db.base import Base
 
 
 class DocumentVersion(Base):

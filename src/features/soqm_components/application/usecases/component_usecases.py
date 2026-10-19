@@ -1,15 +1,16 @@
 from uuid import UUID
+
 from src.core.exceptions import NotFoundError, ValidationError
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
+from src.features.soqm_components.application.dtos.component_dto import (
+    CreateComponentDTO,
+    UpdateComponentDTO,
+)
 from src.features.soqm_components.application.ports.component_repository import (
     IComponentRepository,
 )
 from src.features.soqm_components.domain.component import SOQMComponent
 from src.features.soqm_components.domain.enums.state import ComponentState
-from src.features.soqm_components.application.dtos.component_dto import (
-    CreateComponentDTO,
-    UpdateComponentDTO,
-)
 
 
 class ComponentUC:

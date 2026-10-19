@@ -1,9 +1,10 @@
-from pydantic import BaseModel
 from uuid import UUID
+
+from pydantic import BaseModel
+
 from src.features.findings.domain.enums.finding import (
-    FindingSource,
-    FindingStatus,
     DeficiencySeverity,
+    FindingSource,
 )
 
 
@@ -12,3 +13,11 @@ class CreateFindingRequest(BaseModel):
     finding_source: FindingSource
     department: UUID
     deficiency_severity: DeficiencySeverity
+
+
+class StartRootCauseAnalysisRequest(BaseModel):
+    analysis: str
+    category_id: UUID
+    indicator_id: UUID
+    potential_root_cause_id: UUID
+    component_id: UUID

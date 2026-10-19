@@ -1,5 +1,6 @@
-from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 
 
 class UnitOfWork(IUnitOfWork):

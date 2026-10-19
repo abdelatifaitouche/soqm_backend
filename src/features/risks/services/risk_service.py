@@ -1,28 +1,21 @@
 from uuid import UUID
-from src.features.risks.domain.risk import Risk
+
+from src.core.exceptions import NotFoundError, ValidationError
+from src.features.quality_objectives.domain.objective import Objective
 from src.features.quality_objectives.repository.objective_repository import (
     ObjectiveRepository,
 )
-from src.features.soqm_components.application.ports.component_repository import (
-    IComponentRepository,
-)
-from src.features.risks.repositories.risk_repository import RiskRepository
-from src.features.quality_objectives.domain.objective import Objective
-from src.features.soqm_components.domain.component import SOQMComponent
-from src.features.quality_objectives.enums.objective_states import ObjectiveState
-from src.features.soqm_components.enums.soqm_component import ComponentState
-from src.features.risks.enums.risk_states import RiskStatus
-from src.core.exceptions import ValidationError, NotFoundError
-from datetime import date
-from src.features.risks.schemas.risk import CreateRisk, UpdateRisk
-from src.features.risks.repositories.risk_response_repository import (
-    RiskResponseRepository,
-)
-from src.features.risks.domain.risk_response import RiskResponse as RiskResponseEntity
+from src.features.risks.domain.risk import Risk
 from src.features.risks.repositories.component_risk_seq_repository import (
     ComponentRiskSeqRepository,
 )
-from src.core.pagination import Pagination
+from src.features.risks.repositories.risk_repository import RiskRepository
+from src.features.risks.schemas.risk import CreateRisk, UpdateRisk
+from src.features.soqm_components.application.ports.component_repository import (
+    IComponentRepository,
+)
+from src.features.soqm_components.domain.component import SOQMComponent
+from src.features.soqm_components.enums.soqm_component import ComponentState
 
 
 class RiskService:

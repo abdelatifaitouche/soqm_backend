@@ -1,10 +1,11 @@
-from datetime import datetime
 from dataclasses import dataclass
+from datetime import datetime
 from uuid import UUID, uuid4
+
 from src.features.findings.domain.enums.finding import (
-    FindingStatus,
-    FindingSource,
     DeficiencySeverity,
+    FindingSource,
+    FindingStatus,
     ProcessStatus,
 )
 
@@ -42,6 +43,7 @@ class Finding:
     @classmethod
     def create(
         cls,
+        *,
         finding_ref: str,
         description: str,
         finding_source: FindingSource,

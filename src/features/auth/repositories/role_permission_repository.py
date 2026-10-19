@@ -1,9 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.features.auth.domain.permission import Permission as PermissionEntity
 from src.features.auth.models.permission import Permission
 from src.features.auth.models.role import Role
 from src.features.auth.models.role_permissions import RolePermissions
-from src.features.auth.domain.permission import Permission as PermissionEntity
 
 
 class RolePermissionRepository:

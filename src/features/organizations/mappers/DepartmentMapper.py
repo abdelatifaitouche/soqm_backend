@@ -1,5 +1,5 @@
 from src.features.organizations.domain.department import Department as Entity
-from src.features.organizations.schemas.department import Department, CreateDepartment
+from src.features.organizations.schemas.department import CreateDepartment
 
 
 class DepartmentMapper:

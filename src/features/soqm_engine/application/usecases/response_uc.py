@@ -1,23 +1,23 @@
-from src.features.soqm_engine.application.ports import (
-    IResponseRepository,
-    IComponentRepository,
-)
-from src.features.soqm_engine.application.ports import ISeqRepository
+from uuid import UUID
+
+from src.core.exceptions import NotFoundError, ValidationError
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
-from src.features.soqm_engine.domain.entities.response import RiskResponse
+from src.features.organizations.repositories.employee_repository import (
+    EmployeeRepository,
+)
 from src.features.soqm_engine.application.dtos.response_dtos import (
     CreateRiskResponse,
     UpdateRiskResponse,
 )
+from src.features.soqm_engine.application.ports import (
+    IComponentRepository,
+    IResponseRepository,
+    ISeqRepository,
+)
+from src.features.soqm_engine.domain.entities.response import RiskResponse
 from src.features.soqm_engine.domain.services.response_ref_gen import (
     ResponseRefGenerator,
 )
-from src.core.exceptions import NotFoundError, ValidationError
-from dataclasses import asdict
-from src.features.organizations.repositories.employee_repository import (
-    EmployeeRepository,
-)
-from uuid import UUID
 
 
 class ResponseUC:
@@ -48,7 +48,7 @@ class ResponseUC:
             "TERMINATED",
         ):
             raise ValidationError(
-                message=f"Employee choosen is not active",
+                message="Employee choosen is not active",
                 details={"status": owner.status},
             )
         return owner

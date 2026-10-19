@@ -1,8 +1,10 @@
-import pytest
-from src.features.risks.domain.events.risk_events import RiskCreatedEvent
-from src.features.risks.domain.risk import Risk
 import uuid
 from datetime import date
+
+import pytest
+
+from src.features.risks.domain.events.risk_events import RiskCreatedEvent
+from src.features.risks.domain.risk import Risk
 
 
 @pytest.fixture

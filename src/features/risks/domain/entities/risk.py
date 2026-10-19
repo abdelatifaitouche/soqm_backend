@@ -1,6 +1,7 @@
-from datetime import datetime, date
-from uuid import UUID, uuid4
 from dataclasses import dataclass
+from datetime import date, datetime
+from uuid import UUID, uuid4
+
 from src.features.risks.domain.enums.risk_states import RiskStatus
 
 

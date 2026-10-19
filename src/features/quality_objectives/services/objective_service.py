@@ -1,30 +1,26 @@
-import uuid
+from uuid import UUID
+
+from src.core.exceptions import NotFoundError, ValidationError
 from src.features.quality_objectives.domain.objective import (
     Objective,
-)
-from src.features.soqm_components.domain.component import SOQMComponent
-from datetime import datetime, UTC
-from src.features.quality_objectives.repository.objective_repository import (
-    ObjectiveRepository,
-)
-from src.features.soqm_components.infra.repositories.component_repository import (
-    ComponentRepository,
-)
-from src.core.exceptions import NotFoundError, ValidationError
-from src.features.soqm_components.enums.soqm_component import ComponentState
-from src.features.quality_objectives.enums.objective_states import ObjectiveState
-from src.core.pagination import Pagination
-from src.features.quality_objectives.filters.filters import ObjectiveFilters
-from uuid import UUID
-from src.features.quality_objectives.repository.component_objective_seq_repository import (
-    ComponentObjectiveSeqRepository,
 )
 from src.features.quality_objectives.domain.objective_ref_generator import (
     ObjectiveRefGenerator,
 )
+from src.features.quality_objectives.repository.component_objective_seq_repository import (
+    ComponentObjectiveSeqRepository,
+)
+from src.features.quality_objectives.repository.objective_repository import (
+    ObjectiveRepository,
+)
 from src.features.quality_objectives.schemas.objective import (
     CreateObjective,
     UpdateObjective,
+)
+from src.features.soqm_components.domain.component import SOQMComponent
+from src.features.soqm_components.enums.soqm_component import ComponentState
+from src.features.soqm_components.infra.repositories.component_repository import (
+    ComponentRepository,
 )
 
 

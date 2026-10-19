@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from src.core.events import DomainEvent
-from uuid import UUID
 from typing import Any
+from uuid import UUID
+
+from src.core.events import DomainEvent
 
 
 @dataclass

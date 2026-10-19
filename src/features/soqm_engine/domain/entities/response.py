@@ -1,10 +1,9 @@
 from dataclasses import dataclass, field
-from uuid import UUID, uuid4
 from datetime import date, datetime
+from uuid import UUID, uuid4
+
 from src.features.soqm_engine.domain.enums.response_state import (
     ResponseState,
-    ResponseType,
-    Frequency,
 )
 
 

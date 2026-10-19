@@ -1,10 +1,10 @@
-from pydantic import BaseModel, Field
-from uuid import UUID
 from datetime import date
+from uuid import UUID
+
+from pydantic import BaseModel, Field
+
 from src.features.risks.enums.risk_states import RiskStatus
-from src.core.exceptions import ValidationError
 from src.features.soqm_components.schemas.component import BaseComponent
-from src.features.quality_objectives.schemas.objective import ObjectiveSummary
 
 
 class ListRisk(BaseModel):

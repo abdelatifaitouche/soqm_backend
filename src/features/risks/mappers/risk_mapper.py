@@ -1,6 +1,7 @@
+import uuid
+
 from src.features.risks.domain.risk import Risk as RiskEntity
 from src.features.risks.schemas.risk import CreateRisk, UpdateRisk
-import uuid
 
 
 class RiskMapper:

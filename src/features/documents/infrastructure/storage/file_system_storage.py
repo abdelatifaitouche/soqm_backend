@@ -1,8 +1,9 @@
+import pathlib
+from typing import BinaryIO
+
 from src.features.documents.infrastructure.storage.file_storage_interface import (
     FileStorage,
 )
-import pathlib
-from typing import BinaryIO
 
 
 class FileSystemStorage(FileStorage):
