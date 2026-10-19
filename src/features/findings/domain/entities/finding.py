@@ -73,3 +73,6 @@ class Finding:
         root_cause_analysis.analysis_completed_at = datetime.now()
         self.root_cause_analysis = root_cause_analysis
         self.status = FindingStatus.UNDER_ASSESSMENT
+
+    def can_accept_new_actions(self) -> bool:
+        return self.status != FindingStatus.CLOSED

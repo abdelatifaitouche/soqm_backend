@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import UUID, DateTime, Enum, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.features.findings.domain.enums.finding import (
     DeficiencySeverity,
@@ -79,3 +79,5 @@ class Finding(Base):
         DateTime,
         nullable=True,
     )
+
+    actions: Mapped[list["Action"]] = relationship(back_populates="finding")
