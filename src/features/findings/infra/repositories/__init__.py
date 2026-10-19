@@ -1,1 +1,3 @@
+from .action_repository import ActionRepository
+from .finding_repository import FindingRepository
 from .rca_tracker_repo import RcaTrackerRepository
