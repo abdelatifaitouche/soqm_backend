@@ -16,3 +16,7 @@ class IComponentRepository(ABC):
     @abstractmethod
     async def delete(self, component_id: UUID) -> None:
         raise NotImplementedError()
+
+    @abstractmethod
+    async def list_isqm_refs(self) -> dict[str, str]:
+        raise

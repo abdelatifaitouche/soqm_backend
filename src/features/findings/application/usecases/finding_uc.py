@@ -1,10 +1,14 @@
+from uuid import UUID
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
-from src.features.findings.application.dtos.finding_dtos import CreateFinding
+from src.features.findings.application.dtos import (
+    CreateFinding,
+    CreateRootCauseAnalysis,
+)
 from src.features.findings.application.ports import (
     IFindingDeptSeqRepository,
     IFindingRepository,
 )
-from src.features.findings.domain.entities.finding import Finding
+from src.features.findings.domain.entities.finding import Finding, RootCauseAnalysis
 from src.features.organizations.application.ports import IDepartmentRepository
 
 
@@ -49,3 +53,31 @@ class FindingUC:
             )
 
             await self.finding_repo.save(finding)
+
+    async def get(self, finding_id: UUID):
+
+        finding = await self.finding_repo.get(finding_id)
+
+        if not finding:
+            raise Exception()
+
+        return finding
+
+    async def start_root_cause_analysis(
+        self, finding_id: UUID, root_cause_analysis: CreateRootCauseAnalysis
+    ):
+        async with self.uow:
+            finding = await self.get(finding_id)
+
+            root_cause = RootCauseAnalysis(
+                analysis=root_cause_analysis.analysis,
+                category_id=root_cause_analysis.category_id,
+                indicator_id=root_cause_analysis.indicator_id,
+                potential_root_cause_id=root_cause_analysis.potential_root_cause_id,
+            )
+
+            finding.start_root_cause_analysis(root_cause)
+
+            await self.finding_repo.save(finding)
+
+        return

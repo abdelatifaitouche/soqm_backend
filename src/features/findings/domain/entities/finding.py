@@ -43,6 +43,7 @@ class Finding:
     @classmethod
     def create(
         cls,
+        *,
         finding_ref: str,
         description: str,
         finding_source: FindingSource,
