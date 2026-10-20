@@ -1,1 +1,2 @@
+from .employee_repository import EmployeeRepository
 from .department_repository import DepartmentRepository
