@@ -1,1 +1,2 @@
+from .employee_query_service import EmployeeQueryService
 from .department_queries import DepartmentQueryService

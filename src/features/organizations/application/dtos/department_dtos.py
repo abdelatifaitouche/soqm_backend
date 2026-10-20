@@ -12,3 +12,13 @@ class Department:
 class CreateDepartment:
     name: str
     parent_id: UUID | None = None
+
+
+@dataclass(frozen=True)
+class UpdateDepartment:
+    name: str
+
+
+@dataclass(frozen=True)
+class UpdateDepartmentParent:
+    parent_id: UUID

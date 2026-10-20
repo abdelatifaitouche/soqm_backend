@@ -82,10 +82,8 @@ class UserRepository:
         result = await self.db.execute(stmt)
 
         data = result.unique().scalar_one_or_none()
-        print(f"from the repo getting the data : {data}")
         if not data:
             return None
-        print(f"from the repoistory : {data.id}")
         return self._to_domain(data)
 
     async def get_by_email(self, email: str) -> UserEntity | None:

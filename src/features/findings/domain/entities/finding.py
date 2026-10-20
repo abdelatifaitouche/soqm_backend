@@ -62,6 +62,13 @@ class Finding:
         )
         return finding
 
+    def update(
+        self,
+        description: str | None,
+        finding_source: FindingSource | None,
+    ):
+        return
+
     def start_root_cause_analysis(self, root_cause_analysis: RootCauseAnalysis):
 
         if self.status != FindingStatus.OPEN:
