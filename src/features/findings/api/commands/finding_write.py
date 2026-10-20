@@ -8,7 +8,14 @@ from src.features.findings.domain.enums.finding import (
 )
 
 
+class UpdateFindingRequest(BaseModel):
+    finding_title: str | None = None
+    finding_source: FindingSource | None = None
+    description: str | None = None
+
+
 class CreateFindingRequest(BaseModel):
+    finding_title: str
     description: str
     finding_source: FindingSource
     department: UUID

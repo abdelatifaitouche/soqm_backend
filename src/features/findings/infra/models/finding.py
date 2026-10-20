@@ -20,6 +20,9 @@ class Finding(Base):
         String(100),
         nullable=True,
     )
+
+    finding_title: Mapped[str] = mapped_column(String, nullable=True)
+
     description: Mapped[str] = mapped_column(
         Text,
         nullable=True,

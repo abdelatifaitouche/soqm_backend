@@ -32,6 +32,7 @@ class FindingRepository(IFindingRepository):
                 "potential_root_cause_id": finding.root_cause_analysis.potential_root_cause_id,
                 "soqm_component_id": finding.root_cause_analysis.soqm_component_id,
                 "analysis_completed_at": finding.root_cause_analysis.analysis_completed_at,
+                "finding_title": finding.finding_title,
             },
         )
         upsert_stmt = stmt.on_conflict_do_update(
@@ -50,6 +51,7 @@ class FindingRepository(IFindingRepository):
                 "potential_root_cause_id": finding.root_cause_analysis.potential_root_cause_id,
                 "soqm_component_id": finding.root_cause_analysis.soqm_component_id,
                 "analysis_completed_at": finding.root_cause_analysis.analysis_completed_at,
+                "finding_title": finding.finding_title,
             },
         )
         result = await self.session.execute(upsert_stmt)
@@ -74,6 +76,7 @@ class FindingRepository(IFindingRepository):
 
         return Finding(
             id=finding_orm.id,
+            finding_title=finding_orm.finding_title,
             finding_ref=finding_orm.finding_ref,
             description=finding_orm.description,
             finding_source=finding_orm.finding_source,

@@ -2,6 +2,7 @@ from uuid import UUID
 
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
 from src.features.findings.application.dtos import (
+    UpdateFinding,
     CreateFinding,
     CreateRootCauseAnalysis,
 )
@@ -51,6 +52,7 @@ class FindingUC:
                 finding_source=finding_data.finding_source,
                 department=finding_data.department,
                 deficiency_severity=finding_data.deficiency_severity,
+                finding_title=finding_data.finding_title,
             )
 
             await self.finding_repo.save(finding)
@@ -63,6 +65,18 @@ class FindingUC:
             raise Exception()
 
         return finding
+
+    async def update(self, finding_id: UUID, update_data: UpdateFinding):
+        async with self.uow:
+            finding = await self.get(finding_id)
+
+            finding.update(
+                finding_title=update_data.finding_title,
+                description=update_data.description,
+                finding_source=update_data.finding_source,
+            )
+
+            await self.finding_repo.save(finding)
 
     async def start_root_cause_analysis(
         self, finding_id: UUID, root_cause_analysis: CreateRootCauseAnalysis

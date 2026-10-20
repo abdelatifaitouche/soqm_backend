@@ -1,9 +1,10 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from src.core.pagination import Pagination
 from src.features.findings.api.commands.finding_write import (
+    UpdateFindingRequest,
     CreateFindingRequest,
     StartRootCauseAnalysisRequest,
 )
@@ -11,7 +12,10 @@ from src.features.findings.api.dependencies.finding_deps import (
     get_finding_queries,
     get_finding_uc,
 )
-from src.features.findings.application.dtos.finding_dtos import CreateFinding
+from src.features.findings.application.dtos.finding_dtos import (
+    CreateFinding,
+    UpdateFinding,
+)
 from src.features.findings.application.dtos.root_cause_analysis import (
     CreateRootCauseAnalysis,
 )
@@ -29,6 +33,7 @@ async def identify_finding(
 ):
     return await uc.identify_finding(
         finding_data=CreateFinding(
+            finding_title=data.finding_title,
             description=data.description,
             finding_source=data.finding_source,
             department=data.department,
@@ -52,6 +57,22 @@ async def get_finding_details(
     queries: FindingQueryService = Depends(get_finding_queries),
 ):
     return await queries.get_finding_details(finding_id)
+
+
+@router.patch("/{finding_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_finding(
+    finding_id: UUID,
+    data: UpdateFindingRequest,
+    uc: FindingUC = Depends(get_finding_uc),
+):
+    await uc.update(
+        finding_id,
+        UpdateFinding(
+            finding_title=data.finding_title,
+            finding_source=data.finding_source,
+            description=data.description,
+        ),
+    )
 
 
 @router.patch("/{finding_id}/root_cause_analyses")
