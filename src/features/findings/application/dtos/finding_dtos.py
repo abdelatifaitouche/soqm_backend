@@ -11,7 +11,15 @@ from src.features.findings.domain.enums.finding import (
 
 
 @dataclass(frozen=True)
+class UpdateFinding:
+    finding_title: str | None = None
+    description: str | None = None
+    finding_source: FindingSource | None = None
+
+
+@dataclass(frozen=True)
 class CreateFinding:
+    finding_title: str
     description: str
     finding_source: FindingSource
     department: UUID
@@ -24,7 +32,9 @@ class FindingListItem:
     finding_ref: str
     finding_source: FindingSource
     deficiency_severity: DeficiencySeverity
+
     status: FindingStatus
+    finding_title: str | None = None
 
 
 @dataclass(frozen=True)
@@ -47,3 +57,4 @@ class FindingDetails:
     root_cause_analysis: RootCauseAnalysis
     created_at: datetime
     updated_at: datetime
+    finding_title: str | None = None

@@ -53,6 +53,7 @@ class FindingQueryService:
             FindingDB.finding_ref,
             FindingDB.deficiency_severity,
             FindingDB.finding_source,
+            FindingDB.finding_title,
         )
 
         stmt = self._apply_filters(stmt, filters)
@@ -96,4 +97,5 @@ class FindingQueryService:
             root_cause_analysis=root_cause_analysis,
             created_at=res.created_at,
             updated_at=res.updated_at,
+            finding_title=res.finding_title,
         )

@@ -36,9 +36,9 @@ class Finding:
     status: FindingStatus
 
     root_cause_analysis: RootCauseAnalysis
-
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    finding_title: str | None = None
 
     @classmethod
     def create(
@@ -49,6 +49,7 @@ class Finding:
         finding_source: FindingSource,
         department: UUID,
         deficiency_severity: DeficiencySeverity,
+        finding_title: str,
     ) -> "Finding":
         finding = cls(
             id=uuid4(),
@@ -59,15 +60,26 @@ class Finding:
             deficiency_severity=deficiency_severity,
             status=FindingStatus.OPEN,
             root_cause_analysis=RootCauseAnalysis(),
+            finding_title=finding_title,
         )
         return finding
 
     def update(
         self,
-        description: str | None,
-        finding_source: FindingSource | None,
+        finding_title: str | None = None,
+        description: str | None = None,
+        finding_source: FindingSource | None = None,
     ):
-        return
+        if finding_title and finding_title.strip() != "":
+            self.finding_title = finding_title
+            self.updated_at = datetime.now()
+        if description and description.strip() != "":
+            self.description = description
+            self.updated_at = datetime.now()
+
+        if finding_source:
+            self.finding_source = finding_source
+            self.updated_at = datetime.now()
 
     def start_root_cause_analysis(self, root_cause_analysis: RootCauseAnalysis):
 
