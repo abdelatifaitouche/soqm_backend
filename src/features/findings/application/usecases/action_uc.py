@@ -73,6 +73,11 @@ class ActionUC:
                 f"Action with ID {action_id}",
             )
 
+        if action.soft_delete:
+            raise Exception(
+                f"Action was deleted",
+            )
+
         return action
 
     async def start_action(self, action_id: UUID):
@@ -88,5 +93,21 @@ class ActionUC:
             action = await self.get(action_id)
 
             action.complete()
+
+            await self.repo.save(action)
+
+    async def mark_as_delete(self, action_id: UUID):
+        async with self.uow:
+            action = await self.get(action_id)
+
+            action.mark_as_deleted()
+
+            await self.repo.save(action)
+
+    async def mark_as_draft(self, action_id: UUID):
+        async with self.uow:
+            action = await self.get(action_id)
+
+            action.mark_as_draft()
 
             await self.repo.save(action)

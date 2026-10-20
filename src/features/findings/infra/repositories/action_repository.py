@@ -44,4 +44,5 @@ class ActionRepository(IActionRepository):
             finding_id=action.finding_id,
             created_at=action.created_at,
             updated_at=action.updated_at,
+            soft_delete=action.soft_delete,
         )

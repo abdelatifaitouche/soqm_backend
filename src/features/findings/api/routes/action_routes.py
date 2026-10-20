@@ -75,7 +75,7 @@ async def update_action(
     )
 
 
-@router.post("/action/{action_id}/start", status_code=status.HTTP_200_OK)
+@router.post("/action/{action_id}/start", status_code=status.HTTP_204_NO_CONTENT)
 async def start_action(
     action_id: UUID,
     uc: ActionUC = Depends(get_action_uc),
@@ -83,9 +83,25 @@ async def start_action(
     return await uc.start_action(action_id)
 
 
-@router.post("/action/{action_id}/complete", status_code=status.HTTP_200_OK)
+@router.post("/action/{action_id}/complete", status_code=status.HTTP_204_NO_CONTENT)
 async def mark_action_complete(
     action_id: UUID,
     uc: ActionUC = Depends(get_action_uc),
 ):
     return await uc.complete_action(action_id)
+
+
+@router.post("/action/{action_id}/redo", status_code=status.HTTP_204_NO_CONTENT)
+async def mark_action_draft(
+    action_id: UUID,
+    uc: ActionUC = Depends(get_action_uc),
+):
+    return await uc.mark_as_draft(action_id)
+
+
+@router.delete("/action/{action_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def mark_action_draft(
+    action_id: UUID,
+    uc: ActionUC = Depends(get_action_uc),
+):
+    return await uc.mark_as_delete(action_id)

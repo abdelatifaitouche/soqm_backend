@@ -34,10 +34,14 @@ class ActionQueryService:
             total_count = (
                 select(func.count())
                 .select_from(ActionDB)
-                .where(ActionDB.finding_id == finding_id)
+                .where(ActionDB.finding_id == finding_id, ActionDB.soft_delete == False)
             )
         else:
-            total_count = select(func.count()).select_from(ActionDB)
+            total_count = (
+                select(func.count())
+                .select_from(ActionDB)
+                .where(ActionDB.soft_delete == False)
+            )
         total_count = self._apply_filters(total_count, filters)
         total_items: int | None = await self.session.scalar(total_count)
 
@@ -49,7 +53,7 @@ class ActionQueryService:
                 size=pagination.limit,
             )
 
-        stmt = select(ActionDB)
+        stmt = select(ActionDB).where(ActionDB.soft_delete == False)
 
         if finding_id:
             stmt = stmt.where(ActionDB.finding_id == finding_id)
@@ -76,7 +80,9 @@ class ActionQueryService:
         )
 
     async def get_action_details(self, action_id: UUID) -> ActionDetails | None:
-        stmt = select(ActionDB).where(ActionDB.id == action_id)
+        stmt = select(ActionDB).where(
+            ActionDB.id == action_id, ActionDB.soft_delete == False
+        )
 
         res = (await self.session.execute(stmt)).scalar_one_or_none()
 
