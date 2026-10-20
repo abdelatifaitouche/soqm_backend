@@ -71,11 +71,6 @@ class Finding:
 
     def start_root_cause_analysis(self, root_cause_analysis: RootCauseAnalysis):
 
-        if self.status != FindingStatus.OPEN:
-            raise ValueError(
-                f"Invalid finding state : {self.status} , state must be OPEN",
-            )
-
         root_cause_analysis.cause_analysis_status = ProcessStatus.COMPLETED
         root_cause_analysis.analysis_completed_at = datetime.now()
         self.root_cause_analysis = root_cause_analysis

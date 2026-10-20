@@ -13,7 +13,7 @@ class Action:
     estimated_completion_date: datetime
     created_at: datetime
     updated_at: datetime
-
+    soft_delete: bool
     completion_date: datetime | None = None
 
     @classmethod
@@ -35,6 +35,7 @@ class Action:
             status=ActionState.DRAFT,
             created_at=datetime.now(),
             updated_at=datetime.now(),
+            soft_delete=False,
         )
 
         return action
@@ -46,10 +47,8 @@ class Action:
         finding_id: UUID | None,
     ):
 
-        if self.status == ActionState.COMPLETED:
-            raise Exception(
-                "Cannot Update a completed action",
-            )
+        if self.soft_delete:
+            raise Exception("Invalid Action State : Deleted")
 
         if title and title.strip() != "":
             self.title = title
@@ -61,15 +60,28 @@ class Action:
             self.finding_id = finding_id
 
     def start(self):
-        if self.status != ActionState.DRAFT:
+        if self.status != ActionState.DRAFT or self.soft_delete:
             raise Exception("Invalid Action state")
 
         self.status = ActionState.IN_PROGRESS
         self.updated_at = datetime.now()
 
+    def mark_as_draft(self):
+        if self.status == ActionState.DRAFT or self.soft_delete:
+            raise Exception("Invalid Action State")
+
+        self.status = ActionState.DRAFT
+        self.updated_at = datetime.now()
+
     def complete(self):
-        if self.status != ActionState.IN_PROGRESS:
+        if self.status != ActionState.IN_PROGRESS or self.soft_delete:
             raise Exception("Invalid Action State")
         self.status = ActionState.COMPLETED
         self.completion_date = datetime.now()
+        self.updated_at = datetime.now()
+
+    def mark_as_deleted(self):
+        if self.status != ActionState.DRAFT or self.soft_delete:
+            raise Exception("Cannot delete non draft actions")
+        self.soft_delete = True
         self.updated_at = datetime.now()
