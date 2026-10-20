@@ -29,6 +29,9 @@ class FindingQueryService:
                 FindingDB.deficiency_severity == filters.deficiency_severity
             )
 
+        if filters.department_id:
+            stmt = stmt.where(FindingDB.department == filters.department_id)
+
         if filters.finding_source:
             stmt = stmt.where(FindingDB.finding_source == filters.finding_source)
 
