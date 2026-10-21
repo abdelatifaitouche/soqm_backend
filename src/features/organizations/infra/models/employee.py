@@ -37,6 +37,8 @@ class Employee(Base):
         nullable=True,
     )
 
+    actions: Mapped[list["Action"]] = relationship(back_populates="owner")
+
     department: Mapped["Department"] = relationship(back_populates="employees")
     user: Mapped["User"] = relationship(back_populates="profile")
     assigned_responses: Mapped[list["RiskResponse"]] = relationship(

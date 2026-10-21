@@ -5,13 +5,15 @@ from src.features.findings.application.usecases import ActionUC
 from src.features.findings.infra.repositories import ActionRepository, FindingRepository
 from src.infra.db.unit_of_work import UnitOfWork
 from src.features.findings.infra.queries import ActionQueryService
+from src.features.organizations.infra.repositories import EmployeeRepository
 
 
 async def get_action_uc(db: AsyncSession = Depends(get_db)) -> ActionUC:
     uow = UnitOfWork(db)
     repo = ActionRepository(db)
     finding_repo = FindingRepository(db)
-    return ActionUC(uow, repo, finding_repo)
+    emp_repo = EmployeeRepository(db)
+    return ActionUC(uow, repo, finding_repo, emp_repo)
 
 
 async def get_action_queries(db: AsyncSession = Depends(get_db)) -> ActionQueryService:

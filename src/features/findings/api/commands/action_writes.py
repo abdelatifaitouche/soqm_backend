@@ -7,9 +7,11 @@ class UpdateActionRequest(BaseModel):
     title: str | None = None
     finding_id: UUID | None = None
     estimated_completion_date: datetime | None = None
+    owner_id: UUID | None = None
 
 
 class CreateActionRequest(BaseModel):
     title: str
     finding_id: UUID
     estimated_completion_date: datetime
+    owner_id: UUID

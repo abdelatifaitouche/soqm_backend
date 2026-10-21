@@ -41,6 +41,7 @@ class ActionRepository(IActionRepository):
             status=action.status,
             estimated_completion_date=action.estimated_completion_date,
             completion_date=action.completion_date,
+            owner_id=action.owner_id,
             finding_id=action.finding_id,
             created_at=action.created_at,
             updated_at=action.updated_at,

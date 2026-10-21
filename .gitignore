@@ -22,7 +22,7 @@ test.txt
 
 backend.log
 data_load.py
-
+*.sh
 rca_parser.py
 *.xlsx
 rca_tracker_template.xlsx
