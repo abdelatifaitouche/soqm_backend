@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from uuid import uuid4, UUID
 from datetime import datetime
 from src.features.findings.domain.enums import ActionState
@@ -15,6 +15,7 @@ class Action:
     updated_at: datetime
     soft_delete: bool
     completion_date: datetime | None = None
+    owner_id: UUID | None = None
 
     @classmethod
     def create(
@@ -23,6 +24,7 @@ class Action:
         finding_id: UUID,
         title: str,
         estimated_completion_date: datetime,
+        owner_id: UUID,
     ) -> "Action":
         if estimated_completion_date <= datetime.now():
             raise Exception("Invalid time")
@@ -33,6 +35,7 @@ class Action:
             finding_id=finding_id,
             estimated_completion_date=estimated_completion_date,
             status=ActionState.DRAFT,
+            owner_id=owner_id,
             created_at=datetime.now(),
             updated_at=datetime.now(),
             soft_delete=False,
@@ -45,6 +48,7 @@ class Action:
         title: str | None,
         estimated_completion_date: datetime | None,
         finding_id: UUID | None,
+        owner_id: UUID | None = None,
     ):
 
         if self.soft_delete:
@@ -58,6 +62,9 @@ class Action:
 
         if finding_id:
             self.finding_id = finding_id
+
+        if owner_id:
+            self.owner_id = owner_id
 
     def start(self):
         if self.status != ActionState.DRAFT or self.soft_delete:

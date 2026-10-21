@@ -29,6 +29,7 @@ async def create_action(
             title=action_request.title,
             finding_id=finding_id,
             estimated_completion_date=action_request.estimated_completion_date,
+            owner_id=action_request.owner_id,
         )
     )
 
@@ -71,6 +72,7 @@ async def update_action(
             title=update_request.title,
             finding_id=update_request.finding_id,
             estimated_completion_date=update_request.estimated_completion_date,
+            owner_id=update_request.owner_id,
         ),
     )
 

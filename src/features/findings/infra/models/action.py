@@ -25,7 +25,13 @@ class Action(Base):
         DateTime,
         nullable=True,
     )
+    owner_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("employees.id"),
+        nullable=True,
+    )
 
     soft_delete: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False)
 
     finding: Mapped["Finding"] = relationship(back_populates="actions")
+
+    owner: Mapped["Employee"] = relationship(back_populates="actions")
