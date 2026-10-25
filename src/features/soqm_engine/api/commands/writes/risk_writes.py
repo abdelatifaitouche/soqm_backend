@@ -6,6 +6,12 @@ from pydantic import BaseModel, Field
 from src.features.soqm_engine.domain.enums.risk_state import RiskStatus
 
 
+class CloseRiskRequest(BaseModel):
+    code: str
+    context: str
+    user_comment: str
+
+
 class CreateRisk(BaseModel):
     objectives: list[UUID] = Field(min_length=1)
     component_id: UUID

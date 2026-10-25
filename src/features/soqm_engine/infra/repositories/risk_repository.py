@@ -24,6 +24,15 @@ class RiskRepository(IRiskRepository):
 
         values = asdict(risk)
 
+        closure_reason = values.pop("closure_reason", None)
+
+        if closure_reason:
+            values["closure_code"] = closure_reason.get("closure_code")
+            values["closure_title"] = closure_reason.get("closure_title")
+            values["closure_reason_comment"] = closure_reason.get(
+                "closure_reason_comment"
+            )
+
         objectives = set(values.pop("objectives", []))
         responses = set(values.pop("responses", []))
         immutable_fields = {
@@ -101,6 +110,38 @@ class RiskRepository(IRiskRepository):
 
             await self.session.execute(resp_association_insert)
 
+    async def _sync_risk_associations(
+        self, risk_id: UUID, sync_column, association_table, new_data
+    ):
+
+        new_data_set = set(new_data) if new_data else set()
+
+        column = getattr(association_table, sync_column)
+        risk_id_column = getattr(association_table, "risk_id")
+
+        delete_stmt = delete(association_table).where(
+            risk_id_column == risk_id,
+            column.not_in(new_data),
+        )
+
+        if not new_data:
+            delete_obj_stmt = delete(association_table).where(risk_id_column == risk_id)
+
+        await self.session.execute(delete_stmt)
+
+        if new_data:
+            rows = [{"risk_id": risk_id, sync_column: id} for id in new_data]
+
+            association_insert = (
+                insert(association_table)
+                .values(rows)
+                .on_conflict_do_nothing(
+                    index_elements=["risk_id", sync_column],
+                )
+            )
+
+            await self.session.execute(association_insert)
+
     async def get(self, risk_id: UUID) -> Risk | None:
         stmt = select(RiskDB.__table__).where(RiskDB.id == risk_id)
         res = (await self.session.execute(stmt)).mappings().one_or_none()
@@ -108,11 +149,15 @@ class RiskRepository(IRiskRepository):
         if not res:
             return None
 
-        data = {
-            k: v
-            for k, v in dict(res).items()
-            if k not in {"objective_id", "component_order"}
+        closure_reason = {
+            "closure_code": res.get("closure_code", None),
+            "closure_title": res.get("closure_title", None),
+            "closure_reason_comment": res.get("closure_reason_comment", None),
         }
+
+        exculeded = {*closure_reason.keys(), "objective_id", "component_order"}
+
+        data = {k: v for k, v in dict(res).items() if k not in exculeded}
 
         objective = select(RiskObjectiveAssociation.objective_id).where(
             RiskObjectiveAssociation.risk_id == risk_id
@@ -128,6 +173,7 @@ class RiskRepository(IRiskRepository):
 
         data["objectives"] = list(obj_res)
         data["responses"] = list(resp_data)
+        data["closure_reason"] = closure_reason
         return Risk(**data)
 
     async def delete(self, risk_id: UUID) -> None:

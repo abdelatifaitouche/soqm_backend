@@ -6,3 +6,4 @@ from .component_risk_seq import ComponentRiskSequence
 from .quality_objective import QualityObjective
 from .response import RiskResponse
 from .risk import Risk
+from .reason_category import ReasonCategory
