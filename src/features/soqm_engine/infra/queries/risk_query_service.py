@@ -27,6 +27,7 @@ from src.features.soqm_engine.infra.models import (
 )
 from src.features.soqm_engine.infra.models.risk import RISK_ORDER_FIELDS
 from src.infra.db.pagination import apply_pagination
+from src.features.soqm_engine.infra.models import ReasonCategory
 
 
 class RiskQueryService:
@@ -64,7 +65,9 @@ class RiskQueryService:
     async def list(
         self, pagination: Pagination, filters: RiskFilters, order: OrderBy
     ) -> PaginatedResponse:
-        total_count = select(func.count()).select_from(RiskDB)
+        total_count = (
+            select(func.count()).select_from(RiskDB).where(RiskDB.status != "voided")
+        )
         total_count = self._apply_filters(total_count, filters)
         total_items: int | None = await self.session.scalar(total_count)
 
@@ -85,7 +88,7 @@ class RiskQueryService:
             RiskDB.status,
             RiskDB.risk_description,
             RiskDB.date_identified,
-        )
+        ).where(RiskDB.status != "voided")
 
         stmt = self._apply_filters(stmt, filters)
 
@@ -138,6 +141,16 @@ class RiskQueryService:
             description=risk.component.description,
         )
 
+        closure_reason = None
+
+        if risk.closed_by:
+            closure_reason = {
+                "closure_code": risk.closure_code,
+                "closure_title": risk.closure_title,
+                "closed_by": risk.closed_by,
+                "closure_reason_comment": risk.closure_reason_comment,
+            }
+
         risk_details = RiskDetails(
             id=risk.id,
             risk_ref=risk.risk_ref,
@@ -153,6 +166,16 @@ class RiskQueryService:
             objectives=objectives,
             component=component,
             risk_rational=risk.risk_rational,
+            closure_reason=closure_reason,
         )
 
         return risk_details
+
+    async def get_reason_categories(self):
+        stmt = select(
+            ReasonCategory.code, ReasonCategory.context, ReasonCategory.display_text
+        )
+
+        res = (await self.session.execute(stmt)).mappings().all()
+
+        return res

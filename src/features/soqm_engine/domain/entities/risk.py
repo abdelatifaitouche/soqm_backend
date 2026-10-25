@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from uuid import UUID, uuid4
-
+from src.features.soqm_engine.domain.value_objects import ClosureReason
 from src.features.soqm_engine.domain.enums.risk_state import RiskStatus
 
 
@@ -31,6 +31,9 @@ class Risk:
     date_last_assessed: date | None = None
     next_review_date: date | None = None
     created_by: UUID | None = None
+
+    closure_reason: ClosureReason | None = None
+    closed_by: UUID | None = None
 
     @classmethod
     def create(
@@ -114,3 +117,13 @@ class Risk:
     def remove_response(self, response_id: UUID):
         if response_id in self.responses:
             self.responses.remove(response_id)
+
+    def void_risk(self, reason: ClosureReason, voided_by: UUID):
+
+        if not reason.closure_reason_comment.strip():
+            raise Exception("Invalid comment please provide a meaningful way")
+
+        self.status = RiskStatus.VOIDED.value
+        self.closure_reason = reason
+        self.closed_by = voided_by
+        self.updated_at = datetime.now()

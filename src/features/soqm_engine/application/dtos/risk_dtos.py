@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from datetime import date
 from uuid import UUID
+from src.features.soqm_engine.application.dtos.closure_reason import ClosureReasonDTO
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -65,6 +67,7 @@ class Risk:
     risk_rational: str
     component: ComponentSummary
     objectives: list[ObjectiveSummary]
+    closure_reason: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)

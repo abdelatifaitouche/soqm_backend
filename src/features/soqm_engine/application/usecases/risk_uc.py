@@ -12,6 +12,8 @@ from src.features.soqm_engine.application.ports import (
 )
 from src.features.soqm_engine.domain.entities import Objective, Risk, SOQMComponent
 from src.features.soqm_engine.domain.enums.component_state import ComponentState
+from src.features.soqm_engine.application.dtos.closure_reason import ClosureReasonDTO
+from src.features.soqm_engine.domain.value_objects.closure_reason import ClosureReason
 
 
 class RiskUC:
@@ -128,14 +130,22 @@ class RiskUC:
 
             await self.risk_repository.save(risk)
 
-    async def delete(self, risk_id):
-        """to be done later"""
+    async def void_risk(
+        self,
+        risk_id: UUID,
+        user_id: UUID,
+        closure_reason: ClosureReasonDTO,
+    ):
         async with self.uow:
-            risk = await self.risk_repository.get(risk_id)
+            risk = await self.get(risk_id)
 
-            if not risk:
-                raise NotFoundError("Risk Not Found")
+            risk.void_risk(
+                ClosureReason(
+                    closure_code=closure_reason.code,
+                    closure_title=closure_reason.title,  # title --> context
+                    closure_reason_comment=closure_reason.user_comment,
+                ),
+                user_id,
+            )
 
-            await self.risk_repository.delete(risk_id)
-
-        return
+            await self.risk_repository.save(risk)

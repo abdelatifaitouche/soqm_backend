@@ -84,9 +84,24 @@ class Risk(Base):
         nullable=True,
     )
 
+    # closure reason Snapshot
+
+    closure_code: Mapped[str] = mapped_column(String(50), nullable=True)
+    closure_title: Mapped[str] = mapped_column(String(50), nullable=True)
+    closure_reason_comment: Mapped[str] = mapped_column(String(255), nullable=True)
+    closed_by: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=True
+    )
+
+    # ------------------------
     user: Mapped["User"] = relationship(
         "User",
+        foreign_keys=created_by,
         back_populates="risks",
+    )
+
+    terminator: Mapped["User"] = relationship(
+        foreign_keys=closed_by, back_populates="closed_risks"
     )
 
     component: Mapped["SOQMComponent"] = relationship(

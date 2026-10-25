@@ -13,8 +13,15 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
+    closed_risks: Mapped[list["risk"]] = relationship(
+        "Risk",
+        foreign_keys="Risk.closed_by",
+        back_populates="terminator",
+    )
+
     risks: Mapped[list["Risk"]] = relationship(
         "Risk",
+        foreign_keys="Risk.created_by",
         back_populates="user",
     )
 

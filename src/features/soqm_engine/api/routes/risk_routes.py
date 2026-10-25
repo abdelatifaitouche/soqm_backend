@@ -13,6 +13,7 @@ from src.features.soqm_engine.api.commands.writes.risk_writes import (
     UpdateRiskObjectiveRequest,
     UpdateRiskRequest,
     UpdateRiskResponseRequest,
+    CloseRiskRequest,
 )
 from src.features.soqm_engine.api.dependencies.risk_dependenices import (
     get_risk_matrix_query,
@@ -28,8 +29,21 @@ from src.features.soqm_engine.application.dtos.risk_dtos import (
 from src.features.soqm_engine.application.filters.risk_filters import RiskFilters
 from src.features.soqm_engine.application.usecases import RiskUC
 from src.features.soqm_engine.infra.queries import RiskMatrixQuery, RiskQueryService
+from src.features.soqm_engine.application.dtos.closure_reason import ClosureReasonDTO
+from src.features.soqm_engine.api.commands.reads.closure_reason import (
+    ClosureReasonResponse,
+)
 
 router = APIRouter(prefix="/risks", tags=["Quality Risks"])
+
+
+@router.get("/reason_categories")
+async def list_reason_categories(
+    queries: RiskQueryService = Depends(get_risk_queries),
+):
+    reasons = await queries.get_reason_categories()
+
+    return [ClosureReasonResponse.model_validate(reason) for reason in reasons]
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -79,6 +93,24 @@ async def update_risk(
     return await uc.update_risk(
         risk_id,
         RiskUpdateDTO(**dict(data)),
+    )
+
+
+@router.post("/{risk_id}/close", status_code=status.HTTP_204_NO_CONTENT)
+async def close_risk(
+    risk_id: UUID,
+    closure_reason_request: CloseRiskRequest,
+    uc: RiskUC = Depends(get_risk_uc),
+    user=Depends(require_auth),
+):
+    return await uc.void_risk(
+        risk_id=risk_id,
+        user_id=user.get("sub"),
+        closure_reason=ClosureReasonDTO(
+            code=closure_reason_request.code,
+            title=closure_reason_request.context,
+            user_comment=closure_reason_request.user_comment,
+        ),
     )
 
 

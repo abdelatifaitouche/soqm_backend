@@ -9,6 +9,7 @@ class RiskStatus(StrEnum):
     ACCEPTED = "accepted"
     CLOSED = "closed"
     UNDER_REVIEW = "under_review"
+    VOIDED = "voided"
 
 
 class RiskLevel(StrEnum):
