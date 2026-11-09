@@ -2,8 +2,13 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from src.features.findings.api.commands.action_writes import (
     CreateActionRequest,
     UpdateActionRequest,
+    CreateActionEvidence,
 )
-from src.features.findings.application.dtos import CreateAction, UpdateAction
+from src.features.findings.application.dtos import (
+    CreateAction,
+    UpdateAction,
+    ActionEvidence,
+)
 from uuid import UUID
 from src.features.findings.api.dependencies.action_deps import (
     get_action_uc,
@@ -101,9 +106,27 @@ async def mark_action_draft(
     return await uc.mark_as_draft(action_id)
 
 
-@router.delete("/action/{action_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def mark_action_draft(
+@router.post("/action/{action_id}/evidences", status_code=status.HTTP_201_CREATED)
+async def submit_new_evidence(
     action_id: UUID,
+    evidence: CreateActionEvidence,
     uc: ActionUC = Depends(get_action_uc),
 ):
-    return await uc.mark_as_delete(action_id)
+    return await uc.submit_new_evidence(
+        action_id,
+        evidence=ActionEvidence(
+            evidence_title=evidence.evidence_title,
+            evidence_description=evidence.evidence_description,
+        ),
+    )
+
+
+@router.post(
+    "/action/{action_id}/evidences/{evidence_id}", status_code=status.HTTP_200_OK
+)
+async def accept_action_evidence(
+    action_id: UUID,
+    evidence_id: UUID,
+    uc: ActionUC = Depends(get_action_uc),
+):
+    return await uc.accept_action_evidence(action_id, evidence_id)

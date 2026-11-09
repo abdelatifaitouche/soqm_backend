@@ -9,6 +9,7 @@ from src.features.findings.application.dtos import (
     PaginatedActionResponse,
     ActionListItem,
     EmployeeItem,
+    ActionEvidenceDetails,
 )
 from src.features.findings.application.filters import ActionFilters
 from src.core.pagination import Pagination
@@ -109,12 +110,26 @@ class ActionQueryService:
                 ActionDB.soft_delete == False,
             )
             .options(
-                joinedload(ActionDB.owner)
+                joinedload(ActionDB.owner),
+                selectinload(ActionDB.action_completion_evidences),
             )  # LEFT OUTER JOIN under the hood for nullable FK
         )
         res = (await self.session.execute(stmt)).scalar_one_or_none()
         if not res:
             return None
+
+        action_completion_evidences = [
+            ActionEvidenceDetails(
+                id=ev.id,
+                action_id=ev.action_id,
+                title=ev.title,
+                status=ev.status,
+                description=ev.description,
+                accepted_at=ev.accepted_at,
+            )
+            for ev in res.action_completion_evidences
+            if res.action_completion_evidences
+        ]
 
         owner = (
             EmployeeItem(
@@ -136,4 +151,5 @@ class ActionQueryService:
             owner=owner,
             created_at=res.created_at,
             updated_at=res.updated_at,
+            action_completion_evidence=action_completion_evidences,
         )

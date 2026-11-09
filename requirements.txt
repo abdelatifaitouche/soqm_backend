@@ -1,3 +1,4 @@
+aiosqlite==0.22.1
 alembic==1.18.4
 annotated-doc==0.0.4
 annotated-types==0.7.0
@@ -44,6 +45,7 @@ pydantic-settings==2.14.1
 pygments==2.20.0
 pyjwt==2.13.0
 pytest==9.0.3
+pytest-asyncio==1.4.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-magic==0.4.27

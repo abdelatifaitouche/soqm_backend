@@ -4,7 +4,11 @@ from src.features.findings.application.ports import (
 )
 from src.features.organizations.application.ports import IEmployeeRepository
 from src.core.shared.interfaces.unit_of_work import IUnitOfWork
-from src.features.findings.application.dtos import CreateAction, UpdateAction
+from src.features.findings.application.dtos import (
+    CreateAction,
+    UpdateAction,
+    ActionEvidence,
+)
 from src.features.findings.domain.entities import Action
 from uuid import UUID
 
@@ -133,5 +137,24 @@ class ActionUC:
             action = await self.get(action_id)
 
             action.mark_as_draft()
+
+            await self.repo.save(action)
+
+    async def submit_new_evidence(self, action_id: UUID, evidence: ActionEvidence):
+        async with self.uow:
+            action = await self.get(action_id)
+
+            action.submit_new_evidence(
+                evidence_title=evidence.evidence_title,
+                evidence_description=evidence.evidence_description,
+            )
+
+            await self.repo.save(action)
+
+    async def accept_action_evidence(self, action_id: UUID, evidence_id: UUID):
+        async with self.uow:
+            action = await self.get(action_id)
+
+            action.accept_action_evidence(evidence_id)
 
             await self.repo.save(action)
