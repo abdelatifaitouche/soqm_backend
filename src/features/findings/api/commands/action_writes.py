@@ -15,3 +15,8 @@ class CreateActionRequest(BaseModel):
     finding_id: UUID
     estimated_completion_date: datetime
     owner_id: UUID
+
+
+class CreateActionEvidence(BaseModel):
+    evidence_title: str
+    evidence_description: str

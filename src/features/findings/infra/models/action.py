@@ -34,4 +34,8 @@ class Action(Base):
 
     finding: Mapped["Finding"] = relationship(back_populates="actions")
 
+    action_completion_evidences: Mapped[list["ActionEvidence"]] = relationship(
+        back_populates="action",
+    )
+
     owner: Mapped["Employee"] = relationship(back_populates="actions")

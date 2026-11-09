@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 from datetime import datetime
-from src.features.findings.domain.enums import ActionState
+from src.features.findings.domain.enums import ActionState, ActionEvidenceState
 
 
 @dataclass(frozen=True)
@@ -21,10 +21,27 @@ class UpdateAction:
 
 
 @dataclass(frozen=True)
+class ActionEvidence:
+    evidence_title: str
+    evidence_description: str
+
+
+@dataclass(frozen=True)
 class EmployeeItem:
     id: UUID
     first_name: str
     last_name: str
+
+
+@dataclass(frozen=True)
+class ActionEvidenceDetails:
+    id: UUID
+    action_id: UUID
+    title: str
+    description: str
+    status: ActionEvidenceState
+
+    accepted_at: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -37,6 +54,8 @@ class ActionDetails:
     created_at: datetime
     updated_at: datetime
     owner: EmployeeItem | None = None
+
+    action_completion_evidence: list[ActionEvidenceDetails] | None = None
 
     completion_date: datetime | None = None
 

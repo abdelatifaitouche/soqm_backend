@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 from uuid import uuid4, UUID
 from datetime import datetime
 from src.features.findings.domain.enums import ActionState
+from .action_completion_evidence import ActionCompletionEvidence
+from enum import StrEnum
 
 
 @dataclass
@@ -16,6 +18,10 @@ class Action:
     soft_delete: bool
     completion_date: datetime | None = None
     owner_id: UUID | None = None
+
+    action_completion_evidences: list[ActionCompletionEvidence] = field(
+        default_factory=list
+    )
 
     @classmethod
     def create(
@@ -83,6 +89,14 @@ class Action:
     def complete(self):
         if self.status != ActionState.IN_PROGRESS or self.soft_delete:
             raise Exception("Invalid Action State")
+
+        if (
+            not self.action_completion_evidences
+            or len(self.action_completion_evidences) == 0
+        ):
+            raise Exception(
+                "Cannot complete an action without evidences",
+            )
         self.status = ActionState.COMPLETED
         self.completion_date = datetime.now()
         self.updated_at = datetime.now()
@@ -92,3 +106,42 @@ class Action:
             raise Exception("Cannot delete non draft actions")
         self.soft_delete = True
         self.updated_at = datetime.now()
+
+    def submit_new_evidence(self, evidence_title: str, evidence_description: str):
+        if self.status != ActionState.IN_PROGRESS:
+            raise Exception(
+                "Cannot add evidence to a completed action",
+            )
+        new_evidence = ActionCompletionEvidence.create(
+            action_id=self.id,
+            title=evidence_title,
+            description=evidence_description,
+        )
+        self.action_completion_evidences.append(new_evidence)
+
+        return new_evidence.id
+
+    def accept_action_evidence(self, evidence_id: UUID):
+        if self.status != ActionState.IN_PROGRESS:
+            raise Exception("Cannot accept action to a completed action")
+
+        if not self.action_completion_evidences:
+            raise
+
+        evidence = next(
+            (ev for ev in self.action_completion_evidences if ev.id == evidence_id),
+            None,
+        )
+
+        if not evidence:
+            raise Exception("No matching evidence for this action")
+
+        evidence.accept_evidence()
+
+    def review_action_completion_evidence(
+        self,
+        evidence_id: UUID,
+        decision: bool,
+        comment: str,
+    ):
+        return
